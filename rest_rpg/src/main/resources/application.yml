@@ -6,11 +6,7 @@ spring:
     platform: mysql
   jpa:
     hibernate:
-      ddl-auto: create-drop
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
+      ddl-auto: update
     database: mysql
 token:
   refreshTokenExpirationMs: '604800000'

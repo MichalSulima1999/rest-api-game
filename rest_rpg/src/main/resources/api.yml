@@ -7,6 +7,7 @@ paths:
   /users:
     get:
       summary: Returns a list of users.
+      operationId: getUsers
       x-preauth: "hasAuthority('ADMIN')"
       responses:
         '200':
@@ -19,6 +20,13 @@ paths:
                   $ref: '#/components/schemas/UserLite'
 components:
   schemas:
+    ErrorCodes:
+      type: string
+      enum:
+        - EMPTY_JWT
+        - JWT_EXPIRED
+        - USER_NOT_FOUND
+        - REFRESH_TOKEN_NOT_FOUND
     UserLite:
       type: object
       required:

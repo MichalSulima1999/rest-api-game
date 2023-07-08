@@ -1,14 +1,13 @@
 package com.michael1099.rest_rpg.auth.refreshToken;
 
-import com.michael1099.rest_rpg.auth.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 
+import javax.validation.constraints.NotNull;
 import java.util.Optional;
 
 public interface RefreshTokenRepo extends JpaRepository<RefreshToken, Long> {
-    Optional<RefreshToken> findByToken(String token);
 
-    @Modifying
-    int deleteByUser(User user);
+    Optional<RefreshToken> findByToken(@NotNull String token);
+
+    Optional<RefreshToken> findByUser_Username(@NotNull String username);
 }

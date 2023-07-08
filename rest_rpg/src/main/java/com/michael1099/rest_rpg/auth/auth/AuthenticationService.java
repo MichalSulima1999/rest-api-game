@@ -1,7 +1,6 @@
 package com.michael1099.rest_rpg.auth.auth;
 
 import com.michael1099.rest_rpg.auth.config.JwtService;
-import com.michael1099.rest_rpg.auth.refreshToken.RefreshTokenProvider;
 import com.michael1099.rest_rpg.auth.refreshToken.RefreshTokenService;
 import com.michael1099.rest_rpg.auth.user.User;
 import com.michael1099.rest_rpg.auth.user.UserRepository;
@@ -13,9 +12,13 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.validation.constraints.NotNull;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class AuthenticationService {
 
     private final UserRepository repository;
@@ -23,9 +26,8 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final RefreshTokenService refreshTokenService;
-    private final RefreshTokenProvider refreshTokenProvider;
 
-    public AuthenticationResponse register(RegisterRequest request,
+    public AuthenticationResponse register(@NotNull RegisterRequest request,
                                            HttpServletResponse response) {
         var user = User.of(request, passwordEncoder);
         repository.save(user);
@@ -33,7 +35,7 @@ public class AuthenticationService {
         return createJwtResponse(user, response);
     }
 
-    public AuthenticationResponse authenticate(AuthenticationRequest request,
+    public AuthenticationResponse authenticate(@NotNull AuthenticationRequest request,
                                                HttpServletResponse response) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -46,12 +48,6 @@ public class AuthenticationService {
         return createJwtResponse(user, response);
     }
 
-    private void sendRefreshToken(User user, HttpServletResponse response) {
-        refreshTokenService.deleteByUserUsername(user.getUsername());
-        ResponseCookie springCookie = refreshTokenProvider.createRefreshTokenCookie(user);
-        response.setHeader(HttpHeaders.SET_COOKIE, springCookie.toString());
-    }
-
     private AuthenticationResponse createJwtResponse(User user, HttpServletResponse response) {
         var jwtToken = jwtService.generateToken(user);
 
@@ -61,5 +57,10 @@ public class AuthenticationService {
                 .token(jwtToken)
                 .role(user.getRole())
                 .build();
+    }
+
+    private void sendRefreshToken(@NotNull User user, HttpServletResponse response) {
+        ResponseCookie springCookie = refreshTokenService.createRefreshToken(user.getUsername());
+        response.setHeader(HttpHeaders.SET_COOKIE, springCookie.toString());
     }
 }

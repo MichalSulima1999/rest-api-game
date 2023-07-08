@@ -4,13 +4,13 @@ import org.openapitools.model.ErrorCodes;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
-public class EmptyJwtException extends ResponseStatusException {
+public class UserNotFoundException extends ResponseStatusException {
 
-    public EmptyJwtException(String message) {
+    public UserNotFoundException(String message) {
         super(HttpStatus.NOT_FOUND, message);
     }
 
-    public EmptyJwtException() {
-        this(ErrorCodes.EMPTY_JWT.toString());
+    public UserNotFoundException() {
+        this(ErrorCodes.USER_NOT_FOUND.toString());
     }
 }

@@ -1,54 +1,79 @@
 package com.michael1099.rest_rpg.auth.refreshToken;
 
+import com.michael1099.rest_rpg.auth.auth.AuthenticationResponse;
+import com.michael1099.rest_rpg.auth.config.JwtService;
 import com.michael1099.rest_rpg.auth.config.TokenProperties;
 import com.michael1099.rest_rpg.auth.user.User;
 import com.michael1099.rest_rpg.auth.user.UserRepository;
+import com.michael1099.rest_rpg.exceptions.EmptyJwtException;
+import com.michael1099.rest_rpg.exceptions.JwtExpiredException;
+import com.michael1099.rest_rpg.exceptions.RefreshTokenNotFoundException;
+import com.michael1099.rest_rpg.exceptions.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.constraints.NotNull;
 import java.time.Instant;
-import java.util.Optional;
 import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
 public class RefreshTokenService {
+
     private final RefreshTokenRepo refreshTokenRepository;
     private final UserRepository userRepository;
+    private final JwtService jwtService;
     private final TokenProperties tokenProperties;
 
-    public Optional<RefreshToken> findByToken(String token) {
-        return refreshTokenRepository.findByToken(token);
+    public AuthenticationResponse refreshToken(@NotNull String jwt) {
+        if (jwt == null) {
+            throw new EmptyJwtException();
+        }
+        RefreshToken refreshToken = refreshTokenRepository.findByToken(jwt).orElseThrow(RefreshTokenNotFoundException::new);
+        verifyExpiration(refreshToken);
+        User user = refreshToken.getUser();
+        String accessToken = jwtService.generateToken(user);
+
+        return new AuthenticationResponse(accessToken, user.getRole());
     }
 
-    public RefreshToken createRefreshToken(String username) {
-        RefreshToken refreshToken = new RefreshToken();
+    public ResponseCookie logout(@NotNull String jwt) {
+        var refreshToken = refreshTokenRepository.findByToken(jwt).orElseThrow(RefreshTokenNotFoundException::new);
 
-        refreshToken.setUser(userRepository.findByUsername(username).orElse(null));
+        refreshToken.setExpiryDate(Instant.now());
+        refreshTokenRepository.save(refreshToken);
+
+        return ResponseCookie
+                .from(tokenProperties.getRefreshTokenCookieName(), "")
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("None")
+                .maxAge(0)
+                .build();
+    }
+
+    public ResponseCookie createRefreshToken(@NotNull String username) {
+        var refreshToken = refreshTokenRepository.findByUser_Username(username).orElse(
+                RefreshToken.builder().user(userRepository.findByUsername(username).orElseThrow(UserNotFoundException::new)).build()
+        );
+
         refreshToken.setExpiryDate(Instant.now().plusMillis(tokenProperties.getRefreshTokenExpirationMs()));
         refreshToken.setToken(UUID.randomUUID().toString());
 
         refreshToken = refreshTokenRepository.save(refreshToken);
-        return refreshToken;
+
+        return ResponseCookie.from(tokenProperties.getRefreshTokenCookieName(), refreshToken.getToken())
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("None")
+                .maxAge(tokenProperties.getRefreshTokenExpirationMs() / 1000)
+                .build();
     }
 
-    public RefreshToken verifyExpiration(RefreshToken token) throws TokenRefreshException {
+    private void verifyExpiration(@NotNull RefreshToken token) {
         if (token.getExpiryDate().compareTo(Instant.now()) < 0) {
-            refreshTokenRepository.delete(token);
-            throw new TokenRefreshException(token.getToken(), "Refresh token was expired. Please make a new sign in request");
+            throw new JwtExpiredException();
         }
-
-        return token;
-    }
-
-    @Transactional
-    public int deleteByUserUsername(String username) {
-        Optional<User> user = userRepository.findByUsername(username);
-        return user.map(refreshTokenRepository::deleteByUser).orElse(0);
-    }
-
-    public void deleteRefreshToken(RefreshToken refreshToken) {
-        refreshTokenRepository.delete(refreshToken);
     }
 }
