@@ -9,11 +9,12 @@ import com.michael1099.rest_rpg.exceptions.EmptyJwtException;
 import com.michael1099.rest_rpg.exceptions.JwtExpiredException;
 import com.michael1099.rest_rpg.exceptions.RefreshTokenNotFoundException;
 import com.michael1099.rest_rpg.exceptions.UserNotFoundException;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
 
-import javax.validation.constraints.NotNull;
 import java.time.Instant;
 import java.util.UUID;
 
@@ -26,7 +27,7 @@ public class RefreshTokenService {
     private final JwtService jwtService;
     private final TokenProperties tokenProperties;
 
-    public AuthenticationResponse refreshToken(@NotNull String jwt) {
+    public AuthenticationResponse refreshToken(@NotEmpty String jwt) {
         if (jwt == null) {
             throw new EmptyJwtException();
         }
@@ -38,7 +39,7 @@ public class RefreshTokenService {
         return new AuthenticationResponse(accessToken, user.getRole());
     }
 
-    public ResponseCookie logout(@NotNull String jwt) {
+    public ResponseCookie logout(@NotEmpty String jwt) {
         var refreshToken = refreshTokenRepository.findByToken(jwt).orElseThrow(RefreshTokenNotFoundException::new);
 
         refreshToken.setExpiryDate(Instant.now());
@@ -53,7 +54,7 @@ public class RefreshTokenService {
                 .build();
     }
 
-    public ResponseCookie createRefreshToken(@NotNull String username) {
+    public ResponseCookie createRefreshToken(@NotEmpty String username) {
         var refreshToken = refreshTokenRepository.findByUser_Username(username).orElse(
                 RefreshToken.builder().user(userRepository.findByUsername(username).orElseThrow(UserNotFoundException::new)).build()
         );

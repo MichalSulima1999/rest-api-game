@@ -5,6 +5,7 @@ import com.michael1099.rest_rpg.auth.refreshToken.RefreshTokenService;
 import com.michael1099.rest_rpg.auth.user.User;
 import com.michael1099.rest_rpg.auth.user.UserRepository;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
@@ -13,8 +14,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.validation.constraints.NotNull;
 
 @Service
 @RequiredArgsConstructor
