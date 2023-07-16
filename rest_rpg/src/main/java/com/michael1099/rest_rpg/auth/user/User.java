@@ -1,8 +1,8 @@
 package com.michael1099.rest_rpg.auth.user;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.michael1099.rest_rpg.auth.auth.RegisterRequest;
 import com.michael1099.rest_rpg.auth.refreshToken.RefreshToken;
+import com.michael1099.rest_rpg.character.Character;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,6 +11,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -26,6 +27,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -55,8 +57,10 @@ public class User implements UserDetails {
     private Role role;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    @JsonIgnore
     private RefreshToken refreshToken;
+
+    @OneToMany(mappedBy = "user")
+    private Set<Character> characters;
 
     public static User of(RegisterRequest request, PasswordEncoder passwordEncoder) {
         return User.builder()
