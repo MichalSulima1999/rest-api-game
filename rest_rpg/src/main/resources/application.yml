@@ -8,6 +8,17 @@ spring:
     hibernate:
       ddl-auto: update
     database: mysql
+  mail:
+    host: smtp-relay.sendinblue.com
+    port: 587
+    username: Gallzchemika@o2.pl
+    password: zTIJmfN3axcZhK0G
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 token:
   refreshTokenExpirationMs: '604800000'
   accessTokenExpirationMs: '900000'

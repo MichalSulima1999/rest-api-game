@@ -17,6 +17,8 @@ class Response<T> {
         this.response = response
         this.objectMapper = objectMapper
         this.status = HttpStatus.valueOf(response.status)
-        this.body = objectMapper.readValue(response.contentAsString, requiredType)
+        if (response.contentType != null) {
+            this.body = objectMapper.readValue(response.contentAsString, requiredType)
+        }
     }
 }
