@@ -27,6 +27,10 @@ components:
         - JWT_EXPIRED
         - USER_NOT_FOUND
         - REFRESH_TOKEN_NOT_FOUND
+        - ACCOUNT_USERNAME_EXISTS
+        - ACCOUNT_EMAIL_EXISTS
+        - ACCOUNT_ALREADY_VERIFIED
+        - VERIFICATION_EMAIL_SEND_ERROR
     UserLite:
       type: object
       required:

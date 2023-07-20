@@ -15,6 +15,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -53,6 +54,12 @@ public class User implements UserDetails {
     @NotBlank
     private String password;
 
+    private boolean enabled;
+
+    @NotBlank
+    @Size(max = 64)
+    private String verificationCode;
+
     @Enumerated(EnumType.STRING)
     private Role role;
 
@@ -62,12 +69,14 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user")
     private Set<Character> characters;
 
-    public static User of(RegisterRequest request, PasswordEncoder passwordEncoder) {
+    public static User of(RegisterRequest request, PasswordEncoder passwordEncoder, @NotBlank String verificationCode) {
         return User.builder()
                 .username(request.getUsername())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(request.getRole())
+                .enabled(false)
+                .verificationCode(verificationCode)
                 .build();
     }
 
@@ -98,6 +107,6 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return enabled;
     }
 }
