@@ -9,8 +9,8 @@ spring:
   mail:
     host: smtp-relay.sendinblue.com
     port: 587
-    username: Gallzchemika@o2.pl
-    password: zTIJmfN3axcZhK0G
+    username: ${mail.username}
+    password: ${mail.password}
     properties:
       mail:
         smtp:

@@ -42,7 +42,7 @@ public class RefreshTokenService {
     public ResponseCookie logout(@NotEmpty String jwt) {
         var refreshToken = refreshTokenRepository.findByToken(jwt).orElseThrow(RefreshTokenNotFoundException::new);
 
-        refreshToken.setExpiryDate(Instant.now());
+        refreshToken.setExpiryDate(Instant.now().plusMillis(1000));
         refreshTokenRepository.save(refreshToken);
 
         return ResponseCookie

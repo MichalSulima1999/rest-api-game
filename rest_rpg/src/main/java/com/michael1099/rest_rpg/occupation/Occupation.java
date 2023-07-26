@@ -1,7 +1,7 @@
 package com.michael1099.rest_rpg.occupation;
 
 import com.michael1099.rest_rpg.adventure.Adventure;
-import com.michael1099.rest_rpg.character.Character;
+import com.michael1099.rest_rpg.character.model.Character;
 import com.michael1099.rest_rpg.training.Training;
 import com.michael1099.rest_rpg.work.Work;
 import jakarta.annotation.Nullable;

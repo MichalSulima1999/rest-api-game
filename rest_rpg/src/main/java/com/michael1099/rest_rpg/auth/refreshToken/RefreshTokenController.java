@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/refresh-token")
+@RequestMapping("/refresh-token")
 @Slf4j
 public record RefreshTokenController(
 

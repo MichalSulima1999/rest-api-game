@@ -1,13 +1,8 @@
 package com.michael1099.rest_rpg.character_skill;
 
-import com.michael1099.rest_rpg.character.Character;
+import com.michael1099.rest_rpg.character.model.Character;
 import com.michael1099.rest_rpg.skill.Skill;
-import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.MapsId;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

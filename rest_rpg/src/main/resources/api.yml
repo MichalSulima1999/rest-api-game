@@ -1,8 +1,10 @@
-openapi: 3.0.0
+openapi: 3.0.3
 info:
   title: RPG API
   description: API for RPG REST game.
   version: '0.1'
+servers:
+  - url: /api
 paths:
   /users:
     get:
@@ -18,6 +20,24 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/UserLite'
+  /character:
+    post:
+      summary: Creates a character.
+      operationId: createCharacter
+      x-preauth: "hasAuthority('USER')"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CharacterCreateRequest'
+      responses:
+        '200':
+          description: Info about created character
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CharacterLite'
 components:
   schemas:
     ErrorCodes:
@@ -31,6 +51,8 @@ components:
         - ACCOUNT_EMAIL_EXISTS
         - ACCOUNT_ALREADY_VERIFIED
         - VERIFICATION_EMAIL_SEND_ERROR
+        - CHARACTER_ALREADY_EXISTS
+        - NOT_ENOUGH_SKILL_POINTS
     UserLite:
       type: object
       required:
@@ -40,4 +62,65 @@ components:
         userName:
           type: string
         email:
+          type: string
+    CharacterCreateRequest:
+      type: object
+      required:
+        - name
+        - race
+        - sex
+        - characterClass
+        - artwork
+        - statistics
+      properties:
+        name:
+          description: Character name
+          type: string
+        race:
+          description: HUMAN/ELF/DWARF
+          type: string
+        sex:
+          description: MALE/FEMALE
+          type: string
+        characterClass:
+          description: WARRIOR/ROGUE/MAGE
+          type: string
+        artwork:
+          description: Character artwork
+          type: string
+        statistics:
+          description: Character statistics
+          $ref: '#/components/schemas/StatisticsUpdateRequest'
+    StatisticsUpdateRequest:
+      type: object
+      properties:
+        strength:
+          description: Characters strength to add
+          type: integer
+        dexterity:
+          description: Characters dexterity to add
+          type: integer
+        constitution:
+          description: Characters constitution to add
+          type: integer
+        intelligence:
+          description: Characters intelligence to add
+          type: integer
+    CharacterLite:
+      type: object
+      properties:
+        name:
+          description: Character name
+          type: string
+        race:
+          description: Character race
+          type: string
+        sex:
+          description: Character sex
+          type: string
+        characterClass:
+          description: Character class
+          type: string
+        artwork:
+          description: Character artwork
           type: string

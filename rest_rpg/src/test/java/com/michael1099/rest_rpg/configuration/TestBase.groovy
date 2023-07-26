@@ -1,6 +1,7 @@
 package com.michael1099.rest_rpg.configuration
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import jakarta.servlet.http.Cookie
 import org.spockframework.spring.SpringBean
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -10,7 +11,6 @@ import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.util.LinkedMultiValueMap
-import org.springframework.util.MultiValueMap
 import spock.lang.Specification
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
@@ -30,22 +30,50 @@ class TestBase extends Specification {
     @Autowired
     ObjectMapper objectMapper
 
-    <T> Response<T> httpPost(String url, Object request, Class<T> requiredType, MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>()) {
-        def response = mvc.perform(post(url)
+    <T> Response<T> httpPost(String url, Object request, Class<T> requiredType, Map customArgs = [:]) {
+        Map args = [
+                parameters  : new LinkedMultiValueMap<>(),
+                refreshToken: null,
+                accessToken : null
+        ]
+        args << customArgs
+
+        def requestPost = post(url)
                 .content(asJsonString(request))
-                .params(parameters)
+                .params(args.parameters as LinkedMultiValueMap)
                 .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
-                .andReturn().response
+                .accept(MediaType.APPLICATION_JSON)
+        if (args.refreshToken) {
+            requestPost.cookie(new Cookie("jwt", args.refreshToken))
+        }
+        if (args.accessToken) {
+            requestPost.header("Authorization", "Bearer " + args.accessToken)
+        }
+
+        def response = mvc.perform(requestPost).andReturn().response
         return new Response<T>(response, objectMapper, requiredType)
     }
 
-    <T> Response<T> httpGet(String url, Class<T> requiredType, MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>()) {
-        def response = mvc.perform(get(url)
-                .params(parameters)
+    <T> Response<T> httpGet(String url, Class<T> requiredType, Map customArgs = [:]) {
+        Map args = [
+                parameters  : new LinkedMultiValueMap<>(),
+                refreshToken: null,
+                accessToken : null
+        ]
+        args << customArgs
+
+        def requestGet = get(url)
+                .params(args.parameters as LinkedMultiValueMap)
                 .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
-                .andReturn().response
+                .accept(MediaType.APPLICATION_JSON)
+        if (args.refreshToken) {
+            requestGet.cookie(new Cookie("jwt", args.refreshToken))
+        }
+        if (args.accessToken) {
+            requestGet.header("Authorization", "Bearer " + args.accessToken)
+        }
+
+        def response = mvc.perform(requestGet).andReturn().response
         return new Response<T>(response, objectMapper, requiredType)
     }
 

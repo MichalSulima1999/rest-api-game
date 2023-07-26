@@ -1,17 +1,11 @@
 package com.michael1099.rest_rpg.statistics;
 
-import com.michael1099.rest_rpg.character.Character;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.michael1099.rest_rpg.character.model.Character;
+import com.michael1099.rest_rpg.exceptions.NotEnoughSkillPointsException;
+import com.michael1099.rest_rpg.statistics.dto.StatisticsUpdateRequestDto;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
 
 @Entity
 @Getter
@@ -50,6 +44,8 @@ public class Statistics {
 
     private int currentLevel;
 
+    private int freeStatisticPoints;
+
     private int strength;
 
     private int dexterity;
@@ -62,4 +58,38 @@ public class Statistics {
     private Character character;
 
     private boolean deleted;
+
+    public static Statistics init() {
+        return Statistics.builder()
+                .maxHp(100)
+                .currentHp(100)
+                .maxMana(100)
+                .currentMana(100)
+                .damage(10)
+                .magicDamage(10)
+                .armor(0)
+                .dodgeChance(9.5f)
+                .criticalChance(9.5f)
+                .currentXp(0)
+                .xpToNextLevel(500)
+                .currentLevel(1)
+                .freeStatisticPoints(10)
+                .strength(10)
+                .dexterity(10)
+                .constitution(10)
+                .intelligence(10)
+                .build();
+    }
+
+    public void addStatistics(@NotNull StatisticsUpdateRequestDto dto) {
+        var sum = dto.getConstitution() + dto.getDexterity() + dto.getStrength() + dto.getIntelligence();
+        if (sum > freeStatisticPoints) {
+            throw new NotEnoughSkillPointsException();
+        }
+
+        this.strength += dto.getStrength();
+        this.dexterity += dto.getDexterity();
+        this.constitution += dto.getConstitution();
+        this.intelligence += dto.getIntelligence();
+    }
 }

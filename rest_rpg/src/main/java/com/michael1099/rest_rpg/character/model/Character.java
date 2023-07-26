@@ -1,6 +1,7 @@
-package com.michael1099.rest_rpg.character;
+package com.michael1099.rest_rpg.character.model;
 
 import com.michael1099.rest_rpg.auth.user.User;
+import com.michael1099.rest_rpg.character.model.dto.CharacterCreateRequestDto;
 import com.michael1099.rest_rpg.character_skill.CharacterSkill;
 import com.michael1099.rest_rpg.equipment.Equipment;
 import com.michael1099.rest_rpg.fight.Fight;
@@ -20,6 +21,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -28,6 +30,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -53,11 +56,15 @@ public class Character {
 
     @NotNull
     @Enumerated(EnumType.STRING)
+    private CharacterSex sex;
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
     private CharacterClass characterClass;
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    private CharacterStatus status;
+    private CharacterStatus status = CharacterStatus.IDLE;
 
     @Nullable
     @Enumerated(EnumType.STRING)
@@ -67,21 +74,20 @@ public class Character {
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
-    @Nullable
     @OneToMany(mappedBy = "character", fetch = FetchType.LAZY)
-    private Set<CharacterSkill> skills;
+    private Set<CharacterSkill> skills = new HashSet<>();
 
     @NotNull
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "statistics_id", referencedColumnName = "id")
     private Statistics statistics;
 
-    @Nullable
+    @NotNull
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "occupation_id", referencedColumnName = "id")
     private Occupation occupation;
 
-    @Nullable
+    @NotNull
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "fight_id", referencedColumnName = "id")
     private Fight fight;
@@ -92,4 +98,27 @@ public class Character {
     private Equipment equipment;
 
     private boolean deleted;
+
+    public static Character createCharacter(@NotNull @Valid CharacterCreateRequestDto dto, @NotNull User user) {
+        var character = Character.builder()
+                .name(dto.getName())
+                .characterClass(dto.getCharacterClass())
+                .artwork(dto.getArtwork())
+                .race(dto.getRace())
+                .sex(dto.getSex())
+                .equipment(Equipment.init())
+                .occupation(new Occupation())
+                .statistics(Statistics.init())
+                .fight(new Fight())
+                .status(CharacterStatus.IDLE)
+                .user(user)
+                .build();
+
+        character.getOccupation().setCharacter(character);
+        character.getStatistics().setCharacter(character);
+        character.getFight().setCharacter(character);
+        character.getEquipment().setCharacter(character);
+
+        return character;
+    }
 }

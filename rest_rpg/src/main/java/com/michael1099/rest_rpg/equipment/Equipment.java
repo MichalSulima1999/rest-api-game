@@ -1,6 +1,6 @@
 package com.michael1099.rest_rpg.equipment;
 
-import com.michael1099.rest_rpg.character.Character;
+import com.michael1099.rest_rpg.character.model.Character;
 import com.michael1099.rest_rpg.item_equipment.ItemEquipment;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -18,6 +18,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -41,7 +42,11 @@ public class Equipment {
     private Character character;
 
     @OneToMany(mappedBy = "equipment", fetch = FetchType.LAZY)
-    private Set<ItemEquipment> items;
+    private Set<ItemEquipment> items = new HashSet<>();
 
     private boolean deleted;
+
+    public static Equipment init() {
+        return Equipment.builder().gold(0).build();
+    }
 }

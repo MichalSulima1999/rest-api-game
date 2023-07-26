@@ -1,6 +1,6 @@
 package com.michael1099.rest_rpg.fight;
 
-import com.michael1099.rest_rpg.character.Character;
+import com.michael1099.rest_rpg.character.model.Character;
 import com.michael1099.rest_rpg.enemy.Enemy;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
