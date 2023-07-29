@@ -158,7 +158,6 @@
                         <exclude>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
-                            <version>${org.projectlombok.version}</version>
                         </exclude>
                     </excludes>
                 </configuration>
@@ -228,4 +227,11 @@
             </plugin>
         </plugins>
     </build>
+    <distributionManagement>
+        <repository>
+            <id>internal.repo</id>
+            <name>Internal repo</name>
+            <url>file://C:\Users\micha\Documents\Projects</url>
+        </repository>
+    </distributionManagement>
 </project>

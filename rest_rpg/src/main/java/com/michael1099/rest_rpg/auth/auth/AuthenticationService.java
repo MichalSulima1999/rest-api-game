@@ -4,11 +4,7 @@ import com.michael1099.rest_rpg.auth.config.JwtService;
 import com.michael1099.rest_rpg.auth.refreshToken.RefreshTokenService;
 import com.michael1099.rest_rpg.auth.user.User;
 import com.michael1099.rest_rpg.auth.user.UserRepository;
-import com.michael1099.rest_rpg.exceptions.AccountEmailExistsException;
-import com.michael1099.rest_rpg.exceptions.AccountUsernameExistsException;
-import com.michael1099.rest_rpg.exceptions.UserAlreadyVerifiedException;
-import com.michael1099.rest_rpg.exceptions.UserNotFoundException;
-import com.michael1099.rest_rpg.exceptions.VerificationEmailSendErrorException;
+import com.michael1099.rest_rpg.exceptions.*;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.servlet.http.HttpServletResponse;
@@ -116,7 +112,7 @@ public class AuthenticationService {
             helper.setTo(toAddress);
             helper.setSubject(subject);
             content = content.replace("[[name]]", user.getUsername());
-            String verifyURL = verificationURL + "/api/auth/verify?code=" + user.getVerificationCode();
+            String verifyURL = verificationURL + "/auth/verify?code=" + user.getVerificationCode();
 
             content = content.replace("[[URL]]", verifyURL);
 
