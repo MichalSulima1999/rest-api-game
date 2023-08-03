@@ -36,7 +36,7 @@ public class RefreshTokenService {
         User user = refreshToken.getUser();
         String accessToken = jwtService.generateToken(user);
 
-        return new AuthenticationResponse(accessToken, user.getRole());
+        return new AuthenticationResponse(user.getUsername(), accessToken, user.getRole());
     }
 
     public ResponseCookie logout(@NotEmpty String jwt) {

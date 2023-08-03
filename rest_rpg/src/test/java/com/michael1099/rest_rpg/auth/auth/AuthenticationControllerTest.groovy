@@ -47,6 +47,7 @@ class AuthenticationControllerTest extends TestBase {
         then:
             response.status == HttpStatus.OK
             response.body.role == user.role
+            response.body.username == user.username
             response.body.token
     }
 
