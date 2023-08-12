@@ -3,8 +3,8 @@ info:
   title: RPG API
   description: API for RPG REST game.
   version: '0.1'
-#servers:
-#  - url: /api
+servers:
+  - url: http://localhost:8080
 paths:
   /users:
     get:

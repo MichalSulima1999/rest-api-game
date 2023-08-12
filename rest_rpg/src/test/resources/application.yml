@@ -17,6 +17,9 @@ spring:
           auth: true
           starttls:
             enable: true
+server:
+  error:
+    include-message: always
 token:
   refreshTokenExpirationMs: '604800000'
   accessTokenExpirationMs: '900000'

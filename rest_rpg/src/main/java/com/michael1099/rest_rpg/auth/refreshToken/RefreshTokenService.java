@@ -12,6 +12,7 @@ import com.michael1099.rest_rpg.exceptions.UserNotFoundException;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +21,7 @@ import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class RefreshTokenService {
 
     private final RefreshTokenRepo refreshTokenRepository;
@@ -28,6 +30,7 @@ public class RefreshTokenService {
     private final TokenProperties tokenProperties;
 
     public AuthenticationResponse refreshToken(@NotEmpty String jwt) {
+        log.debug(jwt);
         if (jwt == null) {
             throw new EmptyJwtException();
         }
@@ -48,6 +51,7 @@ public class RefreshTokenService {
         return ResponseCookie
                 .from(tokenProperties.getRefreshTokenCookieName(), "")
                 .httpOnly(true)
+                .path("/")
                 .secure(true)
                 .sameSite("None")
                 .maxAge(0)
@@ -66,6 +70,7 @@ public class RefreshTokenService {
 
         return ResponseCookie.from(tokenProperties.getRefreshTokenCookieName(), refreshToken.getToken())
                 .httpOnly(true)
+                .path("/")
                 .secure(true)
                 .sameSite("None")
                 .maxAge(tokenProperties.getRefreshTokenExpirationMs() / 1000)

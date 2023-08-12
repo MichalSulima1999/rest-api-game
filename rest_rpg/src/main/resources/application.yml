@@ -11,16 +11,19 @@ spring:
       ddl-auto: update
     database: mysql
   mail:
-    host: smtp-relay.sendinblue.com
-    port: 587
-    username: ${mail.username}
-    password: ${mail.password}
+    host: ${mock-mail.host}
+    port: ${mock-mail.port}
+    username: ${mock-mail.username}
+    password: ${mock-mail.password}
     properties:
       mail:
         smtp:
           auth: true
           starttls:
             enable: true
+server:
+  error:
+    include-message: always
 token:
   refreshTokenExpirationMs: '604800000'
   accessTokenExpirationMs: '900000'

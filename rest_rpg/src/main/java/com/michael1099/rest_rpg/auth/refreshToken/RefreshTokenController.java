@@ -4,7 +4,6 @@ import com.michael1099.rest_rpg.auth.auth.AuthenticationResponse;
 import com.michael1099.rest_rpg.auth.config.JwtService;
 import com.michael1099.rest_rpg.auth.config.TokenProperties;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.constraints.NotEmpty;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -24,12 +23,12 @@ public record RefreshTokenController(
 ) {
 
     @GetMapping("/refresh")
-    public ResponseEntity<AuthenticationResponse> refreshToken(@NotEmpty @CookieValue(name = "jwt") String jwt) {
+    public ResponseEntity<AuthenticationResponse> refreshToken(@CookieValue(name = "jwt") String jwt) {
         return ResponseEntity.ok(refreshTokenService.refreshToken(jwt));
     }
 
     @GetMapping("/logout")
-    public ResponseEntity<Void> logoutUser(HttpServletResponse response, @NotEmpty @CookieValue(name = "jwt") String jwt) {
+    public ResponseEntity<Void> logoutUser(HttpServletResponse response, @CookieValue(name = "jwt") String jwt) {
         response.setHeader(HttpHeaders.SET_COOKIE, refreshTokenService.logout(jwt).toString());
         return ResponseEntity.ok().build();
     }

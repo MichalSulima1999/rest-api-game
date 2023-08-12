@@ -1,72 +1,122 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
-import React, { useState } from "react";
-import { RegisterRequest } from "../../classes/auth/Auth";
+import {
+  Box,
+  Button,
+  FormControl,
+  FormLabel,
+  Input,
+  Heading,
+  FormErrorMessage,
+  Flex,
+  AbsoluteCenter,
+  useToast,
+} from "@chakra-ui/react";
+import { Form, Formik, FormikHelpers } from "formik";
+import { RegisterSchema } from "./AuthValidation";
 import { register } from "../../services/AuthService";
+import { RegisterRequest } from "../../classes/auth/Auth";
 
 const Register = () => {
-  const [request, setRequest] = useState<RegisterRequest>({
-    username: "",
-    password: "",
-    email: "",
-    role: "USER",
-  });
+  const toast = useToast();
 
-  const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRequest({ ...request, username: event.target.value });
-  };
-
-  const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRequest({ ...request, password: event.target.value });
-  };
-
-  const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRequest({ ...request, email: event.target.value });
-  };
-
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
-    await register(request);
+  const handleSubmit = async (
+    values: RegisterRequest,
+    actions: FormikHelpers<RegisterRequest>
+  ) => {
+    await register(values, toast);
+    actions.setSubmitting(false);
   };
 
   return (
-    <div>
-      <h2>Register</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>
-            Username:
-            <input
-              type="text"
-              value={request.username}
-              onChange={handleUsernameChange}
-            />
-          </label>
-        </div>
-        <div>
-          <label>
-            Email:
-            <input
-              type="email"
-              value={request.email}
-              onChange={handleEmailChange}
-            />
-          </label>
-        </div>
-        <div>
-          <label>
-            Password:
-            <input
-              type="password"
-              value={request.password}
-              onChange={handlePasswordChange}
-            />
-          </label>
-        </div>
-        <div>
-          <button type="submit">Register</button>
-        </div>
-      </form>
-    </div>
+    <Flex color="white" w="100%" direction={{ base: "column", md: "row" }}>
+      <Box p={8} bg="blackAlpha.800" color="white" flex="1">
+        <Heading mb={4}>Register</Heading>
+        <Formik
+          initialValues={{
+            username: "",
+            email: "",
+            password: "",
+            role: "USER",
+          }}
+          validationSchema={RegisterSchema}
+          onSubmit={(values, actions) => handleSubmit(values, actions)}
+        >
+          {({ isSubmitting, values, errors, touched, handleChange }) => (
+            <Form>
+              <FormControl
+                id="username"
+                mb={4}
+                isInvalid={
+                  (errors.username as string) != null &&
+                  (touched.username as boolean)
+                }
+                isRequired
+              >
+                <FormLabel>Username</FormLabel>
+                <Input
+                  name="username"
+                  type="text"
+                  value={values.username}
+                  onChange={handleChange}
+                  placeholder="Username"
+                />
+                <FormErrorMessage>{errors.username}</FormErrorMessage>
+              </FormControl>
+              <FormControl
+                id="email"
+                mb={4}
+                isInvalid={
+                  (errors.email as string) != null && (touched.email as boolean)
+                }
+                isRequired
+              >
+                <FormLabel>Email</FormLabel>
+                <Input
+                  name="email"
+                  type="email"
+                  value={values.email}
+                  onChange={handleChange}
+                  placeholder="Email"
+                />
+                <FormErrorMessage>{errors.email}</FormErrorMessage>
+              </FormControl>
+              <FormControl
+                id="password"
+                mb={6}
+                isInvalid={
+                  (errors.password as string) != null &&
+                  (touched.password as boolean)
+                }
+                isRequired
+              >
+                <FormLabel>Password</FormLabel>
+                <Input
+                  name="password"
+                  type="password"
+                  value={values.password}
+                  onChange={handleChange}
+                  placeholder="Password"
+                />
+                <FormErrorMessage>{errors.password}</FormErrorMessage>
+              </FormControl>
+              <Button
+                mt={4}
+                colorScheme="teal"
+                isLoading={isSubmitting}
+                type="submit"
+              >
+                Register
+              </Button>
+            </Form>
+          )}
+        </Formik>
+      </Box>
+      <Box position="relative" p={8} bg="blackAlpha.800" color="white" flex="2">
+        <AbsoluteCenter axis="both">
+          <Heading>REST RPG</Heading>
+        </AbsoluteCenter>
+      </Box>
+    </Flex>
   );
 };
 

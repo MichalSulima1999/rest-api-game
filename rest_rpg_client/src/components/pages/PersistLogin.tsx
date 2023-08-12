@@ -1,10 +1,11 @@
 import { Outlet } from "react-router-dom";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import useRefreshToken from "../../hooks/useRefreshToken";
 import useLocalStorage from "../../hooks/useLocalStorage";
 import { useStores } from "../../store/RootStore";
+import { observer } from "mobx-react";
 
-const PersistLogin = () => {
+const PersistLogin = observer(() => {
   const [isLoading, setIsLoading] = useState(true);
   const refresh = useRefreshToken();
   const { authStore } = useStores();
@@ -22,7 +23,7 @@ const PersistLogin = () => {
         isMounted && setIsLoading(false);
       }
     };
-
+    
     !authStore.accessToken && persist
       ? verifyRefreshToken()
           .then(() => {
@@ -41,6 +42,6 @@ const PersistLogin = () => {
   return (
     <>{!persist ? <Outlet /> : isLoading ? <p>Loading...</p> : <Outlet />}</>
   );
-};
+});
 
 export default PersistLogin;
