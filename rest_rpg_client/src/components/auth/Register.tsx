@@ -9,28 +9,25 @@ import {
   FormErrorMessage,
   Flex,
   AbsoluteCenter,
-  useToast,
 } from "@chakra-ui/react";
-import { Form, Formik, FormikHelpers } from "formik";
-import { RegisterSchema } from "./AuthValidation";
-import { register } from "../../services/AuthService";
+import { Form, Formik } from "formik";
+import { RegisterSchema } from "../../validation/auth/AuthValidation";
 import { RegisterRequest } from "../../classes/auth/Auth";
+import { useTranslation } from "react-i18next";
+import useAuthService from "../../services/useAuthService";
 
 const Register = () => {
-  const toast = useToast();
+  const { t } = useTranslation();
+  const authService = useAuthService();
 
-  const handleSubmit = async (
-    values: RegisterRequest,
-    actions: FormikHelpers<RegisterRequest>
-  ) => {
-    await register(values, toast);
-    actions.setSubmitting(false);
+  const handleSubmit = async (values: RegisterRequest) => {
+    await authService.register(values);
   };
 
   return (
     <Flex color="white" w="100%" direction={{ base: "column", md: "row" }}>
       <Box p={8} bg="blackAlpha.800" color="white" flex="1">
-        <Heading mb={4}>Register</Heading>
+        <Heading mb={4}>{t("AUTH.REGISTER")}</Heading>
         <Formik
           initialValues={{
             username: "",
@@ -39,9 +36,9 @@ const Register = () => {
             role: "USER",
           }}
           validationSchema={RegisterSchema}
-          onSubmit={(values, actions) => handleSubmit(values, actions)}
+          onSubmit={handleSubmit}
         >
-          {({ isSubmitting, values, errors, touched, handleChange }) => (
+          {({ values, errors, touched, handleChange }) => (
             <Form>
               <FormControl
                 id="username"
@@ -52,15 +49,17 @@ const Register = () => {
                 }
                 isRequired
               >
-                <FormLabel>Username</FormLabel>
+                <FormLabel>{t("AUTH.USERNAME")}</FormLabel>
                 <Input
                   name="username"
                   type="text"
                   value={values.username}
                   onChange={handleChange}
-                  placeholder="Username"
+                  placeholder={t("AUTH.USERNAME")}
                 />
-                <FormErrorMessage>{errors.username}</FormErrorMessage>
+                <FormErrorMessage>
+                  {errors.username && t(`VALIDATION.${errors.username}`)}
+                </FormErrorMessage>
               </FormControl>
               <FormControl
                 id="email"
@@ -70,15 +69,17 @@ const Register = () => {
                 }
                 isRequired
               >
-                <FormLabel>Email</FormLabel>
+                <FormLabel>{t("AUTH.EMAIL")}</FormLabel>
                 <Input
                   name="email"
                   type="email"
                   value={values.email}
                   onChange={handleChange}
-                  placeholder="Email"
+                  placeholder={t("AUTH.EMAIL")}
                 />
-                <FormErrorMessage>{errors.email}</FormErrorMessage>
+                <FormErrorMessage>
+                  {errors.email && t(`VALIDATION.${errors.email}`)}
+                </FormErrorMessage>
               </FormControl>
               <FormControl
                 id="password"
@@ -89,23 +90,25 @@ const Register = () => {
                 }
                 isRequired
               >
-                <FormLabel>Password</FormLabel>
+                <FormLabel>{t("AUTH.PASSWORD")}</FormLabel>
                 <Input
                   name="password"
                   type="password"
                   value={values.password}
                   onChange={handleChange}
-                  placeholder="Password"
+                  placeholder={t("AUTH.PASSWORD")}
                 />
-                <FormErrorMessage>{errors.password}</FormErrorMessage>
+                <FormErrorMessage>
+                  {errors.password && t(`VALIDATION.${errors.password}`)}
+                </FormErrorMessage>
               </FormControl>
               <Button
                 mt={4}
                 colorScheme="teal"
-                isLoading={isSubmitting}
+                isLoading={authService.isLoading}
                 type="submit"
               >
-                Register
+                {t("AUTH.REGISTER")}
               </Button>
             </Form>
           )}
@@ -113,7 +116,7 @@ const Register = () => {
       </Box>
       <Box position="relative" p={8} bg="blackAlpha.800" color="white" flex="2">
         <AbsoluteCenter axis="both">
-          <Heading>REST RPG</Heading>
+          <Heading>{t("NAVBAR.TITLE")}</Heading>
         </AbsoluteCenter>
       </Box>
     </Flex>

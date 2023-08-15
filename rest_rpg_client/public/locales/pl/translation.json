@@ -1,0 +1,36 @@
+{
+    "AUTH": {
+        "LOGIN": "Zaloguj się",
+        "REGISTER": "Rejestracja",
+        "LOGOUT": "Wyloguj się",
+        "USERNAME": "Nazwa użytkownika",
+        "PASSWORD": "Hasło",
+        "PERSIST": "Zapamiętaj mnie",
+        "EMAIL": "Email",
+        "LOGOUT_SUCCESSFUL": "Wylogowano pomyślnie",
+        "LOGIN_SUCCESSFUL": "Zalogowano pomyślnie",
+        "REGISTRATION_SUCCESSFUL": "Zarejestrowano pomyślnie"
+    },
+    "NAVBAR": {
+        "TITLE": "Rest RPG",
+        "HOME": "Strona główna"
+    },
+    "VALIDATION": {
+        "REQUIRED": "Pole wymagane",
+        "PASSWORD_SHORT": "Hasło powinno zawierać minimum 8 znaków",
+        "NOT_EMAIL": "To nie jest format email"
+    },
+    "ERROR": {
+        "COMMUNICATION": "Nie można połączyć z serwerem.",
+        "EMPTY_JWT": "Token jest pusty.",
+        "JWT_EXPIRED": "Wylogowano - token wygasł.",
+        "USER_NOT_FOUND": "Nie znaleziono użytkownika.",
+        "REFRESH_TOKEN_NOT_FOUND": "Wylogowano - nie znaleziono refresh tokena.",
+        "ACCOUNT_USERNAME_EXISTS": "Nazwa użytkownika jest zajęta.",
+        "ACCOUNT_EMAIL_EXISTS": "Email zajęty.",
+        "ACCOUNT_ALREADY_VERIFIED": "Konto już zweryfikowane.",
+        "VERIFICATION_EMAIL_SEND_ERROR": "Nie można wysłać e-maila weryfikacyjnego. Spróbuj ponownie później.",
+        "CHARACTER_ALREADY_EXISTS": "Nazwa postaci zajęta.",
+        "NOT_ENOUGH_SKILL_POINTS": "Za mało punktów umiejętności dla tej operacji."
+    }
+}

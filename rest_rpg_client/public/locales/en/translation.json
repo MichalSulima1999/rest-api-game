@@ -1,0 +1,36 @@
+{
+    "AUTH": {
+        "LOGIN": "Login",
+        "REGISTER": "Register",
+        "LOGOUT": "Logout",
+        "USERNAME": "Username",
+        "PASSWORD": "Password",
+        "PERSIST": "Remember me",
+        "EMAIL": "Email",
+        "LOGOUT_SUCCESSFUL": "Successfully logged out.",
+        "LOGIN_SUCCESSFUL": "Successfully logged in.",
+        "REGISTRATION_SUCCESSFUL": "Successfully registered."
+    },
+    "NAVBAR": {
+        "TITLE": "Rest RPG",
+        "HOME": "Home"
+    },
+    "VALIDATION": {
+        "REQUIRED": "Required",
+        "PASSWORD_SHORT": "The password should be at least 8 characters long.",
+        "NOT_EMAIL": "Not an email format."
+    },
+    "ERROR": {
+        "COMMUNICATION": "Can't communicate with server.",
+        "EMPTY_JWT": "Token is empty.",
+        "JWT_EXPIRED": "Logged out - token expired.",
+        "USER_NOT_FOUND": "User not found.",
+        "REFRESH_TOKEN_NOT_FOUND": "Logged out - refresh token not found.",
+        "ACCOUNT_USERNAME_EXISTS": "Username already exists.",
+        "ACCOUNT_EMAIL_EXISTS": "Email already taken.",
+        "ACCOUNT_ALREADY_VERIFIED": "Account is already verified.",
+        "VERIFICATION_EMAIL_SEND_ERROR": "Verification email could not be sent. Please try again later.",
+        "CHARACTER_ALREADY_EXISTS": "Character name already taken.",
+        "NOT_ENOUGH_SKILL_POINTS": "Not enough skill points for this operation."
+    }
+}

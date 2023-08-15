@@ -1,7 +1,4 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
-import { useStores } from "../../store/RootStore";
 import { AuthRequest } from "../../classes/auth/Auth";
-import { auth } from "../../services/AuthService";
 import {
   Box,
   Button,
@@ -13,38 +10,35 @@ import {
   Flex,
   AbsoluteCenter,
   Checkbox,
-  useToast,
 } from "@chakra-ui/react";
-import { Form, Formik, FormikHelpers } from "formik";
-import { LoginSchema } from "./AuthValidation";
+import { Form, Formik } from "formik";
+import { LoginSchema } from "../../validation/auth/AuthValidation";
 import useToggle from "../../hooks/useToggle";
+import { useTranslation } from "react-i18next";
+import useAuthService from "../../services/useAuthService";
 
 const Login = () => {
-  const { authStore } = useStores();
   const [persist, togglePersist] = useToggle("persist", false);
-  const toast = useToast()
+  const { t } = useTranslation();
+  const authService = useAuthService();
 
-  const handleSubmit = async (
-    values: AuthRequest,
-    actions: FormikHelpers<AuthRequest>
-  ) => {
-    await auth(values, authStore, toast);
-    actions.setSubmitting(false);
+  const handleSubmit = async (values: AuthRequest) => {
+    await authService.authenticate(values);
   };
 
   return (
     <Flex color="white" w="100%" direction={{ base: "column", md: "row" }}>
       <Box p={8} bg="blackAlpha.800" color="white" flex="1">
-        <Heading mb={4}>Login</Heading>
+        <Heading mb={4}>{t("AUTH.LOGIN")}</Heading>
         <Formik
           initialValues={{
             username: "",
             password: "",
           }}
           validationSchema={LoginSchema}
-          onSubmit={(values, actions) => handleSubmit(values, actions)}
+          onSubmit={handleSubmit}
         >
-          {({ isSubmitting, values, errors, touched, handleChange }) => (
+          {({ values, errors, touched, handleChange }) => (
             <Form>
               <FormControl
                 id="username"
@@ -55,15 +49,17 @@ const Login = () => {
                 }
                 isRequired
               >
-                <FormLabel>Username</FormLabel>
+                <FormLabel>{t("AUTH.USERNAME")}</FormLabel>
                 <Input
                   name="username"
                   type="text"
                   value={values.username}
                   onChange={handleChange}
-                  placeholder="Username"
+                  placeholder={t("AUTH.USERNAME")}
                 />
-                <FormErrorMessage>{errors.username}</FormErrorMessage>
+                <FormErrorMessage>
+                  {errors.username && t(`VALIDATION.${errors.username}`)}
+                </FormErrorMessage>
               </FormControl>
 
               <FormControl
@@ -75,31 +71,33 @@ const Login = () => {
                 }
                 isRequired
               >
-                <FormLabel>Password</FormLabel>
+                <FormLabel>{t("AUTH.PASSWORD")}</FormLabel>
                 <Input
                   name="password"
                   type="password"
                   value={values.password}
                   onChange={handleChange}
-                  placeholder="Password"
+                  placeholder={t("AUTH.PASSWORD")}
                 />
-                <FormErrorMessage>{errors.password}</FormErrorMessage>
+                <FormErrorMessage>
+                  {errors.password && t(`VALIDATION.${errors.password}`)}
+                </FormErrorMessage>
               </FormControl>
               <FormControl>
                 <Checkbox
                   onChange={(e) => togglePersist(e.target.checked)}
                   isChecked={persist}
                 >
-                  Remember me
+                  {t("AUTH.PERSIST")}
                 </Checkbox>
               </FormControl>
               <Button
                 mt={4}
                 colorScheme="teal"
-                isLoading={isSubmitting}
+                isLoading={authService.isLoading}
                 type="submit"
               >
-                Login
+                {t("AUTH.LOGIN")}
               </Button>
             </Form>
           )}
@@ -107,7 +105,7 @@ const Login = () => {
       </Box>
       <Box position="relative" p={8} bg="blackAlpha.800" color="white" flex="2">
         <AbsoluteCenter axis="both">
-          <Heading>REST RPG</Heading>
+          <Heading>{t("NAVBAR.TITLE")}</Heading>
         </AbsoluteCenter>
       </Box>
     </Flex>
