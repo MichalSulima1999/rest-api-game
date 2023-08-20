@@ -73,7 +73,7 @@ public class Statistics {
                 .currentXp(0)
                 .xpToNextLevel(500)
                 .currentLevel(1)
-                .freeStatisticPoints(10)
+                .freeStatisticPoints(50)
                 .strength(10)
                 .dexterity(10)
                 .constitution(10)
@@ -91,5 +91,6 @@ public class Statistics {
         this.dexterity += dto.getDexterity();
         this.constitution += dto.getConstitution();
         this.intelligence += dto.getIntelligence();
+        this.freeStatisticPoints -= dto.getStrength() + dto.getDexterity() + dto.getConstitution() + dto.getIntelligence();
     }
 }

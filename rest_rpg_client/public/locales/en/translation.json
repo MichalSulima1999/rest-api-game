@@ -15,6 +15,36 @@
         "TITLE": "Rest RPG",
         "HOME": "Home"
     },
+    "CHARACTER": {
+        "NAME": "Character name",
+        "CREATE": "Create character",
+        "CREATION_SUCCESSFUL": "Character created",
+        "RACE": {
+            "NAME": "Race",
+            "HUMAN": "Human",
+            "ELF": "Elf",
+            "DWARF": "Dwarf"
+        },
+        "SEX": {
+            "NAME": "Sex",
+            "MALE": "Male",
+            "FEMALE": "Female"
+        },
+        "CLASS": {
+            "NAME": "Class",
+            "WARRIOR": "Warrior",
+            "ROGUE": "Rogue",
+            "MAGE": "Mage"
+        },
+        "STATISTICS": {
+            "NAME": "Statistics",
+            "FREE_POINTS": "Free points",
+            "STRENGTH": "Strength",
+            "DEXTERITY": "Dexterity",
+            "INTELLIGENCE": "Intelligence",
+            "CONSTITUTION": "Constitution"
+        }
+    },
     "VALIDATION": {
         "REQUIRED": "Required",
         "PASSWORD_SHORT": "The password should be at least 8 characters long.",
@@ -23,6 +53,7 @@
     "ERROR": {
         "COMMUNICATION": "Can't communicate with server.",
         "EMPTY_JWT": "Token is empty.",
+        "Access Denied": "Access denied.",
         "JWT_EXPIRED": "Logged out - token expired.",
         "USER_NOT_FOUND": "User not found.",
         "REFRESH_TOKEN_NOT_FOUND": "Logged out - refresh token not found.",

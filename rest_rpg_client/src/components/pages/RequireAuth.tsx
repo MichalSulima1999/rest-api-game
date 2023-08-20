@@ -15,7 +15,7 @@ const RequireAuth: React.FC<Props> = ({ allowedRoles }) => {
   ) : authStore?.accessToken ? (
     <Navigate to="/unauthorized" state={{ from: location }} replace />
   ) : (
-    <Navigate to="/account/login" state={{ from: location }} replace />
+    <Navigate to="/login" state={{ from: location }} replace />
   );
 };
 

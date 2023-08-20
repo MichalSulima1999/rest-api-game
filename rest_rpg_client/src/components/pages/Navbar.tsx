@@ -9,7 +9,7 @@ import {
   MenuItem,
   MenuList,
 } from "@chakra-ui/react";
-import { Link as RouterLink, useNavigate } from "react-router-dom";
+import { Link as RouterLink } from "react-router-dom";
 import { useStores } from "../../store/RootStore";
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";

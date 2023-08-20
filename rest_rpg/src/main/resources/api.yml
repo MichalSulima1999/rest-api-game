@@ -93,6 +93,11 @@ components:
           $ref: '#/components/schemas/StatisticsUpdateRequest'
     StatisticsUpdateRequest:
       type: object
+      required:
+        - strength
+        - dexterity
+        - constitution
+        - intelligence
       properties:
         strength:
           description: Characters strength to add
@@ -108,6 +113,12 @@ components:
           type: integer
     CharacterLite:
       type: object
+      required:
+        - name
+        - race
+        - sex
+        - characterClass
+        - artwork
       properties:
         name:
           description: Character name

@@ -15,6 +15,36 @@
         "TITLE": "Rest RPG",
         "HOME": "Strona główna"
     },
+    "CHARACTER": {
+        "NAME": "Nazwa postaci",
+        "CREATE": "Stwórz postać",
+        "CREATION_SUCCESSFUL": "Stworzono postać",
+        "RACE": {
+            "NAME": "Rasa",
+            "HUMAN": "Człowiek",
+            "ELF": "Elf",
+            "DWARF": "Krasnolud"
+        },
+        "SEX": {
+            "NAME": "Płeć",
+            "MALE": "Mężczyzna",
+            "FEMALE": "Kobieta"
+        },
+        "CLASS": {
+            "NAME": "Klasa",
+            "WARRIOR": "Wojownik",
+            "ROGUE": "Łotrzyk",
+            "MAGE": "Mag"
+        },
+        "STATISTICS": {
+            "NAME": "Statystyki",
+            "FREE_POINTS": "Wolne punkty",
+            "STRENGTH": "Siła",
+            "DEXTERITY": "Zręczność",
+            "INTELLIGENCE": "Inteligencja",
+            "CONSTITUTION": "Kondycja"
+        }
+    },
     "VALIDATION": {
         "REQUIRED": "Pole wymagane",
         "PASSWORD_SHORT": "Hasło powinno zawierać minimum 8 znaków",
@@ -23,6 +53,7 @@
     "ERROR": {
         "COMMUNICATION": "Nie można połączyć z serwerem.",
         "EMPTY_JWT": "Token jest pusty.",
+        "Access Denied": "Dostęp zabrioniony.",
         "JWT_EXPIRED": "Wylogowano - token wygasł.",
         "USER_NOT_FOUND": "Nie znaleziono użytkownika.",
         "REFRESH_TOKEN_NOT_FOUND": "Wylogowano - nie znaleziono refresh tokena.",
