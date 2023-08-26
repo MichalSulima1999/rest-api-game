@@ -1,6 +1,9 @@
 package com.michael1099.rest_rpg.configuration
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.michael1099.rest_rpg.auth.auth.AuthenticationServiceHelper
+import com.michael1099.rest_rpg.auth.user.Role
+import com.michael1099.rest_rpg.auth.user.User
 import jakarta.servlet.http.Cookie
 import org.spockframework.spring.SpringBean
 import org.springframework.beans.factory.annotation.Autowired
@@ -29,6 +32,30 @@ class TestBase extends Specification {
 
     @Autowired
     ObjectMapper objectMapper
+
+    @Autowired
+    AuthenticationServiceHelper authenticationServiceHelper
+
+    User user
+
+    User admin
+
+    String userAccessToken
+
+    String adminAccessToken
+
+    void setup() {
+        user = authenticationServiceHelper.getUser(username: "TestUser", email: "testUser@gmail.com")
+        userAccessToken = authenticationServiceHelper.generateAccessToken(user)
+        admin = authenticationServiceHelper.getUser(username: "TestAdmin",
+                email: "testAdmin@gmail.com",
+                role: Role.ADMIN)
+        adminAccessToken = authenticationServiceHelper.generateAccessToken(admin)
+    }
+
+    void cleanup() {
+        authenticationServiceHelper.clean()
+    }
 
     <T> Response<T> httpPost(String url, Object request, Class<T> requiredType, Map customArgs = [:]) {
         Map args = [

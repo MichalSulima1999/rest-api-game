@@ -10,6 +10,9 @@ import {
   DefaultApiFp,
 } from "../generated-sources/openapi";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import { BASE_URL } from "../api/axios";
+
+export const THUMBNAIL_URL = BASE_URL + "/character/thumbnail";
 
 const useCharacterService = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -22,8 +25,10 @@ const useCharacterService = () => {
 
   const create = async (request: CharacterCreateRequest) => {
     setIsLoading(true);
-    const createCharacter = await api.createCharacter(request, {withCredentials: true});
-    
+    const createCharacter = await api.createCharacter(request, {
+      withCredentials: true,
+    });
+
     createCharacter(axiosPrivate)
       .then((response) => {
         characterStore.characterLite(response.data);
@@ -40,9 +45,32 @@ const useCharacterService = () => {
       .finally(() => setIsLoading(false));
   };
 
+  const getArtworksEnum = async (): Promise<string[]> => {
+    setIsLoading(true);
+    const getArtworks = await api.getCharacterArtworkEnum({
+      withCredentials: true,
+    });
+
+    return getArtworks(axiosPrivate)
+      .then((response) => {
+        return response.data;
+      })
+      .catch((err: AxiosError) => {
+        if (err.response?.data) {
+          const error = err as Error;
+          errorToast(t(`ERROR.${error.response.data.message}`));
+        } else {
+          errorToast(t("ERROR.COMMUNICATION"));
+        }
+        return [""];
+      })
+      .finally(() => setIsLoading(false));
+  };
+
   return {
     isLoading,
     create,
+    getArtworksEnum,
   };
 };
 

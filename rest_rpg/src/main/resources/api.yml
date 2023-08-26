@@ -38,6 +38,58 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CharacterLite'
+  /character/image/{characterArtwork}:
+    get:
+      summary: Get full sized character artwork
+      operationId: getCharacterArtwork
+      parameters:
+        - name: characterArtwork
+          in: path
+          required: true
+          description: Artwork enum
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            image/jpeg:
+              schema:
+                type: string
+                format: binary
+  /character/thumbnail/{characterArtwork}:
+    get:
+      summary: Get thumbnail artwork
+      operationId: getCharacterArtworkThumbnail
+      parameters:
+        - name: characterArtwork
+          in: path
+          required: true
+          description: Artwork enum
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            image/jpeg:
+              schema:
+                type: string
+                format: binary
+  /character/artworks:
+    get:
+      summary: Get enum artwork
+      operationId: getCharacterArtworkEnum
+      x-preauth: "hasAuthority('USER')"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
 components:
   schemas:
     ErrorCodes:
@@ -53,6 +105,8 @@ components:
         - VERIFICATION_EMAIL_SEND_ERROR
         - CHARACTER_ALREADY_EXISTS
         - NOT_ENOUGH_SKILL_POINTS
+        - GET_IMAGE
+        - IMAGE_DOES_NOT_EXIST
     UserLite:
       type: object
       required:

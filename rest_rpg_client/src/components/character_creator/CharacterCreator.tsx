@@ -20,6 +20,22 @@ import { CharacterCreateRequest } from "../../generated-sources/openapi";
 import FormikRadioGroup from "./FormikRadioGroup";
 import FormikInput from "./FormikInput";
 import { useEffect } from "react";
+import ArtworkModal from "./ArtworkModal";
+
+export interface CreateCharacterFormData {
+  name: string;
+  race: string;
+  sex: string;
+  characterClass: string;
+  artwork: string;
+  statistics: {
+    strength: number;
+    dexterity: number;
+    constitution: number;
+    intelligence: number;
+    freePoints: number;
+  };
+}
 
 const CharacterCreator = () => {
   const { t } = useTranslation();
@@ -29,27 +45,28 @@ const CharacterCreator = () => {
     await characterService.create(values);
   };
 
-  const { values, errors, touched, handleChange, setFieldValue, handleSubmit } = useFormik({
-    initialValues: {
-      name: "",
-      race: races[0],
-      sex: sexes[0],
-      characterClass: classes[0],
-      artwork: "HUMAN_MALE_1",
-      statistics: {
-        strength: 10,
-        dexterity: 10,
-        constitution: 10,
-        intelligence: 10,
-        freePoints: 50,
+  const { values, errors, touched, handleChange, setFieldValue, handleSubmit } =
+    useFormik({
+      initialValues: {
+        name: "",
+        race: races[0],
+        sex: sexes[0],
+        characterClass: classes[0],
+        artwork: "HUMAN_MALE_1",
+        statistics: {
+          strength: 10,
+          dexterity: 10,
+          constitution: 10,
+          intelligence: 10,
+          freePoints: 50,
+        },
       },
-    },
-    validationSchema: CharacterCreateSchema,
-    onSubmit: handleSubmitFunc,
-  });
+      validationSchema: CharacterCreateSchema,
+      onSubmit: handleSubmitFunc,
+    });
 
   useEffect(() => {
-    async function fetchData() {
+    async function updateFreePoints() {
       const newValue =
         characterCreateMaxSkillpoints -
         values.statistics.constitution -
@@ -58,13 +75,13 @@ const CharacterCreator = () => {
         values.statistics.intelligence;
       await setFieldValue("statistics.freePoints", Math.max(0, newValue));
     }
-    fetchData().catch((error) => console.log(error));
+    updateFreePoints().catch((error) => console.log(error));
   }, [
     values.statistics.constitution,
     values.statistics.strength,
     values.statistics.dexterity,
     values.statistics.intelligence,
-    setFieldValue
+    setFieldValue,
   ]);
 
   return (
@@ -108,14 +125,7 @@ const CharacterCreator = () => {
             inputName="characterClass"
             translationKey="CHARACTER.CLASS"
           />
-          <Button
-            mt={4}
-            colorScheme="teal"
-            isLoading={characterService.isLoading}
-            type="submit"
-          >
-            {t("CHARACTER.CREATE")}
-          </Button>
+          <ArtworkModal setFieldValue={setFieldValue}/>
         </Box>
         <Box p={8} bg="blackAlpha.800" color="white" flex="2">
           <Heading mb={4}>{t("CHARACTER.STATISTICS.NAME")}</Heading>
@@ -169,6 +179,14 @@ const CharacterCreator = () => {
             inputName="statistics.constitution"
             translationKey="CHARACTER.STATISTICS.CONSTITUTION"
           />
+          <Button
+            mt={4}
+            colorScheme="teal"
+            isLoading={characterService.isLoading}
+            type="submit"
+          >
+            {t("CHARACTER.CREATE")}
+          </Button>
         </Box>
       </Flex>
     </form>

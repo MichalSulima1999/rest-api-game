@@ -19,6 +19,8 @@
         "NAME": "Nazwa postaci",
         "CREATE": "Stwórz postać",
         "CREATION_SUCCESSFUL": "Stworzono postać",
+        "ARTWORK": "Avatar",
+        "CHOOSE_ARTWORK": "Wybierz avatar",
         "RACE": {
             "NAME": "Rasa",
             "HUMAN": "Człowiek",

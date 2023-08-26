@@ -1,1 +1,1 @@
-ALTER TABLE `character` RENAME character_table;
+ALTER TABLE `character` RENAME TO character_table;

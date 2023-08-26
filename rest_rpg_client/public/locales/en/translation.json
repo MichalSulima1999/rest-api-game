@@ -19,6 +19,8 @@
         "NAME": "Character name",
         "CREATE": "Create character",
         "CREATION_SUCCESSFUL": "Character created",
+        "ARTWORK": "Artwork",
+        "CHOOSE_ARTWORK": "Choose artwork",
         "RACE": {
             "NAME": "Race",
             "HUMAN": "Human",
