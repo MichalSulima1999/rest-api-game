@@ -40,8 +40,8 @@ class AuthenticationServiceHelper {
 
     User getUser(Map customArgs = [:]) {
         Map args = [
-                username        : "User",
-                email           : "user@gmail.com",
+                username        : "User" + Instant.now().toEpochMilli(),
+                email           : "user" + Instant.now().toEpochMilli() + "@gmail.com",
                 password        : "12345678",
                 verificationCode: "123123123",
                 role            : Role.USER,

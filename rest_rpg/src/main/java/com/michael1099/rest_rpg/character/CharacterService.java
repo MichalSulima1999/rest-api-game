@@ -1,9 +1,11 @@
 package com.michael1099.rest_rpg.character;
 
+import com.michael1099.rest_rpg.auth.auth.IAuthenticationFacade;
 import com.michael1099.rest_rpg.auth.user.UserRepository;
 import com.michael1099.rest_rpg.character.model.Character;
 import com.michael1099.rest_rpg.character.model.CharacterArtwork;
 import com.michael1099.rest_rpg.exceptions.CharacterAlreadyExistsException;
+import com.michael1099.rest_rpg.exceptions.CharacterNotFoundException;
 import com.michael1099.rest_rpg.exceptions.GetImageException;
 import com.michael1099.rest_rpg.exceptions.ImageDoesNotExistException;
 import com.michael1099.rest_rpg.exceptions.NotEnoughSkillPointsException;
@@ -13,6 +15,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.EnumUtils;
+import org.openapitools.model.CharacterBasic;
+import org.openapitools.model.CharacterBasics;
 import org.openapitools.model.CharacterCreateRequest;
 import org.openapitools.model.CharacterLite;
 import org.springframework.core.io.FileSystemResource;
@@ -36,6 +40,7 @@ public class CharacterService {
 
     private final CharacterRepository characterRepository;
     private final UserRepository userRepository;
+    private final IAuthenticationFacade authenticationFacade;
     private final CharacterMapper characterMapper;
 
     public CharacterLite createCharacter(@NotNull CharacterCreateRequest request, @NotBlank String username) {
@@ -59,6 +64,21 @@ public class CharacterService {
 
     public List<String> getCharacterArtworkEnum() {
         return Arrays.stream(CharacterArtwork.values()).map(Objects::toString).collect(Collectors.toList());
+    }
+
+    public CharacterBasics getUserCharacters() {
+        var username = authenticationFacade.getAuthentication().getName();
+        return characterMapper.toBasics(characterRepository.findByUser_Username(username), 1);
+    }
+
+    public CharacterBasic getUserCharacter(long characterId) {
+        var username = authenticationFacade.getAuthentication().getName();
+        var character = characterRepository.getCharacterById(characterId);
+        if (!Objects.equals(character.getUser().getId(), userRepository.getByUsername(username).getId())) {
+            throw new CharacterNotFoundException();
+        }
+
+        return characterMapper.toBasic(character);
     }
 
     private void assertCharacterDoesNotExist(@NotNull String name) {

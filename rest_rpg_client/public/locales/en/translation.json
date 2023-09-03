@@ -21,6 +21,7 @@
         "CREATION_SUCCESSFUL": "Character created",
         "ARTWORK": "Artwork",
         "CHOOSE_ARTWORK": "Choose artwork",
+        "LEVEL": "Level",
         "RACE": {
             "NAME": "Race",
             "HUMAN": "Human",
@@ -46,6 +47,9 @@
             "INTELLIGENCE": "Intelligence",
             "CONSTITUTION": "Constitution"
         }
+    },
+    "HOME_NAVBAR": {
+        "CHARACTERS": "Characters"
     },
     "VALIDATION": {
         "REQUIRED": "Required",

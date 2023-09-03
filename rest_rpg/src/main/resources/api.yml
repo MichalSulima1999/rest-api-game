@@ -90,6 +90,58 @@ paths:
                 type: array
                 items:
                   type: string
+  /character/user-characters:
+    get:
+      summary: Get user characters
+      operationId: getUserCharacters
+      x-preauth: "hasAuthority('USER')"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CharacterBasics'
+  /character/{characterId}:
+    get:
+      summary: Get user character by id
+      operationId: getUserCharacter
+      x-preauth: "hasAuthority('USER')"
+      parameters:
+        - name: characterId
+          in: path
+          required: true
+          description: Character id
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CharacterBasic'
+  /statistics/{characterId}:
+    get:
+      summary: Get user character statistics by character id
+      operationId: getStatistics
+      x-preauth: "hasAuthority('USER')"
+      parameters:
+        - name: characterId
+          in: path
+          required: true
+          description: Character id
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatisticsDetails'
 components:
   schemas:
     ErrorCodes:
@@ -104,6 +156,7 @@ components:
         - ACCOUNT_ALREADY_VERIFIED
         - VERIFICATION_EMAIL_SEND_ERROR
         - CHARACTER_ALREADY_EXISTS
+        - CHARACTER_NOT_FOUND
         - NOT_ENOUGH_SKILL_POINTS
         - GET_IMAGE
         - IMAGE_DOES_NOT_EXIST
@@ -168,12 +221,17 @@ components:
     CharacterLite:
       type: object
       required:
+        - id
         - name
         - race
         - sex
         - characterClass
         - artwork
       properties:
+        id:
+          description: Character id
+          type: integer
+          format: int64
         name:
           description: Character name
           type: string
@@ -188,4 +246,112 @@ components:
           type: string
         artwork:
           description: Character artwork
+          type: string
+    CharacterBasics:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/CharacterBasic'
+    CharacterBasic:
+      allOf:
+        - $ref: '#/components/schemas/CharacterLite'
+        - type: object
+          required:
+            - statistics
+            - occupation
+          properties:
+            statistics:
+              $ref: '#/components/schemas/StatisticsLite'
+            occupation:
+              $ref: '#/components/schemas/OccupationBasic'
+    StatisticsLite:
+      type: object
+      required:
+        - currentXp
+        - xpToNextLevel
+        - currentLevel
+        - maxHp
+        - currentHp
+        - maxMana
+        - currentMana
+      properties:
+        currentXp:
+          description: Character current xp
+          type: integer
+        xpToNextLevel:
+          description: Character xp to next level
+          type: integer
+        currentLevel:
+          description: Character current level
+          type: integer
+        maxHp:
+          description: Character max HP
+          type: integer
+        currentHp:
+          description: Character current HP
+          type: integer
+        maxMana:
+          description: Character max mana
+          type: integer
+        currentMana:
+          description: Character current mana
+          type: integer
+    StatisticsDetails:
+      allOf:
+        - $ref: '#/components/schemas/StatisticsLite'
+        - type: object
+          required:
+            - damage
+            - magicDamage
+            - armor
+            - dodgeChance
+            - criticalChance
+            - freeStatisticPoints
+            - strength
+            - dexterity
+            - constitution
+            - intelligence
+          properties:
+            damage:
+              description: Character damage
+              type: integer
+            magicDamage:
+              description: Character magic damage
+              type: integer
+            armor:
+              description: Character armor
+              type: integer
+            dodgeChance:
+              description: Character dodge chance
+              type: number
+              format: float
+            criticalChance:
+              description: Character critical chance
+              type: number
+              format: float
+            freeStatisticPoints:
+              description: Character free statistic points
+              type: integer
+            strength:
+              description: Character strength
+              type: integer
+            dexterity:
+              description: Character dexterity
+              type: integer
+            constitution:
+              description: Character constitution
+              type: integer
+            intelligence:
+              description: Character intelligence
+              type: integer
+    OccupationBasic:
+      type: object
+      properties:
+        finishTime:
+          description: Occupation finish time
+          type: string
+        occupationType:
+          description: Character occupation
           type: string

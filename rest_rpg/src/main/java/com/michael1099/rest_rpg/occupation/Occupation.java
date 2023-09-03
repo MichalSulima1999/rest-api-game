@@ -65,4 +65,17 @@ public class Occupation {
                 training != null ||
                 work != null;
     }
+
+    public String getOccupationType() {
+        if (adventure != null) {
+            return adventure.getName();
+        }
+        if (training != null) {
+            return training.getName();
+        }
+        if (work != null) {
+            return work.getName();
+        }
+        return null;
+    }
 }

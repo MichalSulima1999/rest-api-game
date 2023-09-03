@@ -1,5 +1,6 @@
 package com.michael1099.rest_rpg.statistics
 
+import org.openapitools.model.StatisticsDetails
 import org.openapitools.model.StatisticsUpdateRequest
 
 class StatisticsHelper {
@@ -66,5 +67,27 @@ class StatisticsHelper {
                 .character(args.character)
                 .deleted(args.deleted)
                 .build()
+    }
+
+    static boolean compare(Statistics statistics, StatisticsDetails dto) {
+        assert statistics.maxHp == dto.maxHp
+        assert statistics.currentHp == dto.currentHp
+        assert statistics.maxMana == dto.maxMana
+        assert statistics.currentMana == dto.currentMana
+        assert statistics.damage == dto.damage
+        assert statistics.magicDamage == dto.magicDamage
+        assert statistics.armor == dto.armor
+        assert statistics.dodgeChance == dto.dodgeChance
+        assert statistics.criticalChance == dto.criticalChance
+        assert statistics.currentXp == dto.currentXp
+        assert statistics.xpToNextLevel == dto.xpToNextLevel
+        assert statistics.currentLevel == dto.currentLevel
+        assert statistics.freeStatisticPoints == dto.freeStatisticPoints
+        assert statistics.strength == dto.strength
+        assert statistics.dexterity == dto.dexterity
+        assert statistics.constitution == dto.constitution
+        assert statistics.intelligence == dto.intelligence
+
+        true
     }
 }

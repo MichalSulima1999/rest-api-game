@@ -1,9 +1,11 @@
 package com.michael1099.rest_rpg.character
 
-
 import com.michael1099.rest_rpg.character.model.CharacterArtwork
+import com.michael1099.rest_rpg.character.model.CharacterSex
 import com.michael1099.rest_rpg.configuration.TestBase
 import com.michael1099.rest_rpg.statistics.StatisticsHelper
+import org.openapitools.model.CharacterBasic
+import org.openapitools.model.CharacterBasics
 import org.openapitools.model.CharacterLite
 import org.openapitools.model.ErrorCodes
 import org.springframework.beans.factory.annotation.Autowired
@@ -21,6 +23,8 @@ class CharacterControllerTest extends TestBase {
     def imageUrl = { String characterArtwork -> baseUrl + "/image/" + characterArtwork }
     def thumbnailUrl = { String characterArtwork -> baseUrl + "/thumbnail/" + characterArtwork }
     def artworksUrl = baseUrl + "/artworks"
+    def userCharactersUrl = baseUrl + "/user-characters"
+    def userCharacterUrl = { long characterId -> baseUrl + "/" + characterId }
 
     @Autowired
     CharacterServiceHelper characterServiceHelper
@@ -93,5 +97,37 @@ class CharacterControllerTest extends TestBase {
         then:
             response.status == HttpStatus.OK
             response.body.size() == Arrays.stream(CharacterArtwork.values()).map(Objects::toString).collect(Collectors.toList()).size()
+    }
+
+    def "should get user characters"() {
+        when:
+            def user2 = authenticationServiceHelper.getUser()
+            def character1 = characterServiceHelper.createCharacter(user, [name: "Carl"])
+            def character2 = characterServiceHelper.createCharacter(user, [name: "Johnny", sex: CharacterSex.MALE])
+            def anotherUserCharacter = characterServiceHelper.createCharacter(user2, [name: "Fred", sex: CharacterSex.MALE])
+            def list = [character1, character2]
+            def response = httpGet(userCharactersUrl, CharacterBasics, [accessToken: userAccessToken])
+        then:
+            response.status == HttpStatus.OK
+            CharacterHelper.compare(list, response.body.content)
+    }
+
+    def "should get user character"() {
+        when:
+            def character = characterServiceHelper.createCharacter(user, [name: "Carl"])
+            def response = httpGet(userCharacterUrl(character.getId()), CharacterBasic, [accessToken: userAccessToken])
+        then:
+            response.status == HttpStatus.OK
+            CharacterHelper.compare(character, response.body)
+    }
+
+    def "should not get another user character"() {
+        when:
+            def user2 = authenticationServiceHelper.getUser()
+            def character = characterServiceHelper.createCharacter(user2, [name: "Carl"])
+            def response = httpGet(userCharacterUrl(character.getId()), Problem, [accessToken: userAccessToken])
+        then:
+            response.status == HttpStatus.NOT_FOUND
+            response.errorMessage == ErrorCodes.CHARACTER_NOT_FOUND.toString()
     }
 }

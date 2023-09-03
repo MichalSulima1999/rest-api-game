@@ -58,7 +58,7 @@ class CharacterServiceHelper {
                 status        : CharacterStatus.IDLE,
                 artwork       : CharacterArtwork.HUMAN_FEMALE_1,
                 skills        : [],
-                statistics    : StatisticsHelper.statistics(),
+                statistics    : StatisticsHelper.statistics(customArgs),
                 occupation    : new Occupation(),
                 fight         : new Fight(),
                 equipment     : Equipment.init()

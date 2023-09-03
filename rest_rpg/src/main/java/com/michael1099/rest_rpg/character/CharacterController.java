@@ -3,6 +3,8 @@ package com.michael1099.rest_rpg.character;
 import com.michael1099.rest_rpg.auth.auth.IAuthenticationFacade;
 import lombok.RequiredArgsConstructor;
 import org.openapitools.api.CharacterApi;
+import org.openapitools.model.CharacterBasic;
+import org.openapitools.model.CharacterBasics;
 import org.openapitools.model.CharacterCreateRequest;
 import org.openapitools.model.CharacterLite;
 import org.springframework.core.io.Resource;
@@ -37,5 +39,15 @@ public class CharacterController implements CharacterApi {
     @Override
     public ResponseEntity<Resource> getCharacterArtworkThumbnail(String characterArtwork) {
         return characterService.getCharacterThumbnailArtwork(characterArtwork);
+    }
+
+    @Override
+    public ResponseEntity<CharacterBasics> getUserCharacters() {
+        return ResponseEntity.ok(characterService.getUserCharacters());
+    }
+
+    @Override
+    public ResponseEntity<CharacterBasic> getUserCharacter(Long characterId) {
+        return ResponseEntity.ok(characterService.getUserCharacter(characterId));
     }
 }

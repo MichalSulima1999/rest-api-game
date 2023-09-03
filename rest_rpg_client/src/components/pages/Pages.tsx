@@ -5,6 +5,7 @@ import Login from "../auth/Login";
 import Register from "../auth/Register";
 import Home from "../home/Home";
 import CharacterCreator from "../character_creator/CharacterCreator";
+import CharacterDetails from "../home/CharacterDetails";
 
 function Pages() {
   const location = useLocation();
@@ -13,7 +14,9 @@ function Pages() {
       <Route element={<PersistLogin />}>
         {/* protected */}
         <Route element={<RequireAuth allowedRoles={["USER"]} />}>
-          <Route path="/home" element={<Home />} />
+          <Route path="/home" element={<Home />}>
+            <Route path="character/:characterId" element={<CharacterDetails />} />
+          </Route>
           <Route path="/character/create" element={<CharacterCreator />} />
         </Route>
         {/* public */}

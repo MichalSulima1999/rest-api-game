@@ -21,6 +21,7 @@
         "CREATION_SUCCESSFUL": "Stworzono postać",
         "ARTWORK": "Avatar",
         "CHOOSE_ARTWORK": "Wybierz avatar",
+        "LEVEL": "Poziom",
         "RACE": {
             "NAME": "Rasa",
             "HUMAN": "Człowiek",
@@ -46,6 +47,9 @@
             "INTELLIGENCE": "Inteligencja",
             "CONSTITUTION": "Kondycja"
         }
+    },
+    "HOME_NAVBAR": {
+        "CHARACTERS": "Postaci"
     },
     "VALIDATION": {
         "REQUIRED": "Pole wymagane",

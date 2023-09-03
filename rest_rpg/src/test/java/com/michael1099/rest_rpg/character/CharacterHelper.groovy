@@ -1,10 +1,8 @@
 package com.michael1099.rest_rpg.character
 
-import com.michael1099.rest_rpg.character.model.CharacterArtwork
-import com.michael1099.rest_rpg.character.model.CharacterClass
-import com.michael1099.rest_rpg.character.model.CharacterRace
-import com.michael1099.rest_rpg.character.model.CharacterSex
+import com.michael1099.rest_rpg.character.model.*
 import com.michael1099.rest_rpg.statistics.StatisticsHelper
+import org.openapitools.model.CharacterBasic
 import org.openapitools.model.CharacterCreateRequest
 import org.openapitools.model.CharacterLite
 
@@ -31,6 +29,31 @@ class CharacterHelper {
         assert request.characterClass == characterLite.characterClass
         assert request.race == characterLite.race
         assert request.name == characterLite.name
+
+        true
+    }
+
+    static boolean compare(Character character, CharacterBasic dto) {
+        assert character.id == dto.id
+        assert character.sex.toString() == dto.sex
+        assert character.artwork.toString() == dto.artwork
+        assert character.characterClass.toString() == dto.characterClass
+        assert character.race.toString() == dto.race
+        assert character.name.toString() == dto.name
+        assert character.statistics.currentXp == dto.statistics.currentXp
+        assert character.statistics.xpToNextLevel == dto.statistics.xpToNextLevel
+        assert character.statistics.currentLevel == dto.statistics.currentLevel
+        assert character.occupation?.finishTime?.toString() == dto.occupation?.finishTime
+        assert character.occupation?.occupationType == dto.occupation?.occupationType
+
+        true
+    }
+
+    static boolean compare(List<Character> characters, List<CharacterBasic> dtos) {
+        assert characters.size() == dtos.size()
+        characters = characters.sort { it.name }
+        dtos = dtos.sort { it.name }
+        assert characters.withIndex().every { compare(it.v1, dtos[it.v2]) }
 
         true
     }

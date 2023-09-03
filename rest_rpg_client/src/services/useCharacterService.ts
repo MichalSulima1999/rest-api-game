@@ -6,6 +6,7 @@ import { Error } from "../classes/error/Error";
 import { useTranslation } from "react-i18next";
 import { AxiosError } from "axios";
 import {
+  CharacterBasics,
   CharacterCreateRequest,
   DefaultApiFp,
 } from "../generated-sources/openapi";
@@ -67,9 +68,32 @@ const useCharacterService = () => {
       .finally(() => setIsLoading(false));
   };
 
+  const getUserCharacters = async (): Promise<CharacterBasics | undefined> => {
+    setIsLoading(true);
+    const getCharacters = await api.getUserCharacters({
+      withCredentials: true,
+    });
+
+    return getCharacters(axiosPrivate)
+      .then((response) => {
+        return response.data;
+      })
+      .catch((err: AxiosError) => {
+        if (err.response?.data) {
+          const error = err as Error;
+          errorToast(t(`ERROR.${error.response.data.message}`));
+        } else {
+          errorToast(t("ERROR.COMMUNICATION"));
+        }
+        return undefined;
+      })
+      .finally(() => setIsLoading(false));
+  };
+
   return {
     isLoading,
     create,
+    getUserCharacters,
     getArtworksEnum,
   };
 };

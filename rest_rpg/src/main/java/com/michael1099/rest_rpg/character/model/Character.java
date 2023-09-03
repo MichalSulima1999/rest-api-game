@@ -8,11 +8,31 @@ import com.michael1099.rest_rpg.fight.Fight;
 import com.michael1099.rest_rpg.occupation.Occupation;
 import com.michael1099.rest_rpg.statistics.Statistics;
 import jakarta.annotation.Nullable;
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedAttributeNode;
+import jakarta.persistence.NamedEntityGraph;
+import jakarta.persistence.NamedSubgraph;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -24,7 +44,25 @@ import java.util.Set;
 @NoArgsConstructor
 @Builder
 @Table(name = "character_table")
+@NamedEntityGraph(name = Character.CHARACTER_BASIC,
+        attributeNodes = {
+                @NamedAttributeNode("statistics"),
+                @NamedAttributeNode(value = "occupation", subgraph = "occupation-subgraph")
+        },
+        subgraphs = {
+                @NamedSubgraph(
+                        name = "occupation-subgraph",
+                        attributeNodes = {
+                                @NamedAttributeNode("adventure"),
+                                @NamedAttributeNode("training"),
+                                @NamedAttributeNode("work")
+                        }
+                )
+        }
+)
 public class Character {
+
+    public static final String CHARACTER_BASIC = "CHARACTER_BASIC_GRAPH";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
