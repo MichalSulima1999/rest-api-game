@@ -1,5 +1,9 @@
 import { makeAutoObservable } from "mobx";
 import RootStore from "./RootStore";
+import {
+  StatisticsDetails,
+  StatisticsLite,
+} from "../generated-sources/openapi";
 
 export class StatisticsStore {
   private _maxHp = 100;
@@ -291,6 +295,30 @@ export class StatisticsStore {
    */
   public set intelligence(value: number) {
     this._intelligence = value;
+  }
+
+  public statisticsLite(statisticsLite: StatisticsLite) {
+    this.currentHp = statisticsLite.currentHp;
+    this.maxHp = statisticsLite.maxHp;
+    this.currentLevel = statisticsLite.currentLevel;
+    this.currentMana = statisticsLite.currentMana;
+    this.maxMana = statisticsLite.maxMana;
+    this.xpToNextLevel = statisticsLite.xpToNextLevel;
+    this.currentXp = statisticsLite.currentXp;
+  }
+
+  public statisticsDetails(statisticsDetails: StatisticsDetails) {
+    this.statisticsLite(statisticsDetails);
+    this.damage = statisticsDetails.damage;
+    this.magicDamage = statisticsDetails.magicDamage;
+    this.armor = statisticsDetails.armor;
+    this.dodgeChance = statisticsDetails.dodgeChance;
+    this.criticalChance = statisticsDetails.criticalChance;
+    this.freeStatisticPoints = statisticsDetails.freeStatisticPoints;
+    this.strength = statisticsDetails.strength;
+    this.dexterity = statisticsDetails.dexterity;
+    this.constitution = statisticsDetails.constitution;
+    this.intelligence = statisticsDetails.intelligence;
   }
 
   constructor(rootStore: RootStore) {

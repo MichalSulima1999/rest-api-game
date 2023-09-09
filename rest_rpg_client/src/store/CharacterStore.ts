@@ -1,14 +1,23 @@
 import { makeAutoObservable } from "mobx";
 import RootStore from "./RootStore";
-import { CharacterLite } from "../generated-sources/openapi";
+import { CharacterBasic, CharacterLite } from "../generated-sources/openapi";
 
 export class CharacterStore {
+  private _id = -1;
   private _name = "";
   private _race = "";
   private _sex = "";
   private _characterClass = "";
   private _artwork = "";
   private _rootStore: RootStore;
+
+  get id() {
+    return this._id
+  }
+  
+  set id(val: number) {
+    this._id = val
+  }
 
   get name() {
     return this._name
@@ -60,6 +69,16 @@ export class CharacterStore {
     this.sex = characterLite.sex;
     this.characterClass = characterLite.characterClass;
     this.artwork = characterLite.artwork;
+  }
+
+  public characterBasic(characterBasic: CharacterBasic) {
+    this.id = characterBasic.id;
+    this.name = characterBasic.name;
+    this.race = characterBasic.race;
+    this.sex = characterBasic.sex;
+    this.characterClass = characterBasic.characterClass;
+    this.artwork = characterBasic.artwork;
+    this.rootStore.statisticsStore.statisticsLite(characterBasic.statistics);
   }
 
   constructor(rootStore: RootStore) {

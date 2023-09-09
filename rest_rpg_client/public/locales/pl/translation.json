@@ -17,6 +17,7 @@
     },
     "CHARACTER": {
         "NAME": "Nazwa postaci",
+        "NAME_SHORT": "Nazwa",
         "CREATE": "Stwórz postać",
         "CREATION_SUCCESSFUL": "Stworzono postać",
         "ARTWORK": "Avatar",
@@ -45,11 +46,19 @@
             "STRENGTH": "Siła",
             "DEXTERITY": "Zręczność",
             "INTELLIGENCE": "Inteligencja",
-            "CONSTITUTION": "Kondycja"
+            "CONSTITUTION": "Kondycja",
+            "HP": "Zdrowie",
+            "MANA": "Mana",
+            "XP": "XP",
+            "DAMAGE": "Obrażenia",
+            "MAGIC_DAMAGE": "Obrażenia magiczne",
+            "ARMOR": "Pancerz",
+            "DODGE_CHANCE": "Szansa uniku",
+            "CRITICAL_CHANCE": "Szansa ciosu krytycznego"
         }
     },
     "HOME_NAVBAR": {
-        "CHARACTERS": "Postaci"
+        "CHARACTERS": "Postacie"
     },
     "VALIDATION": {
         "REQUIRED": "Pole wymagane",

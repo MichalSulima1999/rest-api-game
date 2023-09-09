@@ -17,6 +17,7 @@
     },
     "CHARACTER": {
         "NAME": "Character name",
+        "NAME_SHORT": "Name",
         "CREATE": "Create character",
         "CREATION_SUCCESSFUL": "Character created",
         "ARTWORK": "Artwork",
@@ -45,7 +46,15 @@
             "STRENGTH": "Strength",
             "DEXTERITY": "Dexterity",
             "INTELLIGENCE": "Intelligence",
-            "CONSTITUTION": "Constitution"
+            "CONSTITUTION": "Constitution",
+            "HP": "Health",
+            "MANA": "Mana",
+            "XP": "XP",
+            "DAMAGE": "Damage",
+            "MAGIC_DAMAGE": "Magic damage",
+            "ARMOR": "Armor",
+            "DODGE_CHANCE": "Dodge chance",
+            "CRITICAL_CHANCE": "Critical chance"
         }
     },
     "HOME_NAVBAR": {

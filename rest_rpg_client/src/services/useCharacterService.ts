@@ -6,12 +6,15 @@ import { Error } from "../classes/error/Error";
 import { useTranslation } from "react-i18next";
 import { AxiosError } from "axios";
 import {
+  CharacterBasic,
   CharacterBasics,
   CharacterCreateRequest,
   DefaultApiFp,
+  StatisticsDetails,
 } from "../generated-sources/openapi";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import { BASE_URL } from "../api/axios";
+import useServiceHelper from "./helpers/useServiceHelper";
 
 export const THUMBNAIL_URL = BASE_URL + "/character/thumbnail";
 
@@ -22,6 +25,7 @@ const useCharacterService = () => {
   const { characterStore } = useStores();
   const { t } = useTranslation();
   const axiosPrivate = useAxiosPrivate();
+  const { getResources } = useServiceHelper();
   const api = DefaultApiFp();
 
   const create = async (request: CharacterCreateRequest) => {
@@ -74,27 +78,38 @@ const useCharacterService = () => {
       withCredentials: true,
     });
 
-    return getCharacters(axiosPrivate)
-      .then((response) => {
-        return response.data;
-      })
-      .catch((err: AxiosError) => {
-        if (err.response?.data) {
-          const error = err as Error;
-          errorToast(t(`ERROR.${error.response.data.message}`));
-        } else {
-          errorToast(t("ERROR.COMMUNICATION"));
-        }
-        return undefined;
-      })
-      .finally(() => setIsLoading(false));
+    return getResources(getCharacters, setIsLoading);
+  };
+
+  const getUserCharacter = async (
+    characterId: number
+  ): Promise<CharacterBasic | undefined> => {
+    setIsLoading(true);
+    const getCharacter = await api.getUserCharacter(characterId, {
+      withCredentials: true,
+    });
+
+    return getResources(getCharacter, setIsLoading);
+  };
+
+  const getCharacterStatistics = async (
+    characterId: number
+  ): Promise<StatisticsDetails | undefined> => {
+    setIsLoading(true);
+    const getStatistics = await api.getStatistics(characterId, {
+      withCredentials: true,
+    });
+
+    return getResources(getStatistics, setIsLoading);
   };
 
   return {
     isLoading,
     create,
     getUserCharacters,
+    getUserCharacter,
     getArtworksEnum,
+    getCharacterStatistics,
   };
 };
 

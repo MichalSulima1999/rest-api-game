@@ -36,24 +36,24 @@ const CharactersPopover = () => {
 
   return (
     <Box>
-      <Popover placement="auto">
+      <Popover placement="left">
         <PopoverTrigger>
           <Button isLoading={characterService.isLoading}>
             {t("HOME_NAVBAR.CHARACTERS")}
           </Button>
         </PopoverTrigger>
-        <PopoverContent width="70vw" bg="blackAlpha.800" color="white">
+        <PopoverContent bg="blackAlpha.800" color="white">
           <PopoverArrow />
           <PopoverCloseButton />
-          <PopoverHeader>{t("CHARACTER.CHOOSE_ARTWORK")}</PopoverHeader>
+          <PopoverHeader>{t("HOME_NAVBAR.CHARACTERS")}</PopoverHeader>
           <PopoverBody>
-            <Skeleton height="40px" isLoaded={!characterService.isLoading}>
+            <Skeleton isLoaded={!characterService.isLoading}>
               <Grid templateColumns="repeat(3, 1fr)" gap={3}>
                 {!characterService.isLoading &&
                   characters?.content &&
                   characters.content.map((character) => (
-                    <GridItem w="100%">
-                      <Link to={`/home/character/${character.id}`}>
+                    <GridItem>
+                      <Link to={`/character/${character.id}/main`}>
                         <Box bg="blackAlpha.900">
                           <Text fontSize="xl">{character.name}</Text>
                           <Text fontSize="md">

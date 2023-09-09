@@ -17,6 +17,7 @@ import { useTranslation } from "react-i18next";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import { MdLanguage } from "react-icons/md";
 import useLogout from "../../hooks/useLogout";
+import CharactersPopover from "../character/CharactersPopover";
 
 interface Language {
   nativeName: string;
@@ -48,6 +49,7 @@ const Navbar = observer(() => {
           {t("NAVBAR.TITLE")}
         </Link>
         <Flex alignItems="center">
+          {logged && <CharactersPopover />}
           <Menu>
             <MenuButton
               as={Button}
@@ -91,9 +93,9 @@ const Navbar = observer(() => {
             </>
           )}
           {logged && (
-            <Button variant='link' onClick={() => logout()}>
-            Logout
-          </Button>
+            <Button variant="link" onClick={() => logout()}>
+              Logout
+            </Button>
           )}
         </Flex>
       </Flex>
