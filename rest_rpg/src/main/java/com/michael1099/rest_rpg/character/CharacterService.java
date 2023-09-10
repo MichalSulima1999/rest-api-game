@@ -4,8 +4,10 @@ import com.michael1099.rest_rpg.auth.auth.IAuthenticationFacade;
 import com.michael1099.rest_rpg.auth.user.UserRepository;
 import com.michael1099.rest_rpg.character.model.Character;
 import com.michael1099.rest_rpg.character.model.CharacterArtwork;
+import com.michael1099.rest_rpg.character.model.dto.CharacterCreateRequestDto;
 import com.michael1099.rest_rpg.exceptions.CharacterAlreadyExistsException;
 import com.michael1099.rest_rpg.exceptions.CharacterNotFoundException;
+import com.michael1099.rest_rpg.exceptions.EnumValueNotFoundException;
 import com.michael1099.rest_rpg.exceptions.GetImageException;
 import com.michael1099.rest_rpg.exceptions.ImageDoesNotExistException;
 import com.michael1099.rest_rpg.exceptions.NotEnoughSkillPointsException;
@@ -44,12 +46,17 @@ public class CharacterService {
     private final CharacterMapper characterMapper;
 
     public CharacterLite createCharacter(@NotNull CharacterCreateRequest request, @NotBlank String username) {
-        var dto = characterMapper.toDto(request);
+        CharacterCreateRequestDto dto;
+        try {
+            dto = characterMapper.toDto(request);
+        } catch (IllegalArgumentException exception) {
+            throw new EnumValueNotFoundException();
+        }
         assertCharacterDoesNotExist(dto.getName());
         var user = userRepository.findByUsername(username).orElseThrow(UserNotFoundException::new);
         var character = Character.createCharacter(dto, user);
         assertCharacterStatisticsAreValid(dto.getStatistics(), character.getStatistics().getFreeStatisticPoints());
-        character.getStatistics().addStatistics(dto.getStatistics());
+        character.getStatistics().addStatistics(dto.getStatistics(), dto.getRace());
 
         return characterMapper.toLite(characterRepository.save(character));
     }

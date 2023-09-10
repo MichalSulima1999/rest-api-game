@@ -1,5 +1,6 @@
 package com.michael1099.rest_rpg.statistics
 
+import com.michael1099.rest_rpg.character.model.CharacterRace
 import org.openapitools.model.StatisticsDetails
 import org.openapitools.model.StatisticsUpdateRequest
 
@@ -91,7 +92,8 @@ class StatisticsHelper {
         true
     }
 
-    static boolean compare(Statistics statistics, StatisticsUpdateRequest dto) {
+    static boolean compare(Statistics statistics, StatisticsUpdateRequest dto, String characterRace) {
+        CharacterRace race = CharacterRace.valueOf(characterRace)
         assert statistics.dodgeChance == criticalDodgeChance(dto.dexterity)
         assert statistics.criticalChance == criticalDodgeChance(dto.dexterity)
         assert statistics.maxHp == dto.constitution * Statistics.HP_MULTIPLIER
@@ -106,9 +108,9 @@ class StatisticsHelper {
         assert statistics.currentLevel == 1
         assert statistics.freeStatisticPoints == Statistics.START_FREE_STATISTICS_POINTS -
                 dto.strength - dto.dexterity - dto.constitution - dto.intelligence
-        assert statistics.strength == dto.strength
-        assert statistics.dexterity == dto.dexterity
-        assert statistics.constitution == dto.constitution
+        assert statistics.strength == dto.strength + (race == CharacterRace.HUMAN ? Statistics.CHARACTER_RACE_BONUS : 0)
+        assert statistics.dexterity == dto.dexterity + (race == CharacterRace.ELF ? Statistics.CHARACTER_RACE_BONUS : 0)
+        assert statistics.constitution == dto.constitution + (race == CharacterRace.DWARF ? Statistics.CHARACTER_RACE_BONUS : 0)
         assert statistics.intelligence == dto.intelligence
 
         true

@@ -160,6 +160,7 @@ components:
         - NOT_ENOUGH_SKILL_POINTS
         - GET_IMAGE
         - IMAGE_DOES_NOT_EXIST
+        - ENUM_VALUE_NOT_FOUND
     UserLite:
       type: object
       required:
