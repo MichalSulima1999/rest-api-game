@@ -15,6 +15,12 @@ import lombok.*;
 @Builder
 public class Statistics {
 
+    public static final int HP_MULTIPLIER = 10;
+    public static final int MANA_MULTIPLIER = 10;
+    public static final int DAMAGE_MULTIPLIER = 10;
+    public static final int MAGIC_DAMAGE_MULTIPLIER = 10;
+    public static final int START_FREE_STATISTICS_POINTS = 50;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -73,7 +79,7 @@ public class Statistics {
                 .currentXp(0)
                 .xpToNextLevel(500)
                 .currentLevel(1)
-                .freeStatisticPoints(50)
+                .freeStatisticPoints(START_FREE_STATISTICS_POINTS)
                 .strength(10)
                 .dexterity(10)
                 .constitution(10)
@@ -87,10 +93,30 @@ public class Statistics {
             throw new NotEnoughSkillPointsException();
         }
 
-        this.strength += dto.getStrength();
-        this.dexterity += dto.getDexterity();
-        this.constitution += dto.getConstitution();
-        this.intelligence += dto.getIntelligence();
+        this.strength = dto.getStrength();
+        this.dexterity = dto.getDexterity();
+        this.constitution = dto.getConstitution();
+        this.intelligence = dto.getIntelligence();
         this.freeStatisticPoints -= dto.getStrength() + dto.getDexterity() + dto.getConstitution() + dto.getIntelligence();
+        updateStats();
+    }
+
+    public void updateStats() {
+        // + items in future
+        this.dodgeChance = criticalDodgeChance(this.dexterity);
+        this.criticalChance = criticalDodgeChance(this.dexterity);
+        var previousMaxHp = this.maxHp;
+        this.maxHp = this.constitution * HP_MULTIPLIER;
+        this.currentHp += this.maxHp - previousMaxHp;
+        var previousMaxMana = this.maxMana;
+        this.maxMana = this.intelligence * MANA_MULTIPLIER;
+        this.currentMana += this.maxMana - previousMaxMana;
+        this.damage = this.strength * DAMAGE_MULTIPLIER;
+        this.magicDamage = this.intelligence * MAGIC_DAMAGE_MULTIPLIER;
+    }
+
+    private float criticalDodgeChance(int statistic) {
+        double k = 0.01;
+        return (float) (100 * (1 - Math.exp(-k * statistic)));
     }
 }

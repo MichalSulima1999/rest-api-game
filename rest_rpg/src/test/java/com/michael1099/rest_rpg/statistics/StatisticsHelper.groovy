@@ -90,4 +90,32 @@ class StatisticsHelper {
 
         true
     }
+
+    static boolean compare(Statistics statistics, StatisticsUpdateRequest dto) {
+        assert statistics.dodgeChance == criticalDodgeChance(dto.dexterity)
+        assert statistics.criticalChance == criticalDodgeChance(dto.dexterity)
+        assert statistics.maxHp == dto.constitution * Statistics.HP_MULTIPLIER
+        assert statistics.currentHp == statistics.maxHp;
+        assert statistics.maxMana == dto.intelligence * Statistics.MANA_MULTIPLIER
+        assert statistics.currentMana == statistics.maxMana
+        assert statistics.damage == dto.strength * Statistics.DAMAGE_MULTIPLIER
+        assert statistics.magicDamage == dto.intelligence * Statistics.MAGIC_DAMAGE_MULTIPLIER
+        assert statistics.armor == 0
+        assert statistics.currentXp == 0
+        assert statistics.xpToNextLevel == 500
+        assert statistics.currentLevel == 1
+        assert statistics.freeStatisticPoints == Statistics.START_FREE_STATISTICS_POINTS -
+                dto.strength - dto.dexterity - dto.constitution - dto.intelligence
+        assert statistics.strength == dto.strength
+        assert statistics.dexterity == dto.dexterity
+        assert statistics.constitution == dto.constitution
+        assert statistics.intelligence == dto.intelligence
+
+        true
+    }
+
+    private static float criticalDodgeChance(int statistic) {
+        double k = 0.01
+        return (float) (100 * (1 - Math.exp(-k * statistic)))
+    }
 }
