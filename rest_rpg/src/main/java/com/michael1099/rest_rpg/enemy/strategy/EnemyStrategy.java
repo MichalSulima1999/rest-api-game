@@ -1,8 +1,7 @@
-package com.michael1099.rest_rpg.fight;
+package com.michael1099.rest_rpg.enemy.strategy;
 
-import com.michael1099.rest_rpg.character.model.Character;
 import com.michael1099.rest_rpg.enemy.Enemy;
-import jakarta.annotation.Nullable;
+import com.michael1099.rest_rpg.enemy.strategy.element.StrategyElement;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -10,7 +9,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -19,13 +19,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Set;
+
 @Entity
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Fight {
+public class EnemyStrategy {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,19 +35,14 @@ public class Fight {
     private Long id;
 
     @NotNull
-    @OneToOne(mappedBy = "fight", fetch = FetchType.EAGER)
-    private Character character;
+    @ManyToMany
+    @JoinTable(
+            name = "strategy_element_enemy_strategy",
+            joinColumns = @JoinColumn(name = "enemy_strategy_id"),
+            inverseJoinColumns = @JoinColumn(name = "strategy_element_id"))
+    private Set<StrategyElement> strategyElements;
 
-    @Nullable
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "enemy_id")
+    @NotNull
+    @OneToOne(mappedBy = "enemyStrategy", fetch = FetchType.EAGER)
     private Enemy enemy;
-
-    @Nullable
-    private Integer enemyCurrentHp;
-
-    @Nullable
-    private Boolean playerTurn;
-
-    private boolean deleted;
 }

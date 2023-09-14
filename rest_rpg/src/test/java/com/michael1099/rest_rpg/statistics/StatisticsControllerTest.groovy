@@ -31,7 +31,7 @@ class StatisticsControllerTest extends TestBase {
 
     def "should not get character statistics"() {
         when:
-            def user2 = authenticationServiceHelper.getUser()
+            def user2 = authenticationServiceHelper.createUser()
             def character = characterServiceHelper.createCharacter(user2, [name: "Carl"])
             def response = httpGet(getStatisticsUrl(character.getId()), Problem, [accessToken: userAccessToken])
         then:

@@ -1,10 +1,10 @@
 package com.michael1099.rest_rpg.auth.auth
 
-import com.michael1099.rest_rpg.auth.user.Role
 import com.michael1099.rest_rpg.configuration.TestBase
 import jakarta.mail.internet.MimeMessage
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
+import org.springframework.test.annotation.Rollback
 import org.springframework.util.LinkedMultiValueMap
 
 class AuthenticationControllerTest extends TestBase {
@@ -26,7 +26,6 @@ class AuthenticationControllerTest extends TestBase {
             def request = RegisterRequest.builder()
                     .username("Michael1099")
                     .email("michael1099@gmail.com")
-                    .role(Role.ADMIN)
                     .password("12345678")
                     .build()
             def response = httpPost(registerUrl, request, Void)
@@ -37,7 +36,7 @@ class AuthenticationControllerTest extends TestBase {
 
     def "should login user"() {
         given:
-            def user = authenticationServiceHelper.getUser()
+            def user = authenticationServiceHelper.createUser()
         when:
             def request = AuthenticationRequest.builder()
                     .username(user.username)
@@ -51,9 +50,10 @@ class AuthenticationControllerTest extends TestBase {
             response.body.token
     }
 
+    @Rollback
     def "should verify not verified user"() {
         given:
-            def user = authenticationServiceHelper.getUser(enabled: enabled)
+            def user = authenticationServiceHelper.createUser(enabled: enabled)
         when:
             def params = new LinkedMultiValueMap()
             params.add("code", user.verificationCode)

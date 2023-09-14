@@ -142,6 +142,25 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/StatisticsDetails'
+#Admin
+  /enemy:
+    post:
+      summary: Creates an enemy.
+      operationId: createEnemy
+      x-preauth: "hasAuthority('ADMIN')"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EnemyCreateRequest'
+      responses:
+        '200':
+          description: Info about created enemy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnemyLite'
 components:
   schemas:
     ErrorCodes:
@@ -355,4 +374,32 @@ components:
           type: string
         occupationType:
           description: Character occupation
+          type: string
+    EnemyCreateRequest:
+      type: object
+      required:
+        - name
+        - numberOfPotions
+      properties:
+        name:
+          description: Enemy name
+          type: string
+        numberOfPotions:
+          description: Enemy potions
+          type: integer
+        enemyStrategy:
+          description: Character statistics
+          $ref: '#/components/schemas/StatisticsUpdateRequest'
+    EnemyLite:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          description: Enemy id
+          type: integer
+          format: int64
+        name:
+          description: Enemy name
           type: string

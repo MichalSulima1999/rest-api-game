@@ -1,9 +1,7 @@
 package com.michael1099.rest_rpg.auth.auth;
 
-import com.michael1099.rest_rpg.auth.user.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,7 +24,4 @@ public class RegisterRequest {
     @Length(min = 8)
     @NotEmpty
     private String password;
-
-    @NotNull
-    private Role role;
 }

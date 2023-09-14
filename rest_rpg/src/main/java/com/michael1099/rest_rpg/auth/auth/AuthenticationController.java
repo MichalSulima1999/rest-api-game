@@ -1,5 +1,6 @@
 package com.michael1099.rest_rpg.auth.auth;
 
+import com.michael1099.rest_rpg.auth.user.Role;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -24,7 +25,7 @@ public class AuthenticationController {
             @Valid @RequestBody RegisterRequest request,
             HttpServletRequest servletRequest
     ) {
-        service.register(request, getSiteURL(servletRequest));
+        service.register(request, getSiteURL(servletRequest), Role.USER);
         return ResponseEntity.ok().build();
     }
 

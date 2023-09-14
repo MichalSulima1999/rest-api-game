@@ -45,9 +45,9 @@ class TestBase extends Specification {
     String adminAccessToken
 
     void setup() {
-        user = authenticationServiceHelper.getUser(username: "TestUser", email: "testUser@gmail.com")
+        user = authenticationServiceHelper.createUser(username: "TestUser", email: "testUser@gmail.com")
         userAccessToken = authenticationServiceHelper.generateAccessToken(user)
-        admin = authenticationServiceHelper.getUser(username: "TestAdmin",
+        admin = authenticationServiceHelper.createUser(username: "TestAdmin",
                 email: "testAdmin@gmail.com",
                 role: Role.ADMIN)
         adminAccessToken = authenticationServiceHelper.generateAccessToken(admin)

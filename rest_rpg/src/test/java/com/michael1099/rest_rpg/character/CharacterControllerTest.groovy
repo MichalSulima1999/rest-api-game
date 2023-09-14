@@ -114,7 +114,7 @@ class CharacterControllerTest extends TestBase {
 
     def "should get user characters"() {
         when:
-            def user2 = authenticationServiceHelper.getUser()
+            def user2 = authenticationServiceHelper.createUser()
             def character1 = characterServiceHelper.createCharacter(user, [name: "Carl"])
             def character2 = characterServiceHelper.createCharacter(user, [name: "Johnny", sex: CharacterSex.MALE])
             def anotherUserCharacter = characterServiceHelper.createCharacter(user2, [name: "Fred", sex: CharacterSex.MALE])
@@ -136,7 +136,7 @@ class CharacterControllerTest extends TestBase {
 
     def "should not get another user character"() {
         when:
-            def user2 = authenticationServiceHelper.getUser()
+            def user2 = authenticationServiceHelper.createUser()
             def character = characterServiceHelper.createCharacter(user2, [name: "Carl"])
             def response = httpGet(userCharacterUrl(character.getId()), Problem, [accessToken: userAccessToken])
         then:

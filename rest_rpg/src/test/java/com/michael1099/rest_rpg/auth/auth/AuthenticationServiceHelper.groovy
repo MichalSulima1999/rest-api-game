@@ -10,6 +10,7 @@ import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import io.jsonwebtoken.io.Decoders
 import io.jsonwebtoken.security.Keys
+import jakarta.validation.constraints.NotBlank
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -38,12 +39,12 @@ class AuthenticationServiceHelper {
         refreshTokenRepo.deleteAll()
     }
 
-    User getUser(Map customArgs = [:]) {
+    User createUser(Map customArgs = [:]) {
         Map args = [
                 username        : "User" + Instant.now().toEpochMilli(),
                 email           : "user" + Instant.now().toEpochMilli() + "@gmail.com",
                 password        : "12345678",
-                verificationCode: "123123123",
+                verificationCode: UUID.randomUUID().toString(),
                 role            : Role.USER,
                 enabled         : true
         ]
@@ -62,6 +63,10 @@ class AuthenticationServiceHelper {
         def refreshToken = refreshTokenRepo.save(new RefreshToken(null, user, UUID.randomUUID().toString(), Instant.now().plusMillis(100000)))
         user.setRefreshToken(refreshToken)
         return user
+    }
+
+    User getUserByUsername(@NotBlank String username) {
+        userRepository.getByUsername(username)
     }
 
     String generateAccessToken(UserDetails userDetails) {

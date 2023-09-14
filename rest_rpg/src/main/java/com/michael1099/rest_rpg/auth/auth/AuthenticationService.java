@@ -2,6 +2,7 @@ package com.michael1099.rest_rpg.auth.auth;
 
 import com.michael1099.rest_rpg.auth.config.JwtService;
 import com.michael1099.rest_rpg.auth.refreshToken.RefreshTokenService;
+import com.michael1099.rest_rpg.auth.user.Role;
 import com.michael1099.rest_rpg.auth.user.User;
 import com.michael1099.rest_rpg.auth.user.UserRepository;
 import com.michael1099.rest_rpg.exceptions.AccountEmailExistsException;
@@ -26,7 +27,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.UnsupportedEncodingException;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -41,9 +41,10 @@ public class AuthenticationService {
     private final JavaMailSender mailSender;
 
     public void register(@NotNull RegisterRequest request,
-                         @NotNull String verificationURL) {
+                         @NotNull String verificationURL,
+                         @NotNull Role role) {
         assertAccountNotExists(request.getUsername(), request.getEmail());
-        var user = User.of(request, passwordEncoder, UUID.randomUUID().toString());
+        var user = User.of(request, passwordEncoder, role);
         user = repository.save(user);
 
         sendVerificationEmail(user, verificationURL);

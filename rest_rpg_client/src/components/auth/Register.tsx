@@ -33,7 +33,6 @@ const Register = () => {
             username: "",
             email: "",
             password: "",
-            role: "USER",
           }}
           validationSchema={RegisterSchema}
           onSubmit={handleSubmit}

@@ -21,7 +21,7 @@ class RefreshTokenControllerTest extends TestBase {
 
     def "should refresh token"() {
         given:
-            def user = authenticationServiceHelper.getUser()
+            def user = authenticationServiceHelper.createUser()
         when:
             def response = httpGet(refreshUrl, AuthenticationResponse, [refreshToken: user.refreshToken.token])
         then:
@@ -30,7 +30,7 @@ class RefreshTokenControllerTest extends TestBase {
 
     def "should logout user"() {
         given:
-            def user = authenticationServiceHelper.getUser()
+            def user = authenticationServiceHelper.createUser()
         when:
             def response = httpGet(logoutUrl, AuthenticationResponse, [refreshToken: user.refreshToken.token])
         then:
