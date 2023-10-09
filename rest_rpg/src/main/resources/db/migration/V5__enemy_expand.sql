@@ -23,7 +23,7 @@ ALTER TABLE enemy ADD number_of_potions INT NOT NULL;
 ALTER TABLE enemy ADD hp INT NOT NULL;
 ALTER TABLE enemy ADD damage INT NOT NULL;
 
-ALTER TABLE fight ADD enemy_current_hp NULL;
+ALTER TABLE fight ADD enemy_current_hp INT NULL;
 
 ALTER TABLE strategy_element_enemy_strategy ADD CONSTRAINT fk_streleenestr_on_enemy_strategy FOREIGN KEY (enemy_strategy_id) REFERENCES enemy_strategy (id);
 
