@@ -33,14 +33,14 @@ const lngs: Languages = {
 };
 
 const Navbar = observer(() => {
-  const [logged, setLogged] = useState(false);
+  const [logged, setLogged] = useState("");
   const { authStore } = useStores();
   const { t, i18n } = useTranslation();
   const logout = useLogout();
 
   useEffect(() => {
-    setLogged(authStore.accessToken != "");
-  }, [authStore.accessToken]);
+    setLogged(authStore.role?.toUpperCase());
+  }, [authStore.role]);
 
   return (
     <Box bg="gray.900" color="gray.100" py={4} px={8} width="100vw">
@@ -49,7 +49,12 @@ const Navbar = observer(() => {
           {t("NAVBAR.TITLE")}
         </Link>
         <Flex alignItems="center">
-          {logged && <CharactersPopover />}
+          {logged === "ADMIN" && (
+            <Link as={RouterLink} to="/admin/home" mx={2}>
+              {t("ADMIN.NAVBAR.HOME")}
+            </Link>
+          )}
+          {logged === "USER" && <CharactersPopover />}
           <Menu>
             <MenuButton
               as={Button}

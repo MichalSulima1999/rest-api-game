@@ -1,7 +1,8 @@
 package com.michael1099.rest_rpg.fight;
 
 import com.michael1099.rest_rpg.character.model.Character;
-import com.michael1099.rest_rpg.enemy.Enemy;
+import com.michael1099.rest_rpg.enemy.model.Enemy;
+import com.michael1099.rest_rpg.fight_effect.FightEffect;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,6 +12,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -18,6 +20,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.Set;
 
 @Entity
 @Getter
@@ -43,6 +47,17 @@ public class Fight {
 
     @Nullable
     private Integer enemyCurrentHp;
+
+    @Nullable
+    private Integer enemyCurrentMana;
+
+    @Nullable
+    @OneToMany(mappedBy = "fightEnemy", fetch = FetchType.LAZY)
+    private Set<FightEffect> enemyEffects;
+
+    @Nullable
+    @OneToMany(mappedBy = "fightPlayer", fetch = FetchType.LAZY)
+    private Set<FightEffect> playerEffects;
 
     @Nullable
     private Boolean playerTurn;

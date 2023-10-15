@@ -1,6 +1,6 @@
 package com.michael1099.rest_rpg.enemy.strategy.element;
 
-import com.michael1099.rest_rpg.enemy.strategy.EnemyStrategy;
+import com.michael1099.rest_rpg.enemy.model.Enemy;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -15,7 +15,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.openapitools.model.ElementAction;
+import org.openapitools.model.ElementEvent;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -40,7 +43,7 @@ public class StrategyElement {
     private ElementAction elementAction;
 
     @ManyToMany(mappedBy = "strategyElements")
-    private Set<EnemyStrategy> enemyStrategies;
+    private Set<Enemy> enemy = new HashSet<>();
 
     private int priority;
 }

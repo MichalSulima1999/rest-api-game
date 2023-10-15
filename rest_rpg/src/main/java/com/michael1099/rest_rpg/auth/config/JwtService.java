@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import java.security.Key;
 import java.util.Date;
@@ -21,6 +22,7 @@ import java.util.function.Function;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Validated
 public class JwtService {
 
     private final TokenProperties tokenProperties;

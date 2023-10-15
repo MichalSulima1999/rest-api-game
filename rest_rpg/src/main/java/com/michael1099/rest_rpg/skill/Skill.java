@@ -1,16 +1,27 @@
 package com.michael1099.rest_rpg.skill;
 
-import com.michael1099.rest_rpg.character.model.CharacterRace;
+import com.michael1099.rest_rpg.character.model.CharacterClass;
 import com.michael1099.rest_rpg.character_skill.CharacterSkill;
+import com.michael1099.rest_rpg.enemy.model.Enemy;
 import jakarta.annotation.Nullable;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -18,6 +29,7 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Skill {
 
     @Id
@@ -46,10 +58,15 @@ public class Skill {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    private CharacterRace race;
+    private CharacterClass characterClass;
 
     @OneToMany(mappedBy = "skill", fetch = FetchType.LAZY)
-    private Set<CharacterSkill> characters;
+    private Set<Enemy> enemy = new HashSet<>();
+    ;
+
+    @OneToMany(mappedBy = "skill", fetch = FetchType.LAZY)
+    private Set<CharacterSkill> characters = new HashSet<>();
+    ;
 
     private boolean deleted;
 }

@@ -1,6 +1,6 @@
 package com.michael1099.rest_rpg.adventure;
 
-import com.michael1099.rest_rpg.enemy.Enemy;
+import com.michael1099.rest_rpg.enemy.model.Enemy;
 import com.michael1099.rest_rpg.item.Item;
 import com.michael1099.rest_rpg.occupation.Occupation;
 import jakarta.annotation.Nullable;

@@ -26,6 +26,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,6 +39,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Validated
 public class CharacterService {
 
     private final CharacterRepository characterRepository;

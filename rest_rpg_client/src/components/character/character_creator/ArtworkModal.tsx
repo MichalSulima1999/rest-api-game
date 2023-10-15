@@ -17,7 +17,7 @@ import {
 import { useEffect, useState } from "react";
 import useCharacterService, {
   THUMBNAIL_URL,
-} from "../../services/useCharacterService";
+} from "../../../services/useCharacterService";
 import { useTranslation } from "react-i18next";
 import { FormikErrors } from "formik";
 import { CreateCharacterFormData } from "./CharacterCreator";

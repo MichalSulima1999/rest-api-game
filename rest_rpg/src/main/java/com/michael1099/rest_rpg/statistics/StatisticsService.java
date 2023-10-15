@@ -6,9 +6,11 @@ import com.michael1099.rest_rpg.exceptions.CharacterNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.openapitools.model.StatisticsDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 @Service
 @RequiredArgsConstructor
+@Validated
 public class StatisticsService {
 
     private final StatisticsRepository statisticsRepository;

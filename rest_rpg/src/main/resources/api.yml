@@ -142,7 +142,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/StatisticsDetails'
-#Admin
+  #Admin
   /enemy:
     post:
       summary: Creates an enemy.
@@ -161,6 +161,34 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/EnemyLite'
+  /enemy/strategy-event:
+    get:
+      summary: Get enum strategy events
+      operationId: getStrategyEventsEnum
+      x-preauth: "hasAuthority('ADMIN')"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+  /enemy/strategy-actions:
+    get:
+      summary: Get enum strategy actions
+      operationId: getStrategyActionsEnum
+      x-preauth: "hasAuthority('ADMIN')"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
 components:
   schemas:
     ErrorCodes:
@@ -180,6 +208,8 @@ components:
         - GET_IMAGE
         - IMAGE_DOES_NOT_EXIST
         - ENUM_VALUE_NOT_FOUND
+        - ENEMY_ALREADY_EXISTS
+        - SKILL_NOT_FOUND
     UserLite:
       type: object
       required:
@@ -379,22 +409,83 @@ components:
       type: object
       required:
         - name
+        - hp
+        - mana
+        - damage
         - numberOfPotions
+        - skillId
+        - skillLevel
+        - enemyStrategy
       properties:
         name:
           description: Enemy name
           type: string
+        hp:
+          description: Enemy hp
+          type: integer
+        mana:
+          description: Enemy mana
+          type: integer
+        damage:
+          description: Enemy damage
+          type: integer
         numberOfPotions:
           description: Enemy potions
           type: integer
+        skillId:
+          description: Skill id
+          type: integer
+          format: int64
+        skillLevel:
+          description: Enemy skill level
+          type: integer
         enemyStrategy:
-          description: Character statistics
-          $ref: '#/components/schemas/StatisticsUpdateRequest'
+          description: Enemy strategy
+          type: array
+          items:
+            $ref: '#/components/schemas/StrategyElementCreateRequest'
+    StrategyElementCreateRequest:
+      type: object
+      required:
+        - event
+        - action
+        - priority
+      properties:
+        event:
+          description: Event
+          $ref: '#/components/schemas/ElementEvent'
+        action:
+          description: Action
+          $ref: '#/components/schemas/ElementAction'
+        priority:
+          description: Action priority
+          type: integer
+    ElementEvent:
+      type: string
+      enum:
+        - HEALTH_20_40
+        - HEALTH_40_60
+        - HEALTH_60_80
+        - HEALTH_80_100
+        - ENEMY_HEALTH_20_40
+        - ENEMY_HEALTH_40_60
+        - ENEMY_HEALTH_60_80
+        - ENEMY_HEALTH_80_10
+    ElementAction:
+      type: string
+      enum:
+        - NORMAL_ATTACK
+        - SPECIAL_ATTACK
+        - USE_POTION
     EnemyLite:
       type: object
       required:
         - id
         - name
+        - hp
+        - mana
+        - damage
+        - numberOfPotions
       properties:
         id:
           description: Enemy id
@@ -403,3 +494,15 @@ components:
         name:
           description: Enemy name
           type: string
+        hp:
+          description: Enemy hp
+          type: integer
+        mana:
+          description: Enemy mana
+          type: integer
+        damage:
+          description: Enemy damage
+          type: integer
+        numberOfPotions:
+          description: Number of potions
+          type: integer

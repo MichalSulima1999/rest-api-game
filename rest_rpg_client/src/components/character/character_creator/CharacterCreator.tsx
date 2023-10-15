@@ -14,9 +14,9 @@ import {
   classes,
   races,
   sexes,
-} from "../../validation/character/CharacterValidation";
-import useCharacterService from "../../services/useCharacterService";
-import { CharacterCreateRequest } from "../../generated-sources/openapi";
+} from "../../../validation/character/CharacterValidation";
+import useCharacterService from "../../../services/useCharacterService";
+import { CharacterCreateRequest } from "../../../generated-sources/openapi";
 import FormikRadioGroup from "./FormikRadioGroup";
 import FormikInput from "./FormikInput";
 import { useEffect } from "react";

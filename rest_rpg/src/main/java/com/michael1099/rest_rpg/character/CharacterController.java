@@ -9,12 +9,14 @@ import org.openapitools.model.CharacterCreateRequest;
 import org.openapitools.model.CharacterLite;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@Validated
 public class CharacterController implements CharacterApi {
 
     private final CharacterService characterService;

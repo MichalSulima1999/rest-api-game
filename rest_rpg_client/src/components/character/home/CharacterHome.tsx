@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom";
 import HomeNavbar from "./HomeNavbar";
 
-const Home = () => {
+const CharacterHome = () => {
   return (
     <div>
       <HomeNavbar />
@@ -10,4 +10,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default CharacterHome;
