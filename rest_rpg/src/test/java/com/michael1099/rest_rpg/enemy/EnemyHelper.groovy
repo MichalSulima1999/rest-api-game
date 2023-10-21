@@ -1,7 +1,12 @@
 package com.michael1099.rest_rpg.enemy
 
-import com.michael1099.rest_rpg.skill.Skill
-import org.openapitools.model.*
+import com.michael1099.rest_rpg.enemy.model.StrategyElement
+import com.michael1099.rest_rpg.skill.model.Skill
+import org.openapitools.model.ElementAction
+import org.openapitools.model.ElementEvent
+import org.openapitools.model.EnemyCreateRequest
+import org.openapitools.model.EnemyLite
+import org.openapitools.model.StrategyElementCreateRequest
 
 class EnemyHelper {
 
@@ -31,6 +36,21 @@ class EnemyHelper {
         args << customArgs
 
         return new StrategyElementCreateRequest(args.event, args.action, args.priority)
+    }
+
+    static StrategyElement createStrategyElement(Map customArgs = [:]) {
+        Map args = [
+                elementEvent : ElementEvent.ENEMY_HEALTH_20_40,
+                elementAction: ElementAction.NORMAL_ATTACK,
+                priority     : 1
+        ]
+        args << customArgs
+
+        return StrategyElement.builder()
+                .elementAction(args.elementAction)
+                .elementEvent(args.elementEvent)
+                .priority(args.priority)
+                .build()
     }
 
     static boolean compare(EnemyCreateRequest request, EnemyLite enemyLite) {

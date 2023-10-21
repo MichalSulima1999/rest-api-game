@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.test.annotation.Rollback
 import org.springframework.util.LinkedMultiValueMap
+import spock.lang.Unroll
 
 class AuthenticationControllerTest extends TestBase {
 
@@ -50,7 +51,7 @@ class AuthenticationControllerTest extends TestBase {
             response.body.token
     }
 
-    @Rollback
+    @Unroll
     def "should verify not verified user"() {
         given:
             def user = authenticationServiceHelper.createUser(enabled: enabled)

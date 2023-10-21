@@ -3,10 +3,6 @@ package com.michael1099.rest_rpg.character
 import com.michael1099.rest_rpg.auth.user.User
 import com.michael1099.rest_rpg.character.model.Character
 import com.michael1099.rest_rpg.character.model.CharacterArtwork
-import com.michael1099.rest_rpg.character.model.CharacterClass
-import com.michael1099.rest_rpg.character.model.CharacterRace
-import com.michael1099.rest_rpg.character.model.CharacterSex
-import com.michael1099.rest_rpg.character.model.CharacterStatus
 import com.michael1099.rest_rpg.equipment.Equipment
 import com.michael1099.rest_rpg.equipment.EquipmentRepository
 import com.michael1099.rest_rpg.fight.Fight
@@ -16,6 +12,10 @@ import com.michael1099.rest_rpg.occupation.OccupationRepository
 import com.michael1099.rest_rpg.skill.SkillRepository
 import com.michael1099.rest_rpg.statistics.StatisticsHelper
 import com.michael1099.rest_rpg.statistics.StatisticsRepository
+import org.openapitools.model.CharacterClass
+import org.openapitools.model.CharacterRace
+import org.openapitools.model.CharacterSex
+import org.openapitools.model.CharacterStatus
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 

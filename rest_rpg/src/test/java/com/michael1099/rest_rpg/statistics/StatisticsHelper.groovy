@@ -1,6 +1,6 @@
 package com.michael1099.rest_rpg.statistics
 
-import com.michael1099.rest_rpg.character.model.CharacterRace
+import org.openapitools.model.CharacterRace
 import org.openapitools.model.StatisticsDetails
 import org.openapitools.model.StatisticsUpdateRequest
 

@@ -189,6 +189,24 @@ paths:
                 type: array
                 items:
                   type: string
+  /skill:
+    post:
+      summary: Creates new skill.
+      operationId: createSkill
+      x-preauth: "hasAuthority('ADMIN')"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SkillCreateRequest'
+      responses:
+        '200':
+          description: Info about created skill
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SkillLite'
 components:
   schemas:
     ErrorCodes:
@@ -210,6 +228,64 @@ components:
         - ENUM_VALUE_NOT_FOUND
         - ENEMY_ALREADY_EXISTS
         - SKILL_NOT_FOUND
+        - SKILL_ALREADY_EXISTS
+    ElementEvent:
+      type: string
+      enum:
+        - HEALTH_20_40
+        - HEALTH_40_60
+        - HEALTH_60_80
+        - HEALTH_80_100
+        - ENEMY_HEALTH_20_40
+        - ENEMY_HEALTH_40_60
+        - ENEMY_HEALTH_60_80
+        - ENEMY_HEALTH_80_10
+    ElementAction:
+      type: string
+      enum:
+        - NORMAL_ATTACK
+        - SPECIAL_ATTACK
+        - USE_POTION
+    SkillType:
+      type: string
+      enum:
+        - NORMAL_DAMAGE
+        - MAGIC_DAMAGE
+        - DAMAGE_BOOST
+        - DEFENCE_BOOST
+        - DAMAGE_DEFENCE_BOOST
+    SkillEffect:
+      type: string
+      enum:
+        - BLEEDING
+        - BURNING
+        - STUNNED
+        - WEAKNESS
+    CharacterClass:
+      type: string
+      enum:
+        - WARRIOR
+        - ROGUE
+        - MAGE
+    CharacterRace:
+      type: string
+      enum:
+        - HUMAN
+        - ELF
+        - DWARF
+    CharacterSex:
+      type: string
+      enum:
+        - MALE
+        - FEMALE
+    CharacterStatus:
+      type: string
+      enum:
+        - IDLE
+        - WORK
+        - FIGHT
+        - TRAINING
+        - ADVENTURE
     UserLite:
       type: object
       required:
@@ -460,23 +536,6 @@ components:
         priority:
           description: Action priority
           type: integer
-    ElementEvent:
-      type: string
-      enum:
-        - HEALTH_20_40
-        - HEALTH_40_60
-        - HEALTH_60_80
-        - HEALTH_80_100
-        - ENEMY_HEALTH_20_40
-        - ENEMY_HEALTH_40_60
-        - ENEMY_HEALTH_60_80
-        - ENEMY_HEALTH_80_10
-    ElementAction:
-      type: string
-      enum:
-        - NORMAL_ATTACK
-        - SPECIAL_ATTACK
-        - USE_POTION
     EnemyLite:
       type: object
       required:
@@ -506,3 +565,70 @@ components:
         numberOfPotions:
           description: Number of potions
           type: integer
+    SkillCreateRequest:
+      type: object
+      required:
+        - name
+        - type
+        - multiplier
+        - characterClass
+      properties:
+        name:
+          description: Skill name
+          type: string
+        type:
+          description: Skill type
+          type: string
+        multiplier:
+          description: Skill multiplier for example totalDamage = normalDamage * multiplier
+          type: number
+          format: float
+        effect:
+          description: Skill effect
+          type: string
+        effectDuration:
+          description: Skill effect duration in turns
+          type: integer
+        effectMultiplier:
+          description: Effect multiplier for example Burning -> damagePerTurn = maxEnemyHealth * effectMultiplier
+          type: number
+          format: float
+        characterClass:
+          description: Character class skill is for
+          type: string
+    SkillLite:
+      type: object
+      required:
+        - id
+        - name
+        - type
+        - multiplier
+        - characterClass
+      properties:
+        id:
+          description: Skill id
+          type: integer
+          format: int64
+        name:
+          description: Skill name
+          type: string
+        type:
+          description: Skill type
+          type: string
+        multiplier:
+          description: Skill multiplier for example totalDamage = normalDamage * multiplier
+          type: number
+          format: float
+        effect:
+          description: Skill effect
+          type: string
+        effectDuration:
+          description: Skill effect duration in turns
+          type: integer
+        effectMultiplier:
+          description: Effect multiplier for example Burning -> damagePerTurn = maxEnemyHealth * effectMultiplier
+          type: number
+          format: float
+        characterClass:
+          description: Character class skill is for
+          type: string

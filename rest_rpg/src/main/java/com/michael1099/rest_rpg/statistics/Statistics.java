@@ -1,7 +1,6 @@
 package com.michael1099.rest_rpg.statistics;
 
 import com.michael1099.rest_rpg.character.model.Character;
-import com.michael1099.rest_rpg.character.model.CharacterRace;
 import com.michael1099.rest_rpg.exceptions.EnumValueNotFoundException;
 import com.michael1099.rest_rpg.exceptions.NotEnoughSkillPointsException;
 import com.michael1099.rest_rpg.statistics.dto.StatisticsUpdateRequestDto;
@@ -17,6 +16,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.openapitools.model.CharacterRace;
 
 @Entity
 @Getter

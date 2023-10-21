@@ -1,20 +1,8 @@
-package com.michael1099.rest_rpg.enemy.strategy.element;
+package com.michael1099.rest_rpg.enemy.model;
 
-import com.michael1099.rest_rpg.enemy.model.Enemy;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.openapitools.model.ElementAction;
 import org.openapitools.model.ElementEvent;
 

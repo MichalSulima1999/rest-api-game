@@ -1,25 +1,16 @@
-package com.michael1099.rest_rpg.skill;
+package com.michael1099.rest_rpg.skill.model;
 
-import com.michael1099.rest_rpg.character.model.CharacterClass;
 import com.michael1099.rest_rpg.character_skill.CharacterSkill;
 import com.michael1099.rest_rpg.enemy.model.Enemy;
 import jakarta.annotation.Nullable;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.openapitools.model.CharacterClass;
+import org.openapitools.model.SkillEffect;
+import org.openapitools.model.SkillType;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -62,11 +53,21 @@ public class Skill {
 
     @OneToMany(mappedBy = "skill", fetch = FetchType.LAZY)
     private Set<Enemy> enemy = new HashSet<>();
-    ;
 
     @OneToMany(mappedBy = "skill", fetch = FetchType.LAZY)
     private Set<CharacterSkill> characters = new HashSet<>();
-    ;
 
     private boolean deleted;
+
+    public static Skill of(@Valid SkillCreateRequestDto dto) {
+        return builder()
+                .name(dto.getName())
+                .type(dto.getType())
+                .multiplier(dto.getMultiplier())
+                .effect(dto.getEffect())
+                .effectDuration(dto.getEffectDuration())
+                .effectMultiplier(dto.getEffectMultiplier())
+                .characterClass(dto.getCharacterClass())
+                .build();
+    }
 }

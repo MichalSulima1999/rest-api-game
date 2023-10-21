@@ -1,30 +1,14 @@
 package com.michael1099.rest_rpg.enemy.model;
 
 import com.michael1099.rest_rpg.adventure.Adventure;
-import com.michael1099.rest_rpg.enemy.strategy.element.StrategyElement;
 import com.michael1099.rest_rpg.fight.Fight;
-import com.michael1099.rest_rpg.skill.Skill;
+import com.michael1099.rest_rpg.skill.model.Skill;
 import jakarta.annotation.Nullable;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -80,20 +64,12 @@ public class Enemy {
     private boolean deleted;
 
     public static Enemy of(@NotNull @Valid EnemyCreateRequestDto dto, @NotNull Skill skill) {
-        var strategyElements = dto.getStrategyElementCreateRequest().stream().map(element ->
-                        StrategyElement.builder()
-                                .elementAction(element.getAction())
-                                .elementEvent(element.getEvent())
-                                .priority(element.getPriority())
-                                .build())
-                .collect(Collectors.toSet());
         return Enemy.builder()
                 .hp(dto.getHp())
                 .mana(dto.getMana())
                 .damage(dto.getDamage())
                 .name(dto.getName())
                 .numberOfPotions(dto.getNumberOfPotions())
-                .strategyElements(strategyElements)
                 .skill(skill)
                 .deleted(false)
                 .build();

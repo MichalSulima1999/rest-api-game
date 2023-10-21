@@ -1,8 +1,10 @@
 package com.michael1099.rest_rpg.skill
 
-
-import com.michael1099.rest_rpg.character.model.CharacterClass
 import com.michael1099.rest_rpg.character_skill.CharacterSkill
+import com.michael1099.rest_rpg.skill.model.Skill
+import org.openapitools.model.CharacterClass
+import org.openapitools.model.SkillEffect
+import org.openapitools.model.SkillType
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 

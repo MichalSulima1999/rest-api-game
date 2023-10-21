@@ -1,13 +1,13 @@
 package com.michael1099.rest_rpg.character
 
 import com.michael1099.rest_rpg.character.model.CharacterArtwork
-import com.michael1099.rest_rpg.character.model.CharacterSex
 import com.michael1099.rest_rpg.configuration.TestBase
 import com.michael1099.rest_rpg.statistics.StatisticsHelper
 import com.michael1099.rest_rpg.statistics.StatisticsServiceHelper
 import org.openapitools.model.CharacterBasic
 import org.openapitools.model.CharacterBasics
 import org.openapitools.model.CharacterLite
+import org.openapitools.model.CharacterSex
 import org.openapitools.model.ErrorCodes
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.parsing.Problem
