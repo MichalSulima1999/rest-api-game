@@ -59,7 +59,7 @@ const CharactersPopover = () => {
                   characters?.content &&
                   characters.content.map((character) => (
                     <GridItem>
-                      <Link to={`/character/${character.id}/main`}>
+                      <Link to={`/user/character/${character.id}/main`}>
                         <Box bg="blackAlpha.900">
                           <Text fontSize="xl">{character.name}</Text>
                           <Text fontSize="md">

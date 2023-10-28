@@ -54,7 +54,17 @@ const Navbar = observer(() => {
               {t("ADMIN.NAVBAR.HOME")}
             </Link>
           )}
-          {logged === "USER" && <CharactersPopover />}
+          {logged === "USER" && (
+            <>
+              <CharactersPopover />
+              <Link as={RouterLink} to="/user/home" mx={2}>
+                {t("NAVBAR.HOME")}
+              </Link>
+              <Link as={RouterLink} to="/user/character/create" mx={2}>
+                {t("CHARACTER.CREATE")}
+              </Link>
+            </>
+          )}
           <Menu>
             <MenuButton
               as={Button}
@@ -83,9 +93,6 @@ const Navbar = observer(() => {
               ))}
             </MenuList>
           </Menu>
-          <Link as={RouterLink} to="/home" mx={2}>
-            {t("NAVBAR.HOME")}
-          </Link>
           {authStore.username}
           {!logged && (
             <>

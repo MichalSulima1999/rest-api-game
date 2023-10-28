@@ -17,6 +17,7 @@ type Props = {
   radioValues: string[];
   inputName: string;
   translationKey: string;
+  isRequired?: boolean;
 };
 
 const FormikRadioGroup = ({
@@ -27,6 +28,7 @@ const FormikRadioGroup = ({
   radioValues,
   inputName,
   translationKey,
+  isRequired = true,
 }: Props) => {
   const { t } = useTranslation();
 
@@ -35,11 +37,16 @@ const FormikRadioGroup = ({
       id={inputName}
       mb={6}
       isInvalid={error != null && touched}
-      isRequired
+      isRequired={isRequired}
     >
       <FormLabel>{t(`${translationKey}.NAME`)}</FormLabel>
       <RadioGroup value={value}>
         <Stack direction="row">
+          {!isRequired && (
+            <Radio onChange={handleChange} name={inputName} value={""}>
+              {t("INPUT.NONE")}
+            </Radio>
+          )}
           {radioValues.map((val) => (
             <Radio
               key={val}

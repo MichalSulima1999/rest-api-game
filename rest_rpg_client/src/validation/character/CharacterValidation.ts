@@ -1,8 +1,13 @@
 import * as Yup from "yup";
+import {
+  CharacterClass,
+  CharacterRace,
+  CharacterSex,
+} from "../../generated-sources/openapi";
 
-export const races = ["HUMAN", "ELF", "DWARF"];
-export const sexes = ["MALE", "FEMALE"];
-export const classes = ["WARRIOR", "ROGUE", "MAGE"];
+export const races = Object.values(CharacterRace);
+export const sexes = Object.values(CharacterSex);
+export const classes = Object.values(CharacterClass);
 export const characterCreateMaxSkillpoints = 50;
 
 export const CharacterCreateSchema = Yup.object().shape({
@@ -18,20 +23,18 @@ export const CharacterCreateSchema = Yup.object().shape({
     dexterity: Yup.number().min(0).required("REQUIRED"),
     constitution: Yup.number().min(0).required("REQUIRED"),
     intelligence: Yup.number().min(0).required("REQUIRED"),
-  }).test(
-    'has-enough-skillpoints', 'NOT_ENOUGH_SKILLPOINTS', function (value) {
-      const isInvalid =
-        value.strength +
-          value.dexterity +
-          value.constitution +
-          value.intelligence >
-        characterCreateMaxSkillpoints;
+  }).test("has-enough-skillpoints", "NOT_ENOUGH_SKILLPOINTS", function (value) {
+    const isInvalid =
+      value.strength +
+        value.dexterity +
+        value.constitution +
+        value.intelligence >
+      characterCreateMaxSkillpoints;
 
-      if (!isInvalid) return true;
-      return this.createError({
-        path: "statistics.freePoints",
-        message: "NOT_ENOUGH_SKILLPOINTS",
-      });
-    },
-  ),
+    if (!isInvalid) return true;
+    return this.createError({
+      path: "statistics.freePoints",
+      message: "NOT_ENOUGH_SKILLPOINTS",
+    });
+  }),
 });

@@ -1,3 +1,9 @@
+import React from "react";
+import useEnemyService from "../../../services/useEnemyService";
+import { EnemyCreateRequest } from "../../../generated-sources/openapi";
+import { useTranslation } from "react-i18next";
+import { EnemyCreateSchema } from "../../../validation/enemy/EnemyValidation";
+import { useFormik } from "formik";
 import {
   Box,
   Button,
@@ -6,89 +12,37 @@ import {
   Heading,
   Text,
 } from "@chakra-ui/react";
-import { useFormik } from "formik";
-import { useTranslation } from "react-i18next";
-import {
-  CharacterCreateSchema,
-  characterCreateMaxSkillpoints,
-  classes,
-  races,
-  sexes,
-} from "../../../validation/character/CharacterValidation";
-import useCharacterService from "../../../services/useCharacterService";
-import { CharacterCreateRequest } from "../../../generated-sources/openapi";
-import FormikRadioGroup from "../../forms/FormikRadioGroup";
 import FormikInput from "../../forms/FormikInput";
-import { useEffect } from "react";
-import ArtworkModal from "./ArtworkModal";
+import FormikRadioGroup from "../../forms/FormikRadioGroup";
 
-export interface CreateCharacterFormData {
-  name: string;
-  race: string;
-  sex: string;
-  characterClass: string;
-  artwork: string;
-  statistics: {
-    strength: number;
-    dexterity: number;
-    constitution: number;
-    intelligence: number;
-    freePoints: number;
-  };
-}
-
-const CharacterCreator = () => {
+const CreateEnemy = () => {
   const { t } = useTranslation();
-  const characterService = useCharacterService();
+  const enemyService = useEnemyService();
 
-  const handleSubmitFunc = async (values: CharacterCreateRequest) => {
-    await characterService.create(values);
+  const handleSubmitFunc = async (values: EnemyCreateRequest) => {
+    await enemyService.create(values);
   };
 
-  const { values, errors, touched, handleChange, setFieldValue, handleSubmit } =
-    useFormik({
-      initialValues: {
-        name: "",
-        race: races[0],
-        sex: sexes[0],
-        characterClass: classes[0],
-        artwork: "HUMAN_MALE_1",
-        statistics: {
-          strength: 10,
-          dexterity: 10,
-          constitution: 10,
-          intelligence: 10,
-          freePoints: 50,
-        },
-      },
-      validationSchema: CharacterCreateSchema,
-      onSubmit: handleSubmitFunc,
-    });
-
-  useEffect(() => {
-    async function updateFreePoints() {
-      const newValue =
-        characterCreateMaxSkillpoints -
-        values.statistics.constitution -
-        values.statistics.strength -
-        values.statistics.dexterity -
-        values.statistics.intelligence;
-      await setFieldValue("statistics.freePoints", Math.max(0, newValue));
-    }
-    updateFreePoints().catch((error) => console.log(error));
-  }, [
-    values.statistics.constitution,
-    values.statistics.strength,
-    values.statistics.dexterity,
-    values.statistics.intelligence,
-    setFieldValue,
-  ]);
+  const { values, errors, touched, handleChange, handleSubmit } = useFormik({
+    initialValues: {
+      name: "",
+      hp: 0,
+      mana: 0,
+      damage: 0,
+      numberOfPotions: 0,
+      skillId: 0,
+      skillLevel: 0,
+      enemyStrategy: [],
+    },
+    validationSchema: EnemyCreateSchema,
+    onSubmit: handleSubmitFunc,
+  });
 
   return (
     <form onSubmit={handleSubmit}>
       <Flex color="white" w="100%" direction={{ base: "column", md: "row" }}>
         <Box p={8} bg="blackAlpha.800" color="white" flex="1">
-          <Heading mb={4}>{t("CHARACTER.CREATE")}</Heading>
+          <Heading mb={4}>{t("ENEMY.CREATE")}</Heading>
           <FormikInput
             error={errors.name}
             touched={touched.name}
@@ -96,40 +50,67 @@ const CharacterCreator = () => {
             handleChange={handleChange}
             inputType="text"
             inputName="name"
-            translationKey="CHARACTER.NAME"
+            translationKey="ENEMY.NAME"
           />
-          <FormikRadioGroup
-            error={errors.race}
-            touched={touched.race}
-            value={values.race}
+          <FormikInput
+            error={errors.hp}
+            touched={touched.hp}
+            value={values.hp}
             handleChange={handleChange}
-            radioValues={races}
-            inputName="race"
-            translationKey="CHARACTER.RACE"
+            inputType="number"
+            inputName="hp"
+            translationKey="STATISTICS.HP"
           />
-          <FormikRadioGroup
-            error={errors.sex}
-            touched={touched.sex}
-            value={values.sex}
+          <FormikInput
+            error={errors.mana}
+            touched={touched.mana}
+            value={values.mana}
             handleChange={handleChange}
-            radioValues={sexes}
-            inputName="sex"
-            translationKey="CHARACTER.SEX"
+            inputType="number"
+            inputName="mana"
+            translationKey="STATISTICS.MANA"
           />
-          <FormikRadioGroup
-            error={errors.characterClass}
-            touched={touched.characterClass}
-            value={values.characterClass}
+          <FormikInput
+            error={errors.damage}
+            touched={touched.damage}
+            value={values.damage}
             handleChange={handleChange}
-            radioValues={classes}
-            inputName="characterClass"
-            translationKey="CHARACTER.CLASS"
+            inputType="number"
+            inputName="damage"
+            translationKey="STATISTICS.DAMAGE"
           />
-          <ArtworkModal setFieldValue={setFieldValue} />
+          <FormikInput
+            error={errors.numberOfPotions}
+            touched={touched.numberOfPotions}
+            value={values.numberOfPotions}
+            handleChange={handleChange}
+            inputType="number"
+            inputName="numberOfPotions"
+            translationKey="STATISTICS.NUMBER_OF_POTIONS"
+          />
+          {/* TODO: Lista pobierana z BE */}
+          <FormikInput
+            error={errors.skillId}
+            touched={touched.skillId}
+            value={values.skillId}
+            handleChange={handleChange}
+            inputType="number"
+            inputName="skillId"
+            translationKey="SKILLS.NAME"
+          />
+          <FormikInput
+            error={errors.skillLevel}
+            touched={touched.skillLevel}
+            value={values.skillLevel}
+            handleChange={handleChange}
+            inputType="number"
+            inputName="skillLevel"
+            translationKey="SKILLS.LEVEL"
+          />
         </Box>
         <Box p={8} bg="blackAlpha.800" color="white" flex="2">
           <Heading mb={4}>{t("CHARACTER.STATISTICS.NAME")}</Heading>
-          <FormControl
+          {/* <FormControl
             id={"freePoints"}
             mb={4}
             isInvalid={errors.statistics?.freePoints != null}
@@ -186,11 +167,11 @@ const CharacterCreator = () => {
             type="submit"
           >
             {t("CHARACTER.CREATE")}
-          </Button>
+          </Button> */}
         </Box>
       </Flex>
     </form>
   );
 };
 
-export default CharacterCreator;
+export default CreateEnemy;

@@ -14,10 +14,15 @@ public class SkillCreateRequestDto {
     @NotBlank
     String name;
 
+    int manaCost;
+
     @NotNull
     SkillType type;
 
     float multiplier;
+
+    @Nullable
+    Float multiplierPerLevel;
 
     @Nullable
     SkillEffect effect;
@@ -26,7 +31,13 @@ public class SkillCreateRequestDto {
     Integer effectDuration;
 
     @Nullable
+    Integer effectDurationPerLevel;
+
+    @Nullable
     Float effectMultiplier;
+
+    @Nullable
+    Float effectMultiplierPerLevel;
 
     @NotNull
     CharacterClass characterClass;

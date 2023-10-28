@@ -57,13 +57,28 @@
             "CRITICAL_CHANCE": "Szansa ciosu krytycznego"
         }
     },
+    "ENEMY": {
+        "CREATION_SUCCESSFUL": "Przeciwnik stworzony pomyślnie"
+    },
+    "SKILL": {
+        "NAME": "Nazwa umiejętności",
+        "TYPE": {
+            "NAME": "Typ umiejętności",
+            "NORMAL_DAMAGE": "Obrażenia normalne",
+            "MAGIC_DAMAGE": "Obrażenia magiczne",
+            "DAMAGE_BOOST": "Zwiększenie obrażeń",
+            "DEFENCE_BOOST": "Zwiększenie obrony"
+        }
+    },
     "HOME_NAVBAR": {
         "CHARACTERS": "Postacie"
     },
     "VALIDATION": {
         "REQUIRED": "Pole wymagane",
         "PASSWORD_SHORT": "Hasło powinno zawierać minimum 8 znaków",
-        "NOT_EMAIL": "To nie jest format email"
+        "NOT_EMAIL": "To nie jest format email",
+        "MUST_BE_GREATER_THAN_0": "Wartość musi być większa od 0",
+        "MUST_BE_POSITIVE": "Wartość musi być dodatnia"
     },
     "ERROR": {
         "COMMUNICATION": "Nie można połączyć z serwerem.",

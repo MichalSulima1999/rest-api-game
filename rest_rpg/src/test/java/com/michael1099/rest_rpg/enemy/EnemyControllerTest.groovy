@@ -9,13 +9,9 @@ import org.openapitools.model.ErrorCodes
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 
-import java.util.stream.Collectors
-
 class EnemyControllerTest extends TestBase {
 
     def baseUrl = "/enemy"
-    def strategyEventUrl = baseUrl + "/strategy-event"
-    def strategyActionUrl = baseUrl + "/strategy-actions"
 
     @Autowired
     SkillServiceHelper skillServiceHelper
@@ -30,22 +26,6 @@ class EnemyControllerTest extends TestBase {
         enemyServiceHelper.clean()
         skillServiceHelper.clean()
         strategyElementRepository.deleteAll()
-    }
-
-    def "should get strategy element event"() {
-        when:
-            def response = httpGet(strategyEventUrl, List<String>, [accessToken: adminAccessToken])
-        then:
-            response.status == HttpStatus.OK
-            response.body.size() == Arrays.stream(ElementEvent.values()).map(Objects::toString).collect(Collectors.toList()).size()
-    }
-
-    def "should get strategy element action"() {
-        when:
-            def response = httpGet(strategyActionUrl, List<String>, [accessToken: adminAccessToken])
-        then:
-            response.status == HttpStatus.OK
-            response.body.size() == Arrays.stream(ElementAction.values()).map(Objects::toString).collect(Collectors.toList()).size()
     }
 
     def "should create enemy"() {

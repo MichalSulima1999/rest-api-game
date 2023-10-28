@@ -57,13 +57,18 @@
             "CRITICAL_CHANCE": "Critical chance"
         }
     },
+    "ENEMY": {
+        "CREATION_SUCCESSFUL": "Enemy created successfully"
+    },
     "HOME_NAVBAR": {
         "CHARACTERS": "Characters"
     },
     "VALIDATION": {
         "REQUIRED": "Required",
         "PASSWORD_SHORT": "The password should be at least 8 characters long.",
-        "NOT_EMAIL": "Not an email format."
+        "NOT_EMAIL": "Not an email format.",
+        "MUST_BE_GREATER_THAN_0": "Value must be greater than 0",
+        "MUST_BE_POSITIVE": "Value must be positive"
     },
     "ERROR": {
         "COMMUNICATION": "Can't communicate with server.",

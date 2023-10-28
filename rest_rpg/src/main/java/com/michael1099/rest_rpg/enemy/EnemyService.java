@@ -9,16 +9,12 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
-import org.openapitools.model.ElementAction;
-import org.openapitools.model.ElementEvent;
 import org.openapitools.model.EnemyCreateRequest;
 import org.openapitools.model.EnemyLite;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -31,14 +27,6 @@ public class EnemyService {
     private final StrategyElementRepository strategyElementRepository;
     private final EnemyMapper enemyMapper;
     private final SkillRepository skillRepository;
-
-    public List<String> getStrategyActionsEnum() {
-        return Arrays.stream(ElementAction.values()).map(Objects::toString).collect(Collectors.toList());
-    }
-
-    public List<String> getStrategyEventsEnum() {
-        return Arrays.stream(ElementEvent.values()).map(Objects::toString).collect(Collectors.toList());
-    }
 
     @Transactional
     public EnemyLite createEnemy(@NotNull EnemyCreateRequest enemyCreateRequest) {

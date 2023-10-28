@@ -1,6 +1,7 @@
 package com.michael1099.rest_rpg.enemy.model;
 
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Value;
 import org.openapitools.model.ElementAction;
 import org.openapitools.model.ElementEvent;
@@ -14,5 +15,6 @@ public class StrategyElementCreateRequestDto {
     @NotNull
     ElementAction action;
 
+    @PositiveOrZero
     int priority;
 }
