@@ -194,10 +194,6 @@
                                 <interfaceOnly>true</interfaceOnly>
                                 <useJakartaEe>true</useJakartaEe>
                             </configOptions>
-                            <typeMappings>
-                                <typeMapping>page=org.springframework.data.domain.Page</typeMapping>
-                            </typeMappings>
-                            <schemaMappings>SkillBasicPage=org.springframework.data.domain.Page&lt;org.openapitools.model.SkillBasic&gt;</schemaMappings>
                         </configuration>
                     </execution>
                 </executions>

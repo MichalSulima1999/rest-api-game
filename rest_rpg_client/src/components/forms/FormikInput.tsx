@@ -11,12 +11,13 @@ type Props = {
   error?: string;
   touched?: boolean;
   value: string | number | undefined;
-  handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  handleChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   inputType: "text" | "number";
   inputName: string;
   translationKey: string;
   step?: number;
   isRequired?: boolean;
+  disabled?: boolean;
 };
 
 const FormikInput = ({
@@ -29,6 +30,7 @@ const FormikInput = ({
   translationKey,
   step = 1,
   isRequired = true,
+  disabled = false,
 }: Props) => {
   const { t } = useTranslation();
   return (
@@ -40,6 +42,7 @@ const FormikInput = ({
     >
       <FormLabel>{t(translationKey)}</FormLabel>
       <Input
+        disabled={disabled}
         name={inputName}
         type={inputType}
         value={value}

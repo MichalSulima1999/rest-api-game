@@ -26,7 +26,8 @@ class SkillServiceHelper {
                 effect         : SkillEffect.BLEEDING,
                 enemy          : null,
                 characterClass : CharacterClass.WARRIOR,
-                characterSkills: new HashSet<CharacterSkill>()
+                characterSkills: new HashSet<CharacterSkill>(),
+                deleted        : false
         ]
         args << customArgs
 
@@ -38,6 +39,7 @@ class SkillServiceHelper {
                 .enemy(args.enemy)
                 .characterClass(args.characterClass)
                 .characters(args.characterSkills)
+                .deleted(args.deleted)
                 .build()
 
         return skillRepository.save(skill)

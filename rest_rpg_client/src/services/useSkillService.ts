@@ -8,8 +8,10 @@ import {
   DefaultApiFp,
   SkillCreateRequest,
   SkillLite,
+  SkillLites,
 } from "../generated-sources/openapi";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import useServiceHelper from "./helpers/useServiceHelper";
 
 const useSkillService = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -18,6 +20,7 @@ const useSkillService = () => {
   const { t } = useTranslation();
   const axiosPrivate = useAxiosPrivate();
   const api = DefaultApiFp();
+  const { getResources } = useServiceHelper();
 
   const create = async (request: SkillCreateRequest): Promise<SkillLite> => {
     request.effect = request.effect ? request.effect : undefined;
@@ -47,9 +50,19 @@ const useSkillService = () => {
       .finally(() => setIsLoading(false));
   };
 
+  const getAllSkills = async (): Promise<SkillLites | undefined> => {
+    setIsLoading(true);
+    const getSkills = await api.getSkills({
+      withCredentials: true,
+    });
+
+    return getResources(getSkills, setIsLoading);
+  };
+
   return {
     isLoading,
     create,
+    getAllSkills,
   };
 };
 

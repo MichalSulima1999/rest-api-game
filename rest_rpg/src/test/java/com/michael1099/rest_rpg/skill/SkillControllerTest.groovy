@@ -5,6 +5,7 @@ import org.openapitools.model.ErrorCodes
 import org.openapitools.model.SkillBasicPage
 import org.openapitools.model.SkillDetails
 import org.openapitools.model.SkillLite
+import org.openapitools.model.SkillLites
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 
@@ -65,5 +66,17 @@ class SkillControllerTest extends TestBase {
         then:
             response.status == HttpStatus.OK
             SkillHelper.compare(skill, response.body)
+    }
+
+    def "should get skills"() {
+        given:
+            def skill1 = skillServiceHelper.createSkill(name: "Fireball")
+            def skill2 = skillServiceHelper.createSkill(name: "Skill")
+            skillServiceHelper.createSkill(name: "Skill 2", deleted: true)
+        when:
+            def response = httpGet(baseUrl, SkillLites, [accessToken: adminAccessToken])
+        then:
+            response.status == HttpStatus.OK
+            SkillHelper.compare([skill1, skill2], response.body)
     }
 }

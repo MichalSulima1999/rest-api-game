@@ -7,6 +7,10 @@ export const skillEffects = Object.values(SkillEffect);
 
 export const SkillCreateSchema = Yup.object().shape({
   name: Yup.string().required("REQUIRED"),
+  manaCost: Yup.number()
+    .integer("MUST_BE_INTEGER")
+    .min(1, "MUST_BE_GREATER_THAN_0")
+    .required("REQUIRED"),
   type: Yup.string().oneOf(skillTypes, "WRONG_SKILL_TYPE").required("REQUIRED"),
   multiplier: Yup.number()
     .min(0.05, "MUST_BE_GREATER_THAN_0")
@@ -16,9 +20,12 @@ export const SkillCreateSchema = Yup.object().shape({
     .required("REQUIRED"),
   effect: Yup.string().oneOf(skillEffects, "WRONG_SKILL_EFFECT"),
   effectDuration: Yup.number().min(1, "MUST_BE_GREATER_THAN_0"),
-  effectDurationPerLevel: Yup.number().min(1, "MUST_BE_POSITIVE"),
-  effectMultiplier: Yup.number().min(0.5, "MUST_BE_POSITIVE"),
-  effectMultiplierPerLevel: Yup.number().min(0.5, "MUST_BE_POSITIVE"),
+  effectDurationPerLevel: Yup.number()
+    .integer("MUST_BE_INTEGER")
+    .min(1, "MUST_BE_POSITIVE"),
+  effectMultiplier: Yup.number()
+    .min(0.05, "MUST_BE_POSITIVE"),
+  effectMultiplierPerLevel: Yup.number().min(0.05, "MUST_BE_POSITIVE"),
   characterClass: Yup.string()
     .oneOf(classes, "WRONG_CLASS")
     .required("REQUIRED"),

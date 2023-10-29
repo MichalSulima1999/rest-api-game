@@ -162,6 +162,17 @@ paths:
               schema:
                 $ref: '#/components/schemas/EnemyLite'
   /skill:
+    get:
+      summary: Get all skills
+      operationId: getSkills
+      x-preauth: "hasAuthority('ADMIN')"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SkillLites'
     post:
       summary: Creates new skill.
       operationId: createSkill
@@ -244,14 +255,16 @@ components:
     ElementEvent:
       type: string
       enum:
-        - HEALTH_20_40
-        - HEALTH_40_60
-        - HEALTH_60_80
-        - HEALTH_80_100
+        - PLAYER_HEALTH_0_20
+        - PLAYER_HEALTH_20_40
+        - PLAYER_HEALTH_40_60
+        - PLAYER_HEALTH_60_80
+        - PLAYER_HEALTH_80_100
+        - ENEMY_HEALTH_0_20
         - ENEMY_HEALTH_20_40
         - ENEMY_HEALTH_40_60
         - ENEMY_HEALTH_60_80
-        - ENEMY_HEALTH_80_10
+        - ENEMY_HEALTH_80_100
     ElementAction:
       type: string
       enum:
@@ -636,6 +649,13 @@ components:
         name:
           description: Skill name
           type: string
+    SkillLites:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/SkillLite'
     Page:
       type: object
       description: Page info

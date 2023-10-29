@@ -1,23 +1,37 @@
-import React from "react";
+import { useEffect, useState } from "react";
 import useEnemyService from "../../../services/useEnemyService";
-import { EnemyCreateRequest } from "../../../generated-sources/openapi";
-import { useTranslation } from "react-i18next";
-import { EnemyCreateSchema } from "../../../validation/enemy/EnemyValidation";
-import { useFormik } from "formik";
 import {
-  Box,
-  Button,
-  Flex,
-  FormControl,
-  Heading,
-  Text,
-} from "@chakra-ui/react";
+  EnemyCreateRequest,
+  SkillLites,
+  StrategyElementCreateRequest,
+} from "../../../generated-sources/openapi";
+import { useTranslation } from "react-i18next";
+import {
+  EnemyCreateSchema,
+  strategyActions,
+  strategyEvents,
+} from "../../../validation/enemy/EnemyValidation";
+import { FormikErrors, useFormik } from "formik";
+import { Box, Button, Flex, Heading, Skeleton } from "@chakra-ui/react";
 import FormikInput from "../../forms/FormikInput";
-import FormikRadioGroup from "../../forms/FormikRadioGroup";
+import FormikSelect from "../../forms/FormikSelect";
+import useSkillService from "../../../services/useSkillService";
 
 const CreateEnemy = () => {
   const { t } = useTranslation();
   const enemyService = useEnemyService();
+  const skillService = useSkillService();
+  const [skills, setSkills] = useState<SkillLites>();
+
+  useEffect(() => {
+    async function getSkills() {
+      const skills = await skillService.getAllSkills();
+      if (skills) {
+        setSkills(skills);
+      }
+    }
+    getSkills().catch((error) => console.log(error));
+  }, []);
 
   const handleSubmitFunc = async (values: EnemyCreateRequest) => {
     await enemyService.create(values);
@@ -32,7 +46,11 @@ const CreateEnemy = () => {
       numberOfPotions: 0,
       skillId: 0,
       skillLevel: 0,
-      enemyStrategy: [],
+      enemyStrategy: strategyEvents.map((el) => ({
+        event: el,
+        action: strategyActions[0],
+        priority: 1,
+      })),
     },
     validationSchema: EnemyCreateSchema,
     onSubmit: handleSubmitFunc,
@@ -59,7 +77,7 @@ const CreateEnemy = () => {
             handleChange={handleChange}
             inputType="number"
             inputName="hp"
-            translationKey="STATISTICS.HP"
+            translationKey="CHARACTER.STATISTICS.HP"
           />
           <FormikInput
             error={errors.mana}
@@ -68,7 +86,7 @@ const CreateEnemy = () => {
             handleChange={handleChange}
             inputType="number"
             inputName="mana"
-            translationKey="STATISTICS.MANA"
+            translationKey="CHARACTER.STATISTICS.MANA"
           />
           <FormikInput
             error={errors.damage}
@@ -77,7 +95,7 @@ const CreateEnemy = () => {
             handleChange={handleChange}
             inputType="number"
             inputName="damage"
-            translationKey="STATISTICS.DAMAGE"
+            translationKey="CHARACTER.STATISTICS.DAMAGE"
           />
           <FormikInput
             error={errors.numberOfPotions}
@@ -86,18 +104,23 @@ const CreateEnemy = () => {
             handleChange={handleChange}
             inputType="number"
             inputName="numberOfPotions"
-            translationKey="STATISTICS.NUMBER_OF_POTIONS"
+            translationKey="CHARACTER.STATISTICS.NUMBER_OF_POTIONS"
           />
-          {/* TODO: Lista pobierana z BE */}
-          <FormikInput
-            error={errors.skillId}
-            touched={touched.skillId}
-            value={values.skillId}
-            handleChange={handleChange}
-            inputType="number"
-            inputName="skillId"
-            translationKey="SKILLS.NAME"
-          />
+          <Skeleton isLoaded={!skillService.isLoading}>
+            <FormikSelect
+              error={errors.skillId}
+              touched={touched.skillId}
+              value={values.skillId}
+              handleChange={handleChange}
+              selectValues={skills?.content?.map(({ id: value, name }) => ({
+                value,
+                name,
+              }))}
+              inputName="skillId"
+              translationKey="SKILL"
+              placeholder={t("SKILL.NAME")}
+            />
+          </Skeleton>
           <FormikInput
             error={errors.skillLevel}
             touched={touched.skillLevel}
@@ -105,69 +128,97 @@ const CreateEnemy = () => {
             handleChange={handleChange}
             inputType="number"
             inputName="skillLevel"
-            translationKey="SKILLS.LEVEL"
+            translationKey="SKILL.LEVEL"
           />
         </Box>
-        <Box p={8} bg="blackAlpha.800" color="white" flex="2">
-          <Heading mb={4}>{t("CHARACTER.STATISTICS.NAME")}</Heading>
-          {/* <FormControl
-            id={"freePoints"}
-            mb={4}
-            isInvalid={errors.statistics?.freePoints != null}
-          >
-            <Text onClick={() => console.log(errors)} fontSize="md">
-              {t("CHARACTER.STATISTICS.FREE_POINTS")}:{" "}
-              {values.statistics.freePoints}
-            </Text>
-            <Text>
-              {errors.statistics?.freePoints &&
-                t(`VALIDATION.${errors.statistics.freePoints}`)}
-            </Text>
-          </FormControl>
-          <FormikInput
-            error={errors.statistics?.strength}
-            touched={touched.statistics?.strength}
-            value={values.statistics?.strength}
-            handleChange={handleChange}
-            inputType="number"
-            inputName="statistics.strength"
-            translationKey="CHARACTER.STATISTICS.STRENGTH"
-          />
-          <FormikInput
-            error={errors.statistics?.dexterity}
-            touched={touched.statistics?.dexterity}
-            value={values.statistics?.dexterity}
-            handleChange={handleChange}
-            inputType="number"
-            inputName="statistics.dexterity"
-            translationKey="CHARACTER.STATISTICS.DEXTERITY"
-          />
-          <FormikInput
-            error={errors.statistics?.intelligence}
-            touched={touched.statistics?.intelligence}
-            value={values.statistics?.intelligence}
-            handleChange={handleChange}
-            inputType="number"
-            inputName="statistics.intelligence"
-            translationKey="CHARACTER.STATISTICS.INTELLIGENCE"
-          />
-          <FormikInput
-            error={errors.statistics?.constitution}
-            touched={touched.statistics?.constitution}
-            value={values.statistics?.constitution}
-            handleChange={handleChange}
-            inputType="number"
-            inputName="statistics.constitution"
-            translationKey="CHARACTER.STATISTICS.CONSTITUTION"
-          />
+        <Box p={8} bg="blackAlpha.800" color="white" flex="3">
+          <Heading mb={4}>{t("STRATEGY.NAME")}</Heading>
+          {strategyEvents.map((el, i) => (
+            <>
+              <Flex
+                key={el}
+                align={"baseline"}
+                color="white"
+                w="100%"
+                direction={{ base: "column", md: "row" }}
+              >
+                <Box flex={2}>
+                  <FormikInput
+                    error={
+                      errors.enemyStrategy &&
+                      errors.enemyStrategy[i] &&
+                      (
+                        errors.enemyStrategy[
+                          i
+                        ] as FormikErrors<StrategyElementCreateRequest>
+                      ).event
+                    }
+                    touched={
+                      touched.enemyStrategy && touched.enemyStrategy[i].event
+                    }
+                    value={t(`STRATEGY.${values.enemyStrategy[i].event}`)}
+                    inputType="text"
+                    inputName={`enemyStrategy[${i}].event`}
+                    translationKey="STRATEGY.EVENT"
+                    disabled
+                  />
+                </Box>
+                <Box flex={3}>
+                  <FormikSelect
+                    error={
+                      errors.enemyStrategy &&
+                      errors.enemyStrategy[i] &&
+                      (
+                        errors.enemyStrategy[
+                          i
+                        ] as FormikErrors<StrategyElementCreateRequest>
+                      ).action
+                    }
+                    touched={
+                      touched.enemyStrategy && touched.enemyStrategy[i].action
+                    }
+                    value={values.enemyStrategy[i].action}
+                    handleChange={handleChange}
+                    selectValues={strategyActions.map((action) => ({
+                      name: t(`STRATEGY.${action}`),
+                      value: action,
+                    }))}
+                    inputName={`enemyStrategy[${i}].action`}
+                    translationKey="STRATEGY.ACTION"
+                  />
+                </Box>
+                <Box flex={1}>
+                  <FormikInput
+                    error={
+                      errors.enemyStrategy &&
+                      errors.enemyStrategy[i] &&
+                      (
+                        errors.enemyStrategy[
+                          i
+                        ] as FormikErrors<StrategyElementCreateRequest>
+                      ).priority
+                    }
+                    touched={
+                      touched.enemyStrategy && touched.enemyStrategy[i].priority
+                    }
+                    value={values.enemyStrategy[i].priority}
+                    handleChange={handleChange}
+                    inputType="number"
+                    inputName={`enemyStrategy[${i}].priority`}
+                    translationKey="STRATEGY.PRIORITY"
+                  />
+                </Box>
+              </Flex>
+            </>
+          ))}
           <Button
             mt={4}
             colorScheme="teal"
-            isLoading={characterService.isLoading}
+            isLoading={enemyService.isLoading}
             type="submit"
           >
             {t("CHARACTER.CREATE")}
-          </Button> */}
+          </Button>
         </Box>
       </Flex>
     </form>

@@ -51,7 +51,7 @@ const Navbar = observer(() => {
         <Flex alignItems="center">
           {logged === "ADMIN" && (
             <Link as={RouterLink} to="/admin/home" mx={2}>
-              {t("ADMIN.NAVBAR.HOME")}
+              {t("NAVBAR.HOME")}
             </Link>
           )}
           {logged === "USER" && (

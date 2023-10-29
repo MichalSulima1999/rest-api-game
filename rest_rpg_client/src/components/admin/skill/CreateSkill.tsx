@@ -1,7 +1,7 @@
 import { SkillCreateRequest } from "../../../generated-sources/openapi";
 import { useTranslation } from "react-i18next";
 import { useFormik } from "formik";
-import { Box, Button, Flex, Heading } from "@chakra-ui/react";
+import { Box, Button, Flex, HStack, Heading } from "@chakra-ui/react";
 import FormikInput from "../../forms/FormikInput";
 import useSkillService from "../../../services/useSkillService";
 import {
@@ -23,6 +23,7 @@ const CreateSkill = () => {
   const { values, errors, touched, handleChange, handleSubmit } = useFormik({
     initialValues: {
       name: "",
+      manaCost: 0,
       type: skillTypes[0],
       multiplier: 0,
       multiplierPerLevel: 0,
@@ -69,26 +70,37 @@ const CreateSkill = () => {
             inputName="characterClass"
             translationKey="CHARACTER.CLASS"
           />
-          <FormikInput
-            error={errors.multiplier}
-            touched={touched.multiplier}
-            value={values.multiplier}
-            handleChange={handleChange}
-            inputType="number"
-            step={0.05}
-            inputName="multiplier"
-            translationKey="SKILL.MULTIPLIER"
-          />
-          <FormikInput
-            error={errors.multiplierPerLevel}
-            touched={touched.multiplierPerLevel}
-            value={values.multiplierPerLevel}
-            handleChange={handleChange}
-            inputType="number"
-            step={0.05}
-            inputName="multiplierPerLevel"
-            translationKey="SKILL.MULTIPLIER_PER_LEVEL"
-          />
+          <HStack spacing="8px" align={"end"}>
+            <FormikInput
+              error={errors.manaCost}
+              touched={touched.manaCost}
+              value={values.manaCost}
+              handleChange={handleChange}
+              inputType="number"
+              inputName="manaCost"
+              translationKey="SKILL.MANA_COST"
+            />
+            <FormikInput
+              error={errors.multiplier}
+              touched={touched.multiplier}
+              value={values.multiplier}
+              handleChange={handleChange}
+              inputType="number"
+              step={0.05}
+              inputName="multiplier"
+              translationKey="SKILL.MULTIPLIER"
+            />
+            <FormikInput
+              error={errors.multiplierPerLevel}
+              touched={touched.multiplierPerLevel}
+              value={values.multiplierPerLevel}
+              handleChange={handleChange}
+              inputType="number"
+              step={0.05}
+              inputName="multiplierPerLevel"
+              translationKey="SKILL.MULTIPLIER_PER_LEVEL"
+            />
+          </HStack>
         </Box>
         <Box p={8} bg="blackAlpha.800" color="white" flex="1">
           <Heading mb={4}>{t("SKILL.EFFECT.NAME")}</Heading>
@@ -102,48 +114,53 @@ const CreateSkill = () => {
             translationKey="SKILL.EFFECT"
             isRequired={false}
           />
-          <FormikInput
-            error={errors.effectDuration}
-            touched={touched.effectDuration}
-            value={values.effectDuration}
-            handleChange={handleChange}
-            inputType="number"
-            inputName="effectDuration"
-            translationKey="SKILL.EFFECT_DURATION"
-            isRequired={false}
-          />
-          <FormikInput
-            error={errors.effectDurationPerLevel}
-            touched={touched.effectDurationPerLevel}
-            value={values.effectDurationPerLevel}
-            handleChange={handleChange}
-            inputType="number"
-            inputName="effectDurationPerLevel"
-            translationKey="SKILL.EFFECT_DURATION_PER_LEVEL"
-            isRequired={false}
-          />
-          <FormikInput
-            error={errors.effectMultiplier}
-            touched={touched.effectMultiplier}
-            value={values.effectMultiplier}
-            handleChange={handleChange}
-            inputType="number"
-            step={0.05}
-            inputName="effectMultiplier"
-            translationKey="SKILL.EFFECT_MULTIPLIER"
-            isRequired={false}
-          />
-          <FormikInput
-            error={errors.effectMultiplierPerLevel}
-            touched={touched.effectMultiplierPerLevel}
-            value={values.effectMultiplierPerLevel}
-            handleChange={handleChange}
-            inputType="number"
-            step={0.05}
-            inputName="effectMultiplierPerLevel"
-            translationKey="SKILL.MULTIPLIER_PER_LEVEL"
-            isRequired={false}
-          />
+          <HStack spacing="8px">
+            <FormikInput
+              error={errors.effectDuration}
+              touched={touched.effectDuration}
+              value={values.effectDuration}
+              handleChange={handleChange}
+              inputType="number"
+              inputName="effectDuration"
+              translationKey="SKILL.EFFECT.DURATION"
+              isRequired={false}
+            />
+            <FormikInput
+              error={errors.effectDurationPerLevel}
+              touched={touched.effectDurationPerLevel}
+              value={values.effectDurationPerLevel}
+              handleChange={handleChange}
+              inputType="number"
+              inputName="effectDurationPerLevel"
+              translationKey="SKILL.EFFECT.DURATION_PER_LEVEL"
+              isRequired={false}
+            />
+          </HStack>
+
+          <HStack spacing="8px">
+            <FormikInput
+              error={errors.effectMultiplier}
+              touched={touched.effectMultiplier}
+              value={values.effectMultiplier}
+              handleChange={handleChange}
+              inputType="number"
+              step={0.05}
+              inputName="effectMultiplier"
+              translationKey="SKILL.EFFECT.MULTIPLIER"
+              isRequired={false}
+            />
+            <FormikInput
+              error={errors.effectMultiplierPerLevel}
+              touched={touched.effectMultiplierPerLevel}
+              value={values.effectMultiplierPerLevel}
+              handleChange={handleChange}
+              inputType="number"
+              step={0.05}
+              inputName="effectMultiplierPerLevel"
+              translationKey="SKILL.EFFECT.MULTIPLIER_PER_LEVEL"
+              isRequired={false}
+            />
+          </HStack>
           <Button
             mt={4}
             colorScheme="teal"

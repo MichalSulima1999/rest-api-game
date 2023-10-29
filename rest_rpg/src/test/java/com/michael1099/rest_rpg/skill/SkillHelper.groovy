@@ -9,6 +9,7 @@ import org.openapitools.model.SkillCreateRequest
 import org.openapitools.model.SkillDetails
 import org.openapitools.model.SkillEffect
 import org.openapitools.model.SkillLite
+import org.openapitools.model.SkillLites
 import org.openapitools.model.SkillSearchRequest
 import org.openapitools.model.SkillType
 
@@ -48,6 +49,23 @@ class SkillHelper {
 
     static boolean compare(SkillCreateRequest request, SkillLite skillLite) {
         assert request.name == skillLite.name
+
+        true
+    }
+
+    static boolean compare(Skill skill, SkillLite skillLite) {
+        assert skill.id == skillLite.id
+        assert skill.name == skillLite.name
+
+        true
+    }
+
+    static boolean compare(List<Skill> skills, SkillLites skillLites) {
+        def skillLiteList = skillLites.content
+        assert skills.size() == skillLiteList.size()
+        skills = skills.sort { it.id }
+        skillLiteList = skillLiteList.sort { it.id }
+        assert skills.withIndex().every { compare(it.v1, skillLiteList[it.v2]) }
 
         true
     }

@@ -54,21 +54,66 @@
             "MAGIC_DAMAGE": "Obrażenia magiczne",
             "ARMOR": "Pancerz",
             "DODGE_CHANCE": "Szansa uniku",
-            "CRITICAL_CHANCE": "Szansa ciosu krytycznego"
+            "CRITICAL_CHANCE": "Szansa ciosu krytycznego",
+            "NUMBER_OF_POTIONS": "Liczba mikstur zdrowia"
         }
     },
     "ENEMY": {
+        "NAME": "Nazwa przeciwnika",
+        "CREATE": "Stwórz przeciwnika",
         "CREATION_SUCCESSFUL": "Przeciwnik stworzony pomyślnie"
+    },
+    "STRATEGY": {
+        "NAME": "Strategia podczas ataku specjalnego",
+        "EVENT": "Wydarzenie",
+        "NORMAL_ATTACK": "Zwykły atak",
+        "SPECIAL_ATTACK": "Atak specjalny",
+        "USE_POTION": "Użyj mikstury zdrowia",
+        "PRIORITY": "Priorytet",
+        "PLAYER_HEALTH_0_20": "Zdrowie gracza 0%-20%",
+        "PLAYER_HEALTH_20_40": "Zdrowie gracza 20%-40%",
+        "PLAYER_HEALTH_40_60": "Zdrowie gracza 40%-60%",
+        "PLAYER_HEALTH_60_80": "Zdrowie gracza 60%-80%",
+        "PLAYER_HEALTH_80_100": "Zdrowie gracza 80%-100%",
+        "ENEMY_HEALTH_0_20": "Zdrowie przeciwnika 0%-20%",
+        "ENEMY_HEALTH_20_40": "Zdrowie przeciwnika 20%-40%",
+        "ENEMY_HEALTH_40_60": "Zdrowie przeciwnika 40%-60%",
+        "ENEMY_HEALTH_60_80": "Zdrowie przeciwnika 60%-80%",
+        "ENEMY_HEALTH_80_100": "Zdrowie przeciwnika 80%-100%",
+        "ACTION": {
+            "NAME": "Akcja"
+        }
     },
     "SKILL": {
         "NAME": "Nazwa umiejętności",
+        "CREATION_SUCCESSFUL": "Umiejętność stworzona pomyślnie",
+        "CREATE": "Stwórz umiejętność",
+        "LEVEL": "Poziom umiejętności",
         "TYPE": {
             "NAME": "Typ umiejętności",
             "NORMAL_DAMAGE": "Obrażenia normalne",
             "MAGIC_DAMAGE": "Obrażenia magiczne",
             "DAMAGE_BOOST": "Zwiększenie obrażeń",
-            "DEFENCE_BOOST": "Zwiększenie obrony"
+            "DEFENCE_BOOST": "Zwiększenie obrony",
+            "DAMAGE_DEFENCE_BOOST": "Zwiększenie obrony i obrażeń"
+        },
+        "MANA_COST": "Koszt many",
+        "MULTIPLIER": "Mnożnik siły umiejętności",
+        "MULTIPLIER_PER_LEVEL": "Mnożnik co poziom",
+        "EFFECT": {
+            "NAME": "Efekt",
+            "BLEEDING": "Krwawienie",
+            "BURNING": "Podpalenie",
+            "STUNNED": "Ogłuszenie",
+            "WEAKNESS": "Osłabienie",
+            "DURATION": "Długość działania",
+            "DURATION_PER_LEVEL": "Długość działania co poziom",
+            "MULTIPLIER": "Mnożnik siły efektu",
+            "MULTIPLIER_PER_LEVEL": "Mnożnik siły co poziom"
         }
+    },
+    "INPUT": {
+        "NONE": "Brak"
     },
     "HOME_NAVBAR": {
         "CHARACTERS": "Postacie"
@@ -83,7 +128,7 @@
     "ERROR": {
         "COMMUNICATION": "Nie można połączyć z serwerem.",
         "EMPTY_JWT": "Token jest pusty.",
-        "Access Denied": "Dostęp zabrioniony.",
+        "Access Denied": "Dostęp zabroniony.",
         "JWT_EXPIRED": "Wylogowano - token wygasł.",
         "USER_NOT_FOUND": "Nie znaleziono użytkownika.",
         "REFRESH_TOKEN_NOT_FOUND": "Wylogowano - nie znaleziono refresh tokena.",

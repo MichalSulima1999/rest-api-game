@@ -25,12 +25,13 @@ const theme = extendTheme({
 interface TileProps {
   title: string;
   imageUrl: string;
+  linkTo: string;
 }
 
-function Tile({ title, imageUrl }: TileProps) {
+function Tile({ title, imageUrl, linkTo }: TileProps) {
   return (
     <Box maxW="sm" borderWidth="1px" borderRadius="lg" overflow="hidden">
-      <Link to="/admin/enemy/create">
+      <Link to={linkTo}>
         <Image src={imageUrl} alt={title} />
         <Box p="6">
           <Box
@@ -53,11 +54,15 @@ const AdminHome = () => {
 
   const tiles: TileProps[] = [
     {
-      title: t("ADMIN.ENEMY.CREATE"),
+      title: t("ENEMY.CREATE"),
       imageUrl: "https://cdn-icons-png.flaticon.com/512/1477/1477179.png",
+      linkTo: "/admin/enemy/create",
     },
-    { title: "Tile 2", imageUrl: "url_do_obrazka_2.jpg" },
-    { title: "Tile 3", imageUrl: "url_do_obrazka_3.jpg" },
+    {
+      title: t("SKILL.CREATE"),
+      imageUrl: "/images/skill.png",
+      linkTo: "/admin/skill/create",
+    },
   ];
 
   return (
@@ -65,7 +70,11 @@ const AdminHome = () => {
       <Grid bg="blackAlpha.800" templateColumns="repeat(3, 1fr)" gap={4}>
         {tiles.map((tile, index) => (
           <GridItem key={index}>
-            <Tile title={tile.title} imageUrl={tile.imageUrl} />
+            <Tile
+              title={tile.title}
+              imageUrl={tile.imageUrl}
+              linkTo={tile.linkTo}
+            />
           </GridItem>
         ))}
       </Grid>

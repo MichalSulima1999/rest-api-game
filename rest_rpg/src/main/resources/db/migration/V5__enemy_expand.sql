@@ -35,8 +35,8 @@ ALTER TABLE fight ADD enemy_current_mana INT NULL;
 ALTER TABLE skill DROP COLUMN race;
 ALTER TABLE skill ADD character_class VARCHAR(255) NULL;
 ALTER TABLE skill ADD multiplier_per_level FLOAT NULL;
-ALTER TABLE skill ADD effect_duration_per_level FLOAT NULL;
-ALTER TABLE skill ADD effect_multiplier_per_level INT NULL;
+ALTER TABLE skill ADD effect_duration_per_level INT NULL;
+ALTER TABLE skill ADD effect_multiplier_per_level FLOAT NULL;
 ALTER TABLE skill ADD mana_cost INT NOT NULL;
 
 ALTER TABLE strategy_element_enemy ADD CONSTRAINT fk_streleenestr_on_enemy FOREIGN KEY (enemy_id) REFERENCES enemy (id);
