@@ -33,14 +33,14 @@ const lngs: Languages = {
 };
 
 const Navbar = observer(() => {
-  const [logged, setLogged] = useState(false);
+  const [logged, setLogged] = useState("");
   const { authStore } = useStores();
   const { t, i18n } = useTranslation();
   const logout = useLogout();
 
   useEffect(() => {
-    setLogged(authStore.accessToken != "");
-  }, [authStore.accessToken]);
+    setLogged(authStore.role?.toUpperCase());
+  }, [authStore.role]);
 
   return (
     <Box bg="gray.900" color="gray.100" py={4} px={8} width="100vw">
@@ -49,7 +49,22 @@ const Navbar = observer(() => {
           {t("NAVBAR.TITLE")}
         </Link>
         <Flex alignItems="center">
-          {logged && <CharactersPopover />}
+          {logged === "ADMIN" && (
+            <Link as={RouterLink} to="/admin/home" mx={2}>
+              {t("NAVBAR.HOME")}
+            </Link>
+          )}
+          {logged === "USER" && (
+            <>
+              <CharactersPopover />
+              <Link as={RouterLink} to="/user/home" mx={2}>
+                {t("NAVBAR.HOME")}
+              </Link>
+              <Link as={RouterLink} to="/user/character/create" mx={2}>
+                {t("CHARACTER.CREATE")}
+              </Link>
+            </>
+          )}
           <Menu>
             <MenuButton
               as={Button}
@@ -78,9 +93,6 @@ const Navbar = observer(() => {
               ))}
             </MenuList>
           </Menu>
-          <Link as={RouterLink} to="/home" mx={2}>
-            {t("NAVBAR.HOME")}
-          </Link>
           {authStore.username}
           {!logged && (
             <>

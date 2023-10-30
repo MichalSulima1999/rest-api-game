@@ -18,7 +18,7 @@ const HomeNavbar = () => {
           <Flex alignItems="center">
             <Link
               as={RouterLink}
-              to={`/character/${characterId}/statistics`}
+              to={`/user/character/${characterId}/statistics`}
               fontSize="xl"
               fontWeight="bold"
             >

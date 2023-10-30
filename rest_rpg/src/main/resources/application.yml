@@ -7,8 +7,11 @@ spring:
     url: jdbc:mysql://localhost:3306/rest_rpg?createDatabaseIfNotExist=true&autoReconnect=true&useSSL=false
     platform: mysql
   jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
     database: mysql
   mail:
     host: ${mock-mail.host}

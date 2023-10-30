@@ -14,7 +14,7 @@ import {
   Skeleton,
   Text,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import useCharacterService, {
   THUMBNAIL_URL,
 } from "../../services/useCharacterService";
@@ -24,19 +24,25 @@ import { Link } from "react-router-dom";
 
 const CharactersPopover = () => {
   const [characters, setCharacters] = useState<CharacterBasics | undefined>();
+  const [loadCharacters, setLoadCharacters] = useState<boolean>(true);
   const { t } = useTranslation();
   const characterService = useCharacterService();
 
-  useEffect(() => {
-    async function getCharacters() {
+  const getCharacters = async () => {
+    if (loadCharacters) {
       setCharacters(await characterService.getUserCharacters());
     }
-    getCharacters().catch((error) => console.log(error));
-  }, []);
+    setLoadCharacters(!loadCharacters);
+  };
 
   return (
     <Box>
-      <Popover placement="left">
+      <Popover
+        placement="left"
+        onOpen={() => {
+          void getCharacters();
+        }}
+      >
         <PopoverTrigger>
           <Button isLoading={characterService.isLoading}>
             {t("HOME_NAVBAR.CHARACTERS")}
@@ -53,7 +59,7 @@ const CharactersPopover = () => {
                   characters?.content &&
                   characters.content.map((character) => (
                     <GridItem>
-                      <Link to={`/character/${character.id}/main`}>
+                      <Link to={`/user/character/${character.id}/main`}>
                         <Box bg="blackAlpha.900">
                           <Text fontSize="xl">{character.name}</Text>
                           <Text fontSize="md">

@@ -1,7 +1,7 @@
 package com.michael1099.rest_rpg.character_skill;
 
 import com.michael1099.rest_rpg.character.model.Character;
-import com.michael1099.rest_rpg.skill.Skill;
+import com.michael1099.rest_rpg.skill.model.Skill;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

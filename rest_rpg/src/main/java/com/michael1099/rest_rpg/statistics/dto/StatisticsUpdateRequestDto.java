@@ -1,11 +1,9 @@
 package com.michael1099.rest_rpg.statistics.dto;
 
 import jakarta.validation.constraints.Min;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Value;
 
-@Getter
-@Setter
+@Value
 public class StatisticsUpdateRequestDto {
 
     @Min(0)

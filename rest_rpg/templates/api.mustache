@@ -154,6 +154,7 @@ import {{javaxPackage}}.annotation.Generated;
                 @ApiVirtual
         {{/virtualService}}
         {{#swagger2AnnotationLibrary}}
+            {{^vendorExtensions.x-deleteResponseAnnotation}}
                 @Operation(
                 operationId = "{{{operationId}}}",
             {{#summary}}
@@ -181,6 +182,7 @@ import {{javaxPackage}}.annotation.Generated;
                 }{{/hasAuthMethods}}{{#externalDocs}},
                 externalDocs = @ExternalDocumentation(description = "{{externalDocs.description}}", url = "{{externalDocs.url}}"){{/externalDocs}}
                 )
+            {{/vendorExtensions.x-deleteResponseAnnotation}}
         {{/swagger2AnnotationLibrary}}
         {{#swagger1AnnotationLibrary}}
                 @ApiOperation(

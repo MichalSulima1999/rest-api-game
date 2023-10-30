@@ -1,10 +1,14 @@
 package com.michael1099.rest_rpg.character
 
-import com.michael1099.rest_rpg.character.model.*
+import com.michael1099.rest_rpg.character.model.Character
+import com.michael1099.rest_rpg.character.model.CharacterArtwork
 import com.michael1099.rest_rpg.statistics.StatisticsHelper
 import org.openapitools.model.CharacterBasic
+import org.openapitools.model.CharacterClass
 import org.openapitools.model.CharacterCreateRequest
 import org.openapitools.model.CharacterLite
+import org.openapitools.model.CharacterRace
+import org.openapitools.model.CharacterSex
 
 class CharacterHelper {
 

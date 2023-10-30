@@ -25,12 +25,14 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
 import java.io.UnsupportedEncodingException;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Validated
 public class AuthenticationService {
 
     private final UserRepository repository;

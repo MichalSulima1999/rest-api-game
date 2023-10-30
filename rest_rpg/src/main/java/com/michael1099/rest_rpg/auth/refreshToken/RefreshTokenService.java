@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -22,6 +23,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Service
 @Slf4j
+@Validated
 public class RefreshTokenService {
 
     private final RefreshTokenRepo refreshTokenRepository;

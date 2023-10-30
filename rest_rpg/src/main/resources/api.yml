@@ -142,7 +142,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/StatisticsDetails'
-#Admin
+  #Admin
   /enemy:
     post:
       summary: Creates an enemy.
@@ -161,6 +161,75 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/EnemyLite'
+  /skill:
+    get:
+      summary: Get all skills
+      operationId: getSkills
+      x-preauth: "hasAuthority('ADMIN')"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SkillLites'
+    post:
+      summary: Creates new skill.
+      operationId: createSkill
+      x-preauth: "hasAuthority('ADMIN')"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SkillCreateRequest'
+      responses:
+        '200':
+          description: Info about created skill
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SkillLite'
+  #Both
+  /skill/search:
+    post:
+      summary: Search skills.
+      operationId: findSkills
+      x-preauth: "hasAnyAuthority('ADMIN', 'USER')"
+      x-deleteResponseAnnotation: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SkillSearchRequest'
+      responses:
+        '200':
+          description: Info about found skills
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SkillBasicPage'
+  /skill/{skillId}:
+    get:
+      summary: Get skill by skill id
+      operationId: getSkill
+      x-preauth: "hasAnyAuthority('ADMIN', 'USER')"
+      parameters:
+        - name: skillId
+          in: path
+          required: true
+          description: Skill id
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Info about created skill
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SkillDetails'
 components:
   schemas:
     ErrorCodes:
@@ -180,6 +249,68 @@ components:
         - GET_IMAGE
         - IMAGE_DOES_NOT_EXIST
         - ENUM_VALUE_NOT_FOUND
+        - ENEMY_ALREADY_EXISTS
+        - SKILL_NOT_FOUND
+        - SKILL_ALREADY_EXISTS
+    ElementEvent:
+      type: string
+      enum:
+        - PLAYER_HEALTH_0_20
+        - PLAYER_HEALTH_20_40
+        - PLAYER_HEALTH_40_60
+        - PLAYER_HEALTH_60_80
+        - PLAYER_HEALTH_80_100
+        - ENEMY_HEALTH_0_20
+        - ENEMY_HEALTH_20_40
+        - ENEMY_HEALTH_40_60
+        - ENEMY_HEALTH_60_80
+        - ENEMY_HEALTH_80_100
+    ElementAction:
+      type: string
+      enum:
+        - NORMAL_ATTACK
+        - SPECIAL_ATTACK
+        - USE_POTION
+    SkillType:
+      type: string
+      enum:
+        - NORMAL_DAMAGE
+        - MAGIC_DAMAGE
+        - DAMAGE_BOOST
+        - DEFENCE_BOOST
+        - DAMAGE_DEFENCE_BOOST
+    SkillEffect:
+      type: string
+      enum:
+        - BLEEDING
+        - BURNING
+        - STUNNED
+        - WEAKNESS
+    CharacterClass:
+      type: string
+      enum:
+        - WARRIOR
+        - ROGUE
+        - MAGE
+    CharacterRace:
+      type: string
+      enum:
+        - HUMAN
+        - ELF
+        - DWARF
+    CharacterSex:
+      type: string
+      enum:
+        - MALE
+        - FEMALE
+    CharacterStatus:
+      type: string
+      enum:
+        - IDLE
+        - WORK
+        - FIGHT
+        - TRAINING
+        - ADVENTURE
     UserLite:
       type: object
       required:
@@ -379,22 +510,66 @@ components:
       type: object
       required:
         - name
+        - hp
+        - mana
+        - damage
         - numberOfPotions
+        - skillId
+        - skillLevel
+        - enemyStrategy
       properties:
         name:
           description: Enemy name
           type: string
+        hp:
+          description: Enemy hp
+          type: integer
+        mana:
+          description: Enemy mana
+          type: integer
+        damage:
+          description: Enemy damage
+          type: integer
         numberOfPotions:
           description: Enemy potions
           type: integer
+        skillId:
+          description: Skill id
+          type: integer
+          format: int64
+        skillLevel:
+          description: Enemy skill level
+          type: integer
         enemyStrategy:
-          description: Character statistics
-          $ref: '#/components/schemas/StatisticsUpdateRequest'
+          description: Enemy strategy
+          type: array
+          items:
+            $ref: '#/components/schemas/StrategyElementCreateRequest'
+    StrategyElementCreateRequest:
+      type: object
+      required:
+        - event
+        - action
+        - priority
+      properties:
+        event:
+          description: Event
+          $ref: '#/components/schemas/ElementEvent'
+        action:
+          description: Action
+          $ref: '#/components/schemas/ElementAction'
+        priority:
+          description: Action priority
+          type: integer
     EnemyLite:
       type: object
       required:
         - id
         - name
+        - hp
+        - mana
+        - damage
+        - numberOfPotions
       properties:
         id:
           description: Enemy id
@@ -403,3 +578,199 @@ components:
         name:
           description: Enemy name
           type: string
+        hp:
+          description: Enemy hp
+          type: integer
+        mana:
+          description: Enemy mana
+          type: integer
+        damage:
+          description: Enemy damage
+          type: integer
+        numberOfPotions:
+          description: Number of potions
+          type: integer
+    SkillCreateRequest:
+      type: object
+      required:
+        - name
+        - manaCost
+        - type
+        - multiplier
+        - characterClass
+      properties:
+        name:
+          description: Skill name
+          type: string
+        manaCost:
+          description: Skill mana cost
+          type: integer
+        type:
+          description: Skill type
+          type: string
+        multiplier:
+          description: Skill multiplier for example totalDamage = normalDamage * multiplier
+          type: number
+          format: float
+        multiplierPerLevel:
+          description: Multiplier to add per level
+          type: number
+          format: float
+        effect:
+          description: Skill effect
+          type: string
+        effectDuration:
+          description: Skill effect duration in turns
+          type: integer
+        effectDurationPerLevel:
+          description: Skill effect duration to add per level
+          type: integer
+        effectMultiplier:
+          description: Effect multiplier for example Burning -> damagePerTurn = maxEnemyHealth * effectMultiplier
+          type: number
+          format: float
+        effectMultiplierPerLevel:
+          description: Effect multiplier to add per level
+          type: number
+          format: float
+        characterClass:
+          description: Character class skill is for
+          type: string
+    SkillLite:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          description: Skill id
+          type: integer
+          format: int64
+        name:
+          description: Skill name
+          type: string
+    SkillLites:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/SkillLite'
+    Page:
+      type: object
+      description: Page info
+      properties:
+        number:
+          type: integer
+        size:
+          type: integer
+        numberOfElements:
+          type: integer
+        totalElements:
+          type: integer
+        content:
+          type: boolean
+        first:
+          type: boolean
+        last:
+          type: boolean
+    SkillBasic:
+      allOf:
+        - $ref: '#/components/schemas/SkillLite'
+        - type: object
+          required:
+            - type
+            - multiplier
+            - characterClass
+          properties:
+            type:
+              description: Skill type
+              type: string
+            effect:
+              description: Skill effect
+              type: string
+            characterClass:
+              description: Character class skill is for
+              type: string
+    SkillBasicPage:
+      allOf:
+        - $ref: '#/components/schemas/Page'
+        - type: object
+          required:
+            - content
+          properties:
+            content:
+              type: array
+              items:
+                $ref: '#/components/schemas/SkillBasic'
+    SkillDetails:
+      allOf:
+        - $ref: '#/components/schemas/SkillBasic'
+        - type: object
+          required:
+            - multiplier
+          properties:
+            manaCost:
+              description: Skill mana cost
+              type: integer
+            multiplier:
+              description: Skill multiplier
+              type: number
+              format: float
+            multiplierPerLevel:
+              description: Multiplier to add per level
+              type: number
+              format: float
+            effectDuration:
+              description: Skill effect duration in turns
+              type: integer
+            effectMultiplier:
+              description: Effect multiplier
+              type: number
+              format: float
+            effectDurationPerLevel:
+              description: Skill effect duration to add per level
+              type: integer
+            effectMultiplierPerLevel:
+              description: Effect multiplier to add per level
+              type: number
+              format: float
+    Pagination:
+      type: object
+      description: Pagination data
+      properties:
+        pageNumber:
+          description: Page number
+          type: integer
+        elements:
+          description: Elements per page
+          type: integer
+        sort:
+          description: Sort by path
+          type: string
+        sortOrder:
+          description: Sort order
+          type: string
+    SkillSearchRequest:
+      type: object
+      properties:
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        nameLike:
+          description: Skill name fragment
+          type: string
+        skillTypeIn:
+          description: Skill type in
+          type: array
+          items:
+            type: string
+        skillEffectIn:
+          description: Skill effect in
+          type: array
+          items:
+            type: string
+        characterClassIn:
+          description: Character class skill is for in
+          type: array
+          items:
+            type: string
