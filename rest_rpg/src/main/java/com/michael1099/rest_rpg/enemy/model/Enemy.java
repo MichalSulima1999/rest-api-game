@@ -1,6 +1,6 @@
 package com.michael1099.rest_rpg.enemy.model;
 
-import com.michael1099.rest_rpg.adventure.Adventure;
+import com.michael1099.rest_rpg.adventure.model.Adventure;
 import com.michael1099.rest_rpg.fight.Fight;
 import com.michael1099.rest_rpg.skill.model.Skill;
 import jakarta.annotation.Nullable;
@@ -53,7 +53,7 @@ public class Enemy {
 
     @Nullable
     @OneToMany(mappedBy = "enemy", fetch = FetchType.LAZY)
-    private Set<Fight> fights;
+    private Set<Fight> fights = new HashSet<>();
 
     @Nullable
     @OneToMany(mappedBy = "enemy", fetch = FetchType.LAZY)

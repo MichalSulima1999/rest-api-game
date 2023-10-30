@@ -1,6 +1,6 @@
 package com.michael1099.rest_rpg.item;
 
-import com.michael1099.rest_rpg.adventure.Adventure;
+import com.michael1099.rest_rpg.adventure.model.Adventure;
 import com.michael1099.rest_rpg.item_equipment.ItemEquipment;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;

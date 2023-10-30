@@ -193,7 +193,14 @@
                                 <delegatePattern>true</delegatePattern>
                                 <interfaceOnly>true</interfaceOnly>
                                 <useJakartaEe>true</useJakartaEe>
+                                <dateLibrary>custom</dateLibrary>
                             </configOptions>
+                            <typeMappings>
+                                <typeMapping>DateTime=LocalDateTime</typeMapping>
+                            </typeMappings>
+                            <importMappings>
+                                <importMapping>LocalDateTime=java.time.LocalDateTime</importMapping>
+                            </importMappings>
                         </configuration>
                     </execution>
                 </executions>

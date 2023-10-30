@@ -1,6 +1,7 @@
 package com.michael1099.rest_rpg.skill;
 
 import com.michael1099.rest_rpg.exceptions.SkillAlreadyExistsException;
+import com.michael1099.rest_rpg.helpers.SearchHelper;
 import com.michael1099.rest_rpg.skill.model.Skill;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -11,8 +12,6 @@ import org.openapitools.model.SkillDetails;
 import org.openapitools.model.SkillLite;
 import org.openapitools.model.SkillLites;
 import org.openapitools.model.SkillSearchRequest;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -32,10 +31,7 @@ public class SkillService {
     }
 
     public SkillBasicPage findSkills(@NotNull SkillSearchRequest request) {
-        var pageableSort = Sort.by(request.getPagination().getSort());
-        pageableSort = request.getPagination().getSortOrder().equalsIgnoreCase("asc") ? pageableSort.ascending() : pageableSort.descending();
-        pageableSort = pageableSort.and(Sort.by("id"));
-        var pageable = PageRequest.of(request.getPagination().getPageNumber(), request.getPagination().getElements(), pageableSort);
+        var pageable = SearchHelper.getPageable(request.getPagination());
         return skillMapper.toPage(skillRepository.findSkills(request, pageable));
     }
 

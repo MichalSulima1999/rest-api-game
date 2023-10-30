@@ -144,6 +144,17 @@ paths:
                 $ref: '#/components/schemas/StatisticsDetails'
   #Admin
   /enemy:
+    get:
+      summary: Get all enemies
+      operationId: getEnemies
+      x-preauth: "hasAuthority('ADMIN')"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnemyLites'
     post:
       summary: Creates an enemy.
       operationId: createEnemy
@@ -190,13 +201,47 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SkillLite'
-  #Both
+  /adventure:
+    post:
+      summary: Creates new adventure.
+      operationId: createAdventure
+      x-preauth: "hasAuthority('ADMIN')"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdventureCreateRequest'
+      responses:
+        '200':
+          description: Info about created skill
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdventureLite'
+  /adventure/search:
+    post:
+      summary: Search adventures.
+      operationId: findAdventures
+      x-preauth: "hasAnyAuthority('ADMIN', 'USER')"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdventureSearchRequest'
+      responses:
+        '200':
+          description: Info about found skills
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdventureBasicPage'
   /skill/search:
     post:
       summary: Search skills.
       operationId: findSkills
       x-preauth: "hasAnyAuthority('ADMIN', 'USER')"
-      x-deleteResponseAnnotation: true
       requestBody:
         required: true
         content:
@@ -250,8 +295,10 @@ components:
         - IMAGE_DOES_NOT_EXIST
         - ENUM_VALUE_NOT_FOUND
         - ENEMY_ALREADY_EXISTS
+        - ENEMY_DOES_NOT_EXIST
         - SKILL_NOT_FOUND
         - SKILL_ALREADY_EXISTS
+        - ADVENTURE_NAME_EXISTS
     ElementEvent:
       type: string
       enum:
@@ -349,6 +396,77 @@ components:
         statistics:
           description: Character statistics
           $ref: '#/components/schemas/StatisticsUpdateRequest'
+    Pagination:
+      type: object
+      description: Pagination data
+      properties:
+        pageNumber:
+          description: Page number
+          type: integer
+        elements:
+          description: Elements per page
+          type: integer
+        sort:
+          description: Sort by path
+          type: string
+        sortOrder:
+          description: Sort order
+          type: string
+    EnemyCreateRequest:
+      type: object
+      required:
+        - name
+        - hp
+        - mana
+        - damage
+        - numberOfPotions
+        - skillId
+        - skillLevel
+        - enemyStrategy
+      properties:
+        name:
+          description: Enemy name
+          type: string
+        hp:
+          description: Enemy hp
+          type: integer
+        mana:
+          description: Enemy mana
+          type: integer
+        damage:
+          description: Enemy damage
+          type: integer
+        numberOfPotions:
+          description: Enemy potions
+          type: integer
+        skillId:
+          description: Skill id
+          type: integer
+          format: int64
+        skillLevel:
+          description: Enemy skill level
+          type: integer
+        enemyStrategy:
+          description: Enemy strategy
+          type: array
+          items:
+            $ref: '#/components/schemas/StrategyElementCreateRequest'
+    StrategyElementCreateRequest:
+      type: object
+      required:
+        - event
+        - action
+        - priority
+      properties:
+        event:
+          description: Event
+          $ref: '#/components/schemas/ElementEvent'
+        action:
+          description: Action
+          $ref: '#/components/schemas/ElementAction'
+        priority:
+          description: Action priority
+          type: integer
     StatisticsUpdateRequest:
       type: object
       required:
@@ -369,6 +487,129 @@ components:
         intelligence:
           description: Characters intelligence to add
           type: integer
+    SkillCreateRequest:
+      type: object
+      required:
+        - name
+        - manaCost
+        - type
+        - multiplier
+        - characterClass
+      properties:
+        name:
+          description: Skill name
+          type: string
+        manaCost:
+          description: Skill mana cost
+          type: integer
+        type:
+          description: Skill type
+          type: string
+        multiplier:
+          description: Skill multiplier for example totalDamage = normalDamage * multiplier
+          type: number
+          format: float
+        multiplierPerLevel:
+          description: Multiplier to add per level
+          type: number
+          format: float
+        effect:
+          description: Skill effect
+          type: string
+        effectDuration:
+          description: Skill effect duration in turns
+          type: integer
+        effectDurationPerLevel:
+          description: Skill effect duration to add per level
+          type: integer
+        effectMultiplier:
+          description: Effect multiplier for example Burning -> damagePerTurn = maxEnemyHealth * effectMultiplier
+          type: number
+          format: float
+        effectMultiplierPerLevel:
+          description: Effect multiplier to add per level
+          type: number
+          format: float
+        characterClass:
+          description: Character class skill is for
+          type: string
+    SkillSearchRequest:
+      type: object
+      properties:
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        nameLike:
+          description: Skill name fragment
+          type: string
+        skillTypeIn:
+          description: Skill type in
+          type: array
+          items:
+            type: string
+        skillEffectIn:
+          description: Skill effect in
+          type: array
+          items:
+            type: string
+        characterClassIn:
+          description: Character class skill is for in
+          type: array
+          items:
+            type: string
+    AdventureCreateRequest:
+      type: object
+      required:
+        - name
+        - adventureLengthInMinutes
+        - xpForAdventure
+        - goldForAdventure
+        - enemy
+      properties:
+        name:
+          description: Adventure name
+          type: string
+        adventureLengthInMinutes:
+          description: Adventure length given in minutes
+          type: integer
+        xpForAdventure:
+          description: XP given to player for adventure
+          type: integer
+        goldForAdventure:
+          description: Gold given to player for adventure
+          type: integer
+        enemy:
+          description: Enemy id that player will fight in an adventure
+          type: integer
+          format: int64
+    AdventureSearchRequest:
+      type: object
+      properties:
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        nameLike:
+          description: Skill name fragment
+          type: string
+        adventureTimeGreaterThanOrEqual:
+          description: Adventure time in minutes greater than or equal
+          type: integer
+        adventureTimeLessThanOrEqual:
+          description: Adventure time in minutes greater than or equal
+          type: integer
+        xpGreaterThanOrEqual:
+          description: XP for adventure greater than or equal
+          type: integer
+        xpLessThanOrEqual:
+          description: XP for adventure greater than or equal
+          type: integer
+        goldGreaterThanOrEqual:
+          description: Gold for adventure greater than or equal
+          type: integer
+        goldLessThanOrEqual:
+          description: Gold for adventure greater than or equal
+          type: integer
+        enemyNameLike:
+          description: Enemy name fragment
+          type: string
     CharacterLite:
       type: object
       required:
@@ -506,61 +747,6 @@ components:
         occupationType:
           description: Character occupation
           type: string
-    EnemyCreateRequest:
-      type: object
-      required:
-        - name
-        - hp
-        - mana
-        - damage
-        - numberOfPotions
-        - skillId
-        - skillLevel
-        - enemyStrategy
-      properties:
-        name:
-          description: Enemy name
-          type: string
-        hp:
-          description: Enemy hp
-          type: integer
-        mana:
-          description: Enemy mana
-          type: integer
-        damage:
-          description: Enemy damage
-          type: integer
-        numberOfPotions:
-          description: Enemy potions
-          type: integer
-        skillId:
-          description: Skill id
-          type: integer
-          format: int64
-        skillLevel:
-          description: Enemy skill level
-          type: integer
-        enemyStrategy:
-          description: Enemy strategy
-          type: array
-          items:
-            $ref: '#/components/schemas/StrategyElementCreateRequest'
-    StrategyElementCreateRequest:
-      type: object
-      required:
-        - event
-        - action
-        - priority
-      properties:
-        event:
-          description: Event
-          $ref: '#/components/schemas/ElementEvent'
-        action:
-          description: Action
-          $ref: '#/components/schemas/ElementAction'
-        priority:
-          description: Action priority
-          type: integer
     EnemyLite:
       type: object
       required:
@@ -578,64 +764,13 @@ components:
         name:
           description: Enemy name
           type: string
-        hp:
-          description: Enemy hp
-          type: integer
-        mana:
-          description: Enemy mana
-          type: integer
-        damage:
-          description: Enemy damage
-          type: integer
-        numberOfPotions:
-          description: Number of potions
-          type: integer
-    SkillCreateRequest:
+    EnemyLites:
       type: object
-      required:
-        - name
-        - manaCost
-        - type
-        - multiplier
-        - characterClass
       properties:
-        name:
-          description: Skill name
-          type: string
-        manaCost:
-          description: Skill mana cost
-          type: integer
-        type:
-          description: Skill type
-          type: string
-        multiplier:
-          description: Skill multiplier for example totalDamage = normalDamage * multiplier
-          type: number
-          format: float
-        multiplierPerLevel:
-          description: Multiplier to add per level
-          type: number
-          format: float
-        effect:
-          description: Skill effect
-          type: string
-        effectDuration:
-          description: Skill effect duration in turns
-          type: integer
-        effectDurationPerLevel:
-          description: Skill effect duration to add per level
-          type: integer
-        effectMultiplier:
-          description: Effect multiplier for example Burning -> damagePerTurn = maxEnemyHealth * effectMultiplier
-          type: number
-          format: float
-        effectMultiplierPerLevel:
-          description: Effect multiplier to add per level
-          type: number
-          format: float
-        characterClass:
-          description: Character class skill is for
-          type: string
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/EnemyLite'
     SkillLite:
       type: object
       required:
@@ -735,42 +870,47 @@ components:
               description: Effect multiplier to add per level
               type: number
               format: float
-    Pagination:
+    AdventureLite:
       type: object
-      description: Pagination data
+      required:
+        - id
+        - name
       properties:
-        pageNumber:
-          description: Page number
+        id:
+          description: Adventure id
           type: integer
-        elements:
-          description: Elements per page
-          type: integer
-        sort:
-          description: Sort by path
+          format: int64
+        name:
+          description: Adventure name
           type: string
-        sortOrder:
-          description: Sort order
-          type: string
-    SkillSearchRequest:
-      type: object
-      properties:
-        pagination:
-          $ref: '#/components/schemas/Pagination'
-        nameLike:
-          description: Skill name fragment
-          type: string
-        skillTypeIn:
-          description: Skill type in
-          type: array
-          items:
-            type: string
-        skillEffectIn:
-          description: Skill effect in
-          type: array
-          items:
-            type: string
-        characterClassIn:
-          description: Character class skill is for in
-          type: array
-          items:
-            type: string
+    AdventureBasic:
+      allOf:
+        - $ref: '#/components/schemas/AdventureLite'
+        - type: object
+          required:
+            - type
+            - multiplier
+            - characterClass
+          properties:
+            adventureTimeInMinutes:
+              description: Adventure time in minutes
+              type: integer
+            xpForAdventure:
+              description: XP from adventure
+              type: integer
+            goldForAdventure:
+              description: Gold from adventure
+              type: integer
+            enemy:
+              $ref: '#/components/schemas/EnemyLite'
+    AdventureBasicPage:
+      allOf:
+        - $ref: '#/components/schemas/Page'
+        - type: object
+          required:
+            - content
+          properties:
+            content:
+              type: array
+              items:
+                $ref: '#/components/schemas/AdventureBasic'
