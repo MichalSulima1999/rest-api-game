@@ -64,9 +64,33 @@ import java.util.Set;
                 )
         }
 )
+@NamedEntityGraph(name = Character.CHARACTER_TEST,
+        attributeNodes = {
+                @NamedAttributeNode("statistics"),
+                @NamedAttributeNode("skills"),
+                @NamedAttributeNode(value = "occupation", subgraph = "occupation-subgraph")
+        },
+        subgraphs = {
+                @NamedSubgraph(
+                        name = "occupation-subgraph",
+                        attributeNodes = {
+                                @NamedAttributeNode(value = "adventure", subgraph = "adventure-subgraph"),
+                                @NamedAttributeNode("training"),
+                                @NamedAttributeNode("work")
+                        }
+                ),
+                @NamedSubgraph(
+                        name = "adventure-subgraph",
+                        attributeNodes = {
+                                @NamedAttributeNode("enemy")
+                        }
+                )
+        }
+)
 public class Character {
 
     public static final String CHARACTER_BASIC = "CHARACTER_BASIC_GRAPH";
+    public static final String CHARACTER_TEST = "CHARACTER_TEST_GRAPH";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -2,15 +2,18 @@ package com.michael1099.rest_rpg.adventure.model;
 
 import com.michael1099.rest_rpg.enemy.model.Enemy;
 import com.michael1099.rest_rpg.occupation.Occupation;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedAttributeNode;
 import jakarta.persistence.NamedEntityGraph;
+import jakarta.persistence.NamedSubgraph;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -34,9 +37,20 @@ import java.util.Set;
                 @NamedAttributeNode("enemy")
         }
 )
+@NamedEntityGraph(name = Adventure.ADVENTURE_DETAILS,
+        attributeNodes = {
+                @NamedAttributeNode(value = "enemy", subgraph = "enemyBasic")
+        },
+        subgraphs = {
+                @NamedSubgraph(name = "enemyBasic", attributeNodes = {
+                        @NamedAttributeNode("skill")
+                })
+        }
+)
 public class Adventure {
 
     public static final String ADVENTURE_BASIC = "ADVENTURE_BASIC_GRAPH";
+    public static final String ADVENTURE_DETAILS = "ADVENTURE_DETAILS_GRAPH";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -53,10 +67,11 @@ public class Adventure {
     private int goldForAdventure;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
+    @JoinColumn(name = "enemy_id")
     private Enemy enemy;
 
-    @OneToMany(mappedBy = "adventure")
+    @OneToMany(mappedBy = "adventure", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<Occupation> occupation = new HashSet<>();
 
     private boolean deleted;

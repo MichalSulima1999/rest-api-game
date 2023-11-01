@@ -11,8 +11,8 @@ import com.michael1099.rest_rpg.exceptions.EnumValueNotFoundException;
 import com.michael1099.rest_rpg.exceptions.GetImageException;
 import com.michael1099.rest_rpg.exceptions.ImageDoesNotExistException;
 import com.michael1099.rest_rpg.exceptions.NotEnoughSkillPointsException;
-import com.michael1099.rest_rpg.exceptions.UserNotFoundException;
 import com.michael1099.rest_rpg.statistics.dto.StatisticsUpdateRequestDto;
+import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -47,6 +47,7 @@ public class CharacterService {
     private final IAuthenticationFacade authenticationFacade;
     private final CharacterMapper characterMapper;
 
+    @Transactional
     public CharacterLite createCharacter(@NotNull CharacterCreateRequest request, @NotBlank String username) {
         CharacterCreateRequestDto dto;
         try {
@@ -55,7 +56,7 @@ public class CharacterService {
             throw new EnumValueNotFoundException();
         }
         assertCharacterDoesNotExist(dto.getName());
-        var user = userRepository.findByUsername(username).orElseThrow(UserNotFoundException::new);
+        var user = userRepository.getByUsername(username);
         var character = Character.createCharacter(dto, user);
         assertCharacterStatisticsAreValid(dto.getStatistics(), character.getStatistics().getFreeStatisticPoints());
         character.getStatistics().addStatistics(dto.getStatistics(), dto.getRace());
@@ -63,23 +64,28 @@ public class CharacterService {
         return characterMapper.toLite(characterRepository.save(character));
     }
 
+    @Transactional
     public ResponseEntity<Resource> getCharacterFullArtwork(@NotNull String characterArtwork) {
         return getCharacterArtwork(characterArtwork, "public/avatars/full/");
     }
 
+    @Transactional
     public ResponseEntity<Resource> getCharacterThumbnailArtwork(@NotNull String characterArtwork) {
         return getCharacterArtwork(characterArtwork, "public/avatars/thumbnail/");
     }
 
+    @Transactional
     public List<String> getCharacterArtworkEnum() {
         return Arrays.stream(CharacterArtwork.values()).map(Objects::toString).collect(Collectors.toList());
     }
 
+    @Transactional
     public CharacterBasics getUserCharacters() {
         var username = authenticationFacade.getAuthentication().getName();
         return characterMapper.toBasics(characterRepository.findByUser_Username(username), 1);
     }
 
+    @Transactional
     public CharacterBasic getUserCharacter(long characterId) {
         var username = authenticationFacade.getAuthentication().getName();
         var character = characterRepository.getCharacterById(characterId);

@@ -11,6 +11,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.openapitools.model.EnemyCreateRequest;
 import org.openapitools.model.EnemyLite;
+import org.openapitools.model.EnemyLites;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -37,6 +38,11 @@ public class EnemyService {
         enemy.setStrategyElements(addExistingStrategies(dto.getStrategyElementCreateRequest()));
         enemy = enemyRepository.save(enemy);
         return enemyMapper.toLite(enemy);
+    }
+
+    @Transactional
+    public EnemyLites getEnemies() {
+        return enemyMapper.toLites(enemyRepository.findByDeletedFalse());
     }
 
     private void checkIfEnemyExists(@NotEmpty String enemyName) {

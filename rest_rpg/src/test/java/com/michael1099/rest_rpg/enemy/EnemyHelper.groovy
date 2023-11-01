@@ -1,11 +1,15 @@
 package com.michael1099.rest_rpg.enemy
 
+import com.michael1099.rest_rpg.enemy.model.Enemy
 import com.michael1099.rest_rpg.enemy.model.StrategyElement
+import com.michael1099.rest_rpg.skill.SkillHelper
 import com.michael1099.rest_rpg.skill.model.Skill
 import org.openapitools.model.ElementAction
 import org.openapitools.model.ElementEvent
+import org.openapitools.model.EnemyBasic
 import org.openapitools.model.EnemyCreateRequest
 import org.openapitools.model.EnemyLite
+import org.openapitools.model.EnemyLites
 import org.openapitools.model.StrategyElementCreateRequest
 
 class EnemyHelper {
@@ -55,10 +59,48 @@ class EnemyHelper {
 
     static boolean compare(EnemyCreateRequest request, EnemyLite enemyLite) {
         assert request.name == enemyLite.name
-        assert request.damage == enemyLite.damage
-        assert request.hp == enemyLite.hp
-        assert request.mana == enemyLite.mana
-        assert request.numberOfPotions == enemyLite.numberOfPotions
+
+        true
+    }
+
+    static boolean compare(Enemy enemy, EnemyLite enemyLite) {
+        assert enemy.id == enemyLite.id
+        assert enemy.name == enemyLite.name
+
+        true
+    }
+
+    static boolean compare(Enemy enemy, EnemyBasic basic) {
+        assert enemy.id == basic.id
+        assert enemy.name == basic.name
+        assert enemy.hp == basic.hp
+        assert enemy.mana == basic.mana
+        assert enemy.damage == basic.damage
+        assert enemy.skillLevel == basic.skillLevel
+        assert enemy.numberOfPotions == basic.numberOfPotions
+        assert SkillHelper.compare(enemy.skill, basic.skill)
+
+        true
+    }
+
+    static boolean compare(Enemy enemy1, Enemy enemy2) {
+        assert enemy1.id == enemy2.id
+        assert enemy1.name == enemy2.name
+        assert enemy1.hp == enemy2.hp
+        assert enemy1.mana == enemy2.mana
+        assert enemy1.damage == enemy2.damage
+        assert enemy1.skillLevel == enemy2.skillLevel
+        assert enemy1.numberOfPotions == enemy2.numberOfPotions
+
+        true
+    }
+
+    static boolean compare(List<Enemy> enemies, EnemyLites enemyLites) {
+        def enemyLiteList = enemyLites.content
+        assert enemies.size() == enemyLiteList.size()
+        enemies = enemies.sort { it.id }
+        enemyLiteList = enemyLiteList.sort { it.id }
+        assert enemies.withIndex().every { compare(it.v1, enemyLiteList[it.v2]) }
 
         true
     }

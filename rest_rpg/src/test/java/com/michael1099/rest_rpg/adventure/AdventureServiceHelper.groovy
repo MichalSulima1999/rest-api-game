@@ -2,6 +2,7 @@ package com.michael1099.rest_rpg.adventure
 
 import com.michael1099.rest_rpg.adventure.model.Adventure
 import com.michael1099.rest_rpg.enemy.EnemyServiceHelper
+import com.michael1099.rest_rpg.occupation.OccupationRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -12,9 +13,13 @@ class AdventureServiceHelper {
     AdventureRepository adventureRepository
 
     @Autowired
+    OccupationRepository occupationRepository
+
+    @Autowired
     EnemyServiceHelper enemyServiceHelper
 
     def clean() {
+        occupationRepository.deleteAll()
         adventureRepository.deleteAll()
         enemyServiceHelper.clean()
     }
@@ -25,7 +30,7 @@ class AdventureServiceHelper {
                 adventureLengthInMinutes: 90,
                 xpForAdventure          : 100,
                 goldForAdventure        : 110,
-                enemy                   : enemyServiceHelper.saveEnemy(customArgs.enemy as Map)
+                enemy                   : enemyServiceHelper.saveEnemy()
         ]
         args << customArgs
 

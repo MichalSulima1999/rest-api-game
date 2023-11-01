@@ -3,6 +3,7 @@ package com.michael1099.rest_rpg.skill;
 import com.michael1099.rest_rpg.exceptions.SkillAlreadyExistsException;
 import com.michael1099.rest_rpg.helpers.SearchHelper;
 import com.michael1099.rest_rpg.skill.model.Skill;
+import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ public class SkillService {
     private final SkillRepository skillRepository;
     private final SkillMapper skillMapper;
 
+    @Transactional
     public SkillLite createSkill(@NotNull SkillCreateRequest skillCreateRequest) {
         var dto = skillMapper.toDto(skillCreateRequest);
         checkIfSkillExists(dto.getName());
@@ -30,6 +32,7 @@ public class SkillService {
         return skillMapper.toLite(skillRepository.save(skill));
     }
 
+    @Transactional
     public SkillBasicPage findSkills(@NotNull SkillSearchRequest request) {
         var pageable = SearchHelper.getPageable(request.getPagination());
         return skillMapper.toPage(skillRepository.findSkills(request, pageable));

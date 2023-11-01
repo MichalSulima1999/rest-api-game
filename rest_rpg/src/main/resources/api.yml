@@ -142,7 +142,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/StatisticsDetails'
-  #Admin
   /enemy:
     get:
       summary: Get all enemies
@@ -219,6 +218,53 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AdventureLite'
+  /adventure/{adventureId}:
+    get:
+      summary: Get info about adventure by adventure id
+      operationId: getAdventure
+      x-preauth: "hasAnyAuthority('ADMIN', 'USER')"
+      parameters:
+        - name: adventureId
+          in: path
+          required: true
+          description: Adventure id
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdventureDetails'
+  /adventure/{adventureId}/start/{characterId}:
+    get:
+      summary: Start adventure with character
+      operationId: startAdventure
+      x-preauth: "hasAuthority('USER')"
+      parameters:
+        - name: adventureId
+          in: path
+          required: true
+          description: Adventure id
+          schema:
+            type: integer
+            format: int64
+        - name: characterId
+          in: path
+          required: true
+          description: Character id that starts adventure
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdventureLite'
   /adventure/search:
     post:
       summary: Search adventures.
@@ -290,6 +336,7 @@ components:
         - VERIFICATION_EMAIL_SEND_ERROR
         - CHARACTER_ALREADY_EXISTS
         - CHARACTER_NOT_FOUND
+        - CHARACTER_IS_OCCUPIED
         - NOT_ENOUGH_SKILL_POINTS
         - GET_IMAGE
         - IMAGE_DOES_NOT_EXIST
@@ -299,6 +346,7 @@ components:
         - SKILL_NOT_FOUND
         - SKILL_ALREADY_EXISTS
         - ADVENTURE_NAME_EXISTS
+        - ADVENTURE_NOT_FOUND
     ElementEvent:
       type: string
       enum:
@@ -771,6 +819,36 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/EnemyLite'
+    EnemyBasic:
+      description: "Basic info about enemy"
+      allOf:
+        - $ref: '#/components/schemas/EnemyLite'
+        - type: object
+          required:
+            - hp
+            - mana
+            - damage
+            - skillLevel
+            - numberOfPotions
+            - skill
+          properties:
+            hp:
+              description: Enemy max hp
+              type: integer
+            mana:
+              description: Enemy max mana
+              type: integer
+            damage:
+              description: Enemy damage
+              type: integer
+            skillLevel:
+              description: Enemy skill level
+              type: integer
+            numberOfPotions:
+              description: Enemy number of potions
+              type: integer
+            skill:
+              $ref: '#/components/schemas/SkillBasic'
     SkillLite:
       type: object
       required:
@@ -810,6 +888,7 @@ components:
         last:
           type: boolean
     SkillBasic:
+      description: "Basic info about skill"
       allOf:
         - $ref: '#/components/schemas/SkillLite'
         - type: object
@@ -914,3 +993,10 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/AdventureBasic'
+    AdventureDetails:
+      allOf:
+        - $ref: '#/components/schemas/AdventureBasic'
+        - type: object
+          properties:
+            enemy:
+              $ref: '#/components/schemas/EnemyBasic'

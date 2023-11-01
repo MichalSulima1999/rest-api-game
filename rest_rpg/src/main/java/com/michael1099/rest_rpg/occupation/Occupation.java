@@ -5,6 +5,7 @@ import com.michael1099.rest_rpg.character.model.Character;
 import com.michael1099.rest_rpg.training.Training;
 import com.michael1099.rest_rpg.work.Work;
 import jakarta.annotation.Nullable;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -40,7 +41,7 @@ public class Occupation {
     private LocalDateTime finishTime;
 
     @NotNull
-    @OneToOne(mappedBy = "occupation", fetch = FetchType.EAGER)
+    @OneToOne(mappedBy = "occupation", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Character character;
 
     @Nullable
@@ -77,5 +78,10 @@ public class Occupation {
             return work.getName();
         }
         return null;
+    }
+
+    public void startAdventure(@NotNull Adventure adventure) {
+        setAdventure(adventure);
+        setFinishTime(LocalDateTime.now().plusMinutes(adventure.getAdventureTimeInMinutes()));
     }
 }

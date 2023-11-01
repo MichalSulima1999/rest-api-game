@@ -23,7 +23,14 @@ public interface CharacterRepository extends JpaRepository<Character, Long> {
     @EntityGraph(Character.CHARACTER_BASIC)
     Optional<Character> findById(@NotNull Long id);
 
+    @EntityGraph(Character.CHARACTER_TEST)
+    Optional<Character> readById(Long id);
+
     default Character getCharacterById(long id) {
         return findById(id).orElseThrow(CharacterNotFoundException::new);
+    }
+
+    default Character getCharacterWithTestGraphById(long id) {
+        return readById(id).orElseThrow(CharacterNotFoundException::new);
     }
 }

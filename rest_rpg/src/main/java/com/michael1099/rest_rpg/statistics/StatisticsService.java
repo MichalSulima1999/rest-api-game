@@ -3,6 +3,7 @@ package com.michael1099.rest_rpg.statistics;
 import com.michael1099.rest_rpg.auth.auth.IAuthenticationFacade;
 import com.michael1099.rest_rpg.auth.user.UserRepository;
 import com.michael1099.rest_rpg.exceptions.CharacterNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.openapitools.model.StatisticsDetails;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ public class StatisticsService {
     private final IAuthenticationFacade authenticationFacade;
     private final StatisticsMapper statisticsMapper;
 
+    @Transactional
     public StatisticsDetails getStatistics(long characterId) {
         var username = authenticationFacade.getAuthentication().getName();
         if (userRepository.getByUsername(username).getCharacters().stream().noneMatch(character -> character.getId() == characterId)) {

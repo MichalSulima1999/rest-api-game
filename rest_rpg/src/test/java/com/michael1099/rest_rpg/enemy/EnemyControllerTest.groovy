@@ -5,6 +5,7 @@ import com.michael1099.rest_rpg.skill.SkillServiceHelper
 import org.openapitools.model.ElementAction
 import org.openapitools.model.ElementEvent
 import org.openapitools.model.EnemyLite
+import org.openapitools.model.EnemyLites
 import org.openapitools.model.ErrorCodes
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -96,5 +97,18 @@ class EnemyControllerTest extends TestBase {
         then:
             response.status == HttpStatus.CONFLICT
             response.errorMessage == ErrorCodes.ENEMY_ALREADY_EXISTS.toString()
+    }
+
+    def "should get all enemies"() {
+        given:
+            def enemy1 = enemyServiceHelper.saveEnemy()
+            def enemy2 = enemyServiceHelper.saveEnemy()
+            def enemy3 = enemyServiceHelper.saveEnemy()
+            enemyServiceHelper.saveEnemy(deleted: true)
+        when:
+            def response = httpGet(baseUrl, EnemyLites, [accessToken: adminAccessToken])
+        then:
+            response.status == HttpStatus.OK
+            EnemyHelper.compare([enemy1, enemy2, enemy3], response.body)
     }
 }

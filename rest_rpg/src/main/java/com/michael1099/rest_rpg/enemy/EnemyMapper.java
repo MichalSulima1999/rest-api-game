@@ -3,11 +3,13 @@ package com.michael1099.rest_rpg.enemy;
 import com.michael1099.rest_rpg.enemy.model.Enemy;
 import com.michael1099.rest_rpg.enemy.model.EnemyCreateRequestDto;
 import com.michael1099.rest_rpg.enemy.model.StrategyElementCreateRequestDto;
+import jakarta.validation.constraints.NotNull;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.openapitools.model.EnemyCreateRequest;
 import org.openapitools.model.EnemyLite;
+import org.openapitools.model.EnemyLites;
 import org.openapitools.model.StrategyElementCreateRequest;
 
 import java.util.List;
@@ -26,5 +28,9 @@ public interface EnemyMapper {
     @Named("strategyElementCreateRequestDto")
     default List<StrategyElementCreateRequestDto> strategyElementCreateRequestDto(List<StrategyElementCreateRequest> requests) {
         return requests.stream().map(this::toDto).collect(Collectors.toList());
+    }
+
+    default EnemyLites toLites(@NotNull List<Enemy> source) {
+        return new EnemyLites().content(source.stream().map(this::toLite).toList());
     }
 }

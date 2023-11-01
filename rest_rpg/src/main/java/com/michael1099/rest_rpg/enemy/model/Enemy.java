@@ -52,11 +52,11 @@ public class Enemy {
     private int damage;
 
     @Nullable
-    @OneToMany(mappedBy = "enemy", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "enemy", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Fight> fights = new HashSet<>();
 
     @Nullable
-    @OneToMany(mappedBy = "enemy", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "enemy", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Adventure> adventures = new HashSet<>();
 
     @NotNull

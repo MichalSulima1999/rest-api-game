@@ -106,4 +106,21 @@ class SkillHelper {
 
         true
     }
+
+    static boolean compare(Skill skill1, Skill skill2) {
+        assert skill1.id == skill2.id
+        assert skill1.name == skill2.name
+        assert skill1.manaCost == skill2.manaCost
+        assert skill1.type == skill2.type
+        assert skill1.effect == skill2.effect
+        assert skill1.characterClass == skill2.characterClass
+        assert skill1.multiplier == skill2.multiplier
+        assert skill1.multiplierPerLevel == skill2.multiplierPerLevel
+        assert skill1.effectDuration == skill2.effectDuration
+        assert skill1.effectMultiplier == skill2.effectMultiplier
+        assert skill1.effectDurationPerLevel == skill2.effectDurationPerLevel
+        assert skill1.effectMultiplierPerLevel == skill2.effectMultiplierPerLevel
+
+        true
+    }
 }

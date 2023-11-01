@@ -86,4 +86,8 @@ class CharacterServiceHelper {
 
         characterRepository.save(character)
     }
+
+    Character getCharacter(long characterId) {
+        return characterRepository.getCharacterWithTestGraphById(characterId)
+    }
 }

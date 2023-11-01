@@ -1,8 +1,13 @@
 package com.michael1099.rest_rpg.adventure
 
+import com.michael1099.rest_rpg.adventure.model.Adventure
+import com.michael1099.rest_rpg.enemy.EnemyHelper
 import com.michael1099.rest_rpg.enemy.model.Enemy
 import com.michael1099.rest_rpg.helpers.PageHelper
+import org.openapitools.model.AdventureBasic
+import org.openapitools.model.AdventureBasicPage
 import org.openapitools.model.AdventureCreateRequest
+import org.openapitools.model.AdventureDetails
 import org.openapitools.model.AdventureLite
 import org.openapitools.model.AdventureSearchRequest
 
@@ -22,16 +27,70 @@ class AdventureHelper {
     }
 
     static AdventureSearchRequest createAdventureSearchRequest(Map args = [:]) {
-        new AdventureSearchRequest() // TODO
+        new AdventureSearchRequest()
                 .pagination(PageHelper.createPagination(args))
-                .nameLike(args.name as String)
-                .skillTypeIn(args.skillTypeIn as List)
-                .skillEffectIn(args.skillEffectIn as List)
-                .characterClassIn(args.characterClassIn as List)
+                .nameLike(args.nameLike as String)
+                .adventureTimeGreaterThanOrEqual(args.adventureTimeGreaterThanOrEqual as Integer)
+                .adventureTimeLessThanOrEqual(args.adventureTimeLessThanOrEqual as Integer)
+                .xpGreaterThanOrEqual(args.xpGreaterThanOrEqual as Integer)
+                .xpLessThanOrEqual(args.xpLessThanOrEqual as Integer)
+                .goldGreaterThanOrEqual(args.goldGreaterThanOrEqual as Integer)
+                .goldLessThanOrEqual(args.goldLessThanOrEqual as Integer)
+                .enemyNameLike(args.enemyNameLike as String)
     }
 
     static boolean compare(AdventureCreateRequest request, AdventureLite lite) {
         assert request.name == lite.name
+
+        true
+    }
+
+    static boolean compare(Adventure adventure, AdventureLite lite) {
+        assert adventure.id == lite.id
+        assert adventure.name == lite.name
+
+        true
+    }
+
+    static boolean compare(Adventure adventure, AdventureBasic basic) {
+        assert adventure.id == basic.id
+        assert adventure.name == basic.name
+        assert adventure.adventureTimeInMinutes == basic.adventureTimeInMinutes
+        assert adventure.xpForAdventure == basic.xpForAdventure
+        assert adventure.goldForAdventure == basic.goldForAdventure
+        assert EnemyHelper.compare(adventure.enemy, basic.enemy)
+
+        true
+    }
+
+    static boolean compare(Adventure adventure1, Adventure adventure2) {
+        assert adventure1.id == adventure2.id
+        assert adventure1.name == adventure2.name
+        assert adventure1.adventureTimeInMinutes == adventure2.adventureTimeInMinutes
+        assert adventure1.xpForAdventure == adventure2.xpForAdventure
+        assert adventure1.goldForAdventure == adventure2.goldForAdventure
+        assert EnemyHelper.compare(adventure1.enemy, adventure2.enemy)
+
+        true
+    }
+
+    static boolean compare(Adventure adventure, AdventureDetails details) {
+        assert adventure.id == details.id
+        assert adventure.name == details.name
+        assert adventure.adventureTimeInMinutes == details.adventureTimeInMinutes
+        assert adventure.xpForAdventure == details.xpForAdventure
+        assert adventure.goldForAdventure == details.goldForAdventure
+        assert EnemyHelper.compare(adventure.enemy, details.enemy)
+
+        true
+    }
+
+    static boolean compare(List<Adventure> adventures, AdventureBasicPage page) {
+        def adventureBasicList = page.content
+        assert adventures.size() == adventureBasicList.size()
+        adventures = adventures.sort { it.id }
+        adventureBasicList = adventureBasicList.sort { it.id }
+        assert adventures.withIndex().every { compare(it.v1, adventureBasicList[it.v2]) }
 
         true
     }

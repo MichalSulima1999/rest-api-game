@@ -5,6 +5,8 @@ import com.michael1099.rest_rpg.skill.SkillServiceHelper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
+import java.time.LocalDateTime
+
 @Service
 class EnemyServiceHelper {
 
@@ -16,18 +18,20 @@ class EnemyServiceHelper {
 
     def clean() {
         enemyRepository.deleteAll()
+        skillServiceHelper.clean()
     }
 
     Enemy saveEnemy(Map customArgs = [:]) {
         Map args = [
-                name            : "Bear",
+                name            : "Bear" + LocalDateTime.now().getNano(),
                 hp              : 200,
                 mana            : 200,
                 damage          : 20,
                 numberOfPotions : 2,
                 skill           : skillServiceHelper.createSkill(),
                 skillLevel      : 1,
-                strategyElements: [EnemyHelper.createStrategyElement()]
+                strategyElements: [EnemyHelper.createStrategyElement()],
+                deleted         : false
         ]
 
         args << customArgs
@@ -40,6 +44,7 @@ class EnemyServiceHelper {
                 .skill(args.skill)
                 .skillLevel(args.skillLevel)
                 .strategyElements(args.strategyElements as Set)
+                .deleted(args.deleted)
                 .build()
         return enemyRepository.save(enemy)
     }
