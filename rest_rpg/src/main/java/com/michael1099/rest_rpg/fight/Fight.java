@@ -1,8 +1,8 @@
 package com.michael1099.rest_rpg.fight;
 
-import com.michael1099.rest_rpg.character.model.Character;
 import com.michael1099.rest_rpg.enemy.model.Enemy;
 import com.michael1099.rest_rpg.fight_effect.FightEffect;
+import com.michael1099.rest_rpg.occupation.Occupation;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -38,7 +38,7 @@ public class Fight {
 
     @NotNull
     @OneToOne(mappedBy = "fight", fetch = FetchType.EAGER)
-    private Character character;
+    private Occupation occupation;
 
     @Nullable
     @ManyToOne(fetch = FetchType.LAZY)
@@ -61,6 +61,8 @@ public class Fight {
 
     @Nullable
     private Boolean playerTurn;
+
+    private boolean isActive;
 
     private boolean deleted;
 }

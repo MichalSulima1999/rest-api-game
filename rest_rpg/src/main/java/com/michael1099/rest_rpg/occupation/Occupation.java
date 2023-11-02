@@ -2,6 +2,7 @@ package com.michael1099.rest_rpg.occupation;
 
 import com.michael1099.rest_rpg.adventure.model.Adventure;
 import com.michael1099.rest_rpg.character.model.Character;
+import com.michael1099.rest_rpg.fight.Fight;
 import com.michael1099.rest_rpg.training.Training;
 import com.michael1099.rest_rpg.work.Work;
 import jakarta.annotation.Nullable;
@@ -59,29 +60,52 @@ public class Occupation {
     @JoinColumn(name = "work_id")
     private Work work;
 
+    @NotNull
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "fight_id", referencedColumnName = "id")
+    private Fight fight;
+
     private boolean deleted;
+
+    public static Occupation init() {
+        var occupation = new Occupation();
+        occupation.setFight(new Fight());
+        occupation.getFight().setOccupation(occupation);
+        return occupation;
+    }
 
     public boolean isOccupied() {
         return adventure != null ||
                 training != null ||
-                work != null;
+                work != null ||
+                fight.isActive();
     }
 
     public String getOccupationType() {
+        if (fight.isActive()) {
+            return Fight.class.getSimpleName();
+        }
         if (adventure != null) {
-            return adventure.getName();
+            return Adventure.class.getSimpleName();
         }
         if (training != null) {
-            return training.getName();
+            return Training.class.getSimpleName();
         }
         if (work != null) {
-            return work.getName();
+            return Work.class.getSimpleName();
         }
         return null;
     }
 
     public void startAdventure(@NotNull Adventure adventure) {
         setAdventure(adventure);
+        setFinishTime(LocalDateTime.now().plusMinutes(adventure.getAdventureTimeInMinutes()));
+    }
+
+    public void endAdventure(@NotNull Adventure adventure) {
+        getFight().setEnemy(adventure.getEnemy());
+        getFight().setActive(true);
+        getFight().setPlayerTurn(true);
         setFinishTime(LocalDateTime.now().plusMinutes(adventure.getAdventureTimeInMinutes()));
     }
 }

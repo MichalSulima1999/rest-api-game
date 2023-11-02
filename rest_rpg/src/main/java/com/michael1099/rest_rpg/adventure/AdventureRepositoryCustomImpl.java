@@ -3,9 +3,6 @@ package com.michael1099.rest_rpg.adventure;
 import com.michael1099.rest_rpg.adventure.model.Adventure;
 import com.michael1099.rest_rpg.adventure.model.QAdventure;
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.Order;
-import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.PathBuilderFactory;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
@@ -16,7 +13,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.Querydsl;
 import org.springframework.data.querydsl.QPageRequest;
-import org.springframework.data.querydsl.QSort;
+
+import static com.michael1099.rest_rpg.helpers.SearchHelper.getQSort;
 
 public class AdventureRepositoryCustomImpl implements AdventureRepositoryCustom {
 
@@ -35,11 +33,7 @@ public class AdventureRepositoryCustomImpl implements AdventureRepositoryCustom 
         var adventure = QAdventure.adventure;
         var predicate = buildPredicate(adventure, request);
 
-        var sortDirection = request.getPagination().getSortOrder().equalsIgnoreCase("asc") ? Order.ASC : Order.DESC;
-        var sortPath = Expressions.stringPath(request.getPagination().getSort());
-        var sort = new OrderSpecifier<>(sortDirection, sortPath);
-
-        var pageRequest = QPageRequest.of(request.getPagination().getPageNumber(), request.getPagination().getElements(), new QSort(sort));
+        var pageRequest = QPageRequest.of(request.getPagination().getPageNumber(), request.getPagination().getElements(), getQSort(request.getPagination()));
 
         var idQuery = queryFactory.select(adventure.id)
                 .from(adventure)

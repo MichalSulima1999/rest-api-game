@@ -15,7 +15,15 @@ const HomeNavbar = () => {
         <ErrorComponent />
       ) : (
         <>
-          <Flex alignItems="center">
+          <Flex alignItems="center" justify={"space-around"}>
+            <Link
+              as={RouterLink}
+              to={`/user/character/${characterId}/main`}
+              fontSize="xl"
+              fontWeight="bold"
+            >
+              {t("CHARACTER.MAIN")}
+            </Link>
             <Link
               as={RouterLink}
               to={`/user/character/${characterId}/statistics`}
@@ -23,6 +31,14 @@ const HomeNavbar = () => {
               fontWeight="bold"
             >
               {t("CHARACTER.STATISTICS.NAME")}
+            </Link>
+            <Link
+              as={RouterLink}
+              to={`/user/character/${characterId}/adventure/show`}
+              fontSize="xl"
+              fontWeight="bold"
+            >
+              {t("ADVENTURE.SHOW")}
             </Link>
           </Flex>
         </>

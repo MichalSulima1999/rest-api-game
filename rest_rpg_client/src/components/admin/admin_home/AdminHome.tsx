@@ -63,6 +63,16 @@ const AdminHome = () => {
       imageUrl: "/images/skill.png",
       linkTo: "/admin/skill/create",
     },
+    {
+      title: t("ADVENTURE.CREATE"),
+      imageUrl: "/images/adventure.jpg",
+      linkTo: "/admin/adventure/create",
+    },
+    {
+      title: t("ADVENTURE.SHOW"),
+      imageUrl: "/images/adventure.jpg",
+      linkTo: "/admin/adventure/show",
+    },
   ];
 
   return (

@@ -11,6 +11,9 @@ import UserHome from "../home/UserHome";
 import AdminHome from "../admin/admin_home/AdminHome";
 import CreateEnemy from "../admin/enemy/CreateEnemy";
 import CreateSkill from "../admin/skill/CreateSkill";
+import CreateAdventure from "../admin/adventure/CreateAdventure";
+import AdminShowAdventures from "../admin/adventure/AdminShowAdventures";
+import ShowAdventures from "../adventure/ShowAdventures";
 
 function Pages() {
   const location = useLocation();
@@ -23,6 +26,9 @@ function Pages() {
             <Route path="character/:characterId" element={<CharacterHome />}>
               <Route path="main" element={<CharacterDetails />} />
               <Route path="statistics" element={<CharacterStatistics />} />
+              <Route path="adventure">
+                <Route path="show" element={<ShowAdventures />} />
+              </Route>
             </Route>
             <Route path="character/create" element={<CharacterCreator />} />
             <Route path="home" element={<UserHome />} />
@@ -34,6 +40,10 @@ function Pages() {
             <Route path="enemy/create" element={<CreateEnemy />} />
             <Route path="skill">
               <Route path="create" element={<CreateSkill />} />
+            </Route>
+            <Route path="adventure">
+              <Route path="create" element={<CreateAdventure />} />
+              <Route path="show" element={<AdminShowAdventures />} />
             </Route>
           </Route>
         </Route>

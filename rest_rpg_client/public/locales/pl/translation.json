@@ -55,10 +55,12 @@
             "ARMOR": "Pancerz",
             "DODGE_CHANCE": "Szansa uniku",
             "CRITICAL_CHANCE": "Szansa ciosu krytycznego",
-            "NUMBER_OF_POTIONS": "Liczba mikstur zdrowia"
+            "NUMBER_OF_POTIONS": "Liczba mikstur zdrowia",
+            "GOLD": "Złoto"
         }
     },
     "ENEMY": {
+        "MAIN": "Przeciwnik",
         "NAME": "Nazwa przeciwnika",
         "CREATE": "Stwórz przeciwnika",
         "CREATION_SUCCESSFUL": "Przeciwnik stworzony pomyślnie"
@@ -85,6 +87,7 @@
         }
     },
     "SKILL": {
+        "MAIN": "Umiejętność",
         "NAME": "Nazwa umiejętności",
         "CREATION_SUCCESSFUL": "Umiejętność stworzona pomyślnie",
         "CREATE": "Stwórz umiejętność",

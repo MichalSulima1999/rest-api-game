@@ -2,6 +2,8 @@ package com.michael1099.rest_rpg.character
 
 import com.michael1099.rest_rpg.character.model.CharacterArtwork
 import com.michael1099.rest_rpg.configuration.TestBase
+import com.michael1099.rest_rpg.fight.Fight
+import com.michael1099.rest_rpg.occupation.Occupation
 import com.michael1099.rest_rpg.statistics.StatisticsHelper
 import com.michael1099.rest_rpg.statistics.StatisticsServiceHelper
 import org.openapitools.model.CharacterBasic
@@ -127,7 +129,7 @@ class CharacterControllerTest extends TestBase {
 
     def "should get user character"() {
         when:
-            def character = characterServiceHelper.createCharacter(user, [name: "Carl"])
+            def character = characterServiceHelper.createCharacter(user, [name: "Carl", occupation: Occupation.builder().fight(Fight.builder().isActive(true).build()).build()])
             def response = httpGet(userCharacterUrl(character.getId()), CharacterBasic, [accessToken: userAccessToken])
         then:
             response.status == HttpStatus.OK

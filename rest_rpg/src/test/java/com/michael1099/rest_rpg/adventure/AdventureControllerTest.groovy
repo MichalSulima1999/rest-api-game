@@ -17,6 +17,7 @@ class AdventureControllerTest extends TestBase {
     def adventureUrl = { long adventureId -> baseUrl + "/" + adventureId }
     def searchUrl = baseUrl + "/search"
     def startAdventureUrl = { long adventureId, long characterId -> baseUrl + "/" + adventureId + "/start/" + characterId }
+    def endAdventureUrl = { long adventureId -> baseUrl + "/" + adventureId + "/end" }
 
     @Autowired
     EnemyServiceHelper enemyServiceHelper
@@ -98,5 +99,50 @@ class AdventureControllerTest extends TestBase {
                 AdventureHelper.compare(it.occupation.adventure, adventure)
                 it.occupation.isOccupied()
             }
+    }
+
+    def "should not start adventure"() {
+        given:
+            def adventure = adventureServiceHelper.saveAdventure(name: "Adventure 1")
+            def character = characterServiceHelper.createCharacter(user)
+            character.occupation.setAdventure(adventure)
+            character = characterServiceHelper.save(character)
+        when:
+            def response = httpGet(startAdventureUrl(adventure.id, character.id), AdventureLite, [accessToken: userAccessToken])
+        then:
+            response.status == HttpStatus.CONFLICT
+            response.errorMessage == ErrorCodes.CHARACTER_IS_OCCUPIED.toString()
+    }
+
+    def "should end adventure"() {
+        given:
+            def adventure = adventureServiceHelper.saveAdventure(name: "Adventure 1")
+            def character = characterServiceHelper.createCharacter(user)
+            character.occupation.setAdventure(adventure)
+            character = characterServiceHelper.save(character)
+        when:
+            def response = httpGet(endAdventureUrl(character.id), AdventureLite, [accessToken: userAccessToken])
+        then:
+            response.status == HttpStatus.OK
+            AdventureHelper.compare(adventure, response.body)
+            characterServiceHelper.getCharacter(character.id).with {
+                AdventureHelper.compare(it.occupation.adventure, adventure)
+                it.occupation.fight.enemy.id == adventure.enemy.id
+                it.occupation.fight.active
+            }
+    }
+
+    def "should not end adventure"() {
+        given:
+            def adventure = adventureServiceHelper.saveAdventure(name: "Adventure 1")
+            def character = characterServiceHelper.createCharacter(user)
+            character.occupation.setAdventure(adventure)
+            character.occupation.fight.setActive(true)
+            character = characterServiceHelper.save(character)
+        when:
+            def response = httpGet(endAdventureUrl(character.id), AdventureLite, [accessToken: userAccessToken])
+        then:
+            response.status == HttpStatus.CONFLICT
+            response.errorMessage == ErrorCodes.FIGHT_IS_ONGOING.toString()
     }
 }

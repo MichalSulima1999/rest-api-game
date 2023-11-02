@@ -265,6 +265,26 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AdventureLite'
+  /adventure/{characterId}/end:
+    get:
+      summary: End adventure with character
+      operationId: endAdventure
+      x-preauth: "hasAuthority('USER')"
+      parameters:
+        - name: characterId
+          in: path
+          required: true
+          description: Character id that ends adventure
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdventureLite'
   /adventure/search:
     post:
       summary: Search adventures.
@@ -337,6 +357,7 @@ components:
         - CHARACTER_ALREADY_EXISTS
         - CHARACTER_NOT_FOUND
         - CHARACTER_IS_OCCUPIED
+        - CHARACTER_IS_NOT_ON_ADVENTURE
         - NOT_ENOUGH_SKILL_POINTS
         - GET_IMAGE
         - IMAGE_DOES_NOT_EXIST
@@ -347,6 +368,7 @@ components:
         - SKILL_ALREADY_EXISTS
         - ADVENTURE_NAME_EXISTS
         - ADVENTURE_NOT_FOUND
+        - FIGHT_IS_ONGOING
     ElementEvent:
       type: string
       enum:
@@ -954,6 +976,7 @@ components:
       required:
         - id
         - name
+        - adventureTimeInMinutes
       properties:
         id:
           description: Adventure id
@@ -962,18 +985,18 @@ components:
         name:
           description: Adventure name
           type: string
+        adventureTimeInMinutes:
+          description: Adventure time in minutes
+          type: integer
     AdventureBasic:
       allOf:
         - $ref: '#/components/schemas/AdventureLite'
         - type: object
           required:
-            - type
-            - multiplier
-            - characterClass
+            - xpForAdventure
+            - goldForAdventure
+            - enemy
           properties:
-            adventureTimeInMinutes:
-              description: Adventure time in minutes
-              type: integer
             xpForAdventure:
               description: XP from adventure
               type: integer
