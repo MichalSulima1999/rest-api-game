@@ -59,8 +59,7 @@ class CharacterServiceHelper {
                 artwork       : CharacterArtwork.HUMAN_FEMALE_1,
                 skills        : [],
                 statistics    : StatisticsHelper.statistics(customArgs),
-                occupation    : new Occupation(),
-                fight         : new Fight(),
+                occupation    : Occupation.builder().fight(new Fight()).build(),
                 equipment     : Equipment.init()
         ]
         args << customArgs
@@ -74,14 +73,13 @@ class CharacterServiceHelper {
                 .equipment(args.equipment)
                 .occupation(args.occupation)
                 .statistics(args.statistics)
-                .fight(args.fight)
                 .status(args.status)
                 .user(user)
                 .build()
 
         character.occupation.setCharacter(character)
         character.statistics.setCharacter(character)
-        character.fight.setCharacter(character)
+        character.getOccupation().getFight().setOccupation(character.occupation)
         character.equipment.setCharacter(character)
 
         characterRepository.save(character)

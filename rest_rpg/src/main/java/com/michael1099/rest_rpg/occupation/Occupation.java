@@ -2,6 +2,7 @@ package com.michael1099.rest_rpg.occupation;
 
 import com.michael1099.rest_rpg.adventure.model.Adventure;
 import com.michael1099.rest_rpg.character.model.Character;
+import com.michael1099.rest_rpg.fight.Fight;
 import com.michael1099.rest_rpg.training.Training;
 import com.michael1099.rest_rpg.work.Work;
 import jakarta.annotation.Nullable;
@@ -59,12 +60,25 @@ public class Occupation {
     @JoinColumn(name = "work_id")
     private Work work;
 
+    @NotNull
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "fight_id", referencedColumnName = "id")
+    private Fight fight;
+
     private boolean deleted;
+
+    public static Occupation init() {
+        var occupation = new Occupation();
+        occupation.setFight(new Fight());
+        occupation.getFight().setOccupation(occupation);
+        return occupation;
+    }
 
     public boolean isOccupied() {
         return adventure != null ||
                 training != null ||
-                work != null;
+                work != null ||
+                fight.isActive();
     }
 
     public String getOccupationType() {
@@ -76,6 +90,9 @@ public class Occupation {
         }
         if (work != null) {
             return work.getName();
+        }
+        if (fight.isActive()) {
+            return fight.getClass().getSimpleName();
         }
         return null;
     }

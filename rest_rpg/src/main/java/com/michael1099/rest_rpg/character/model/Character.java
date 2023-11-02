@@ -4,7 +4,6 @@ import com.michael1099.rest_rpg.auth.user.User;
 import com.michael1099.rest_rpg.character.model.dto.CharacterCreateRequestDto;
 import com.michael1099.rest_rpg.character_skill.CharacterSkill;
 import com.michael1099.rest_rpg.equipment.Equipment;
-import com.michael1099.rest_rpg.fight.Fight;
 import com.michael1099.rest_rpg.occupation.Occupation;
 import com.michael1099.rest_rpg.statistics.Statistics;
 import jakarta.annotation.Nullable;
@@ -140,11 +139,6 @@ public class Character {
 
     @NotNull
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "fight_id", referencedColumnName = "id")
-    private Fight fight;
-
-    @NotNull
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "equipment_id", referencedColumnName = "id")
     private Equipment equipment;
 
@@ -158,16 +152,14 @@ public class Character {
                 .race(dto.getRace())
                 .sex(dto.getSex())
                 .equipment(Equipment.init())
-                .occupation(new Occupation())
+                .occupation(Occupation.init())
                 .statistics(Statistics.init())
-                .fight(new Fight())
                 .status(CharacterStatus.IDLE)
                 .user(user)
                 .build();
 
         character.getOccupation().setCharacter(character);
         character.getStatistics().setCharacter(character);
-        character.getFight().setCharacter(character);
         character.getEquipment().setCharacter(character);
 
         return character;
