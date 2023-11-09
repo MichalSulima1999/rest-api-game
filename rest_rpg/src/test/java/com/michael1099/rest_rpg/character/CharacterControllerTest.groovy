@@ -2,7 +2,7 @@ package com.michael1099.rest_rpg.character
 
 import com.michael1099.rest_rpg.character.model.CharacterArtwork
 import com.michael1099.rest_rpg.configuration.TestBase
-import com.michael1099.rest_rpg.fight.Fight
+import com.michael1099.rest_rpg.fight.model.Fight
 import com.michael1099.rest_rpg.occupation.Occupation
 import com.michael1099.rest_rpg.statistics.StatisticsHelper
 import com.michael1099.rest_rpg.statistics.StatisticsServiceHelper

@@ -2,7 +2,7 @@ package com.michael1099.rest_rpg.occupation;
 
 import com.michael1099.rest_rpg.adventure.model.Adventure;
 import com.michael1099.rest_rpg.character.model.Character;
-import com.michael1099.rest_rpg.fight.Fight;
+import com.michael1099.rest_rpg.fight.model.Fight;
 import com.michael1099.rest_rpg.training.Training;
 import com.michael1099.rest_rpg.work.Work;
 import jakarta.annotation.Nullable;
@@ -105,7 +105,6 @@ public class Occupation {
     public void endAdventure(@NotNull Adventure adventure) {
         getFight().setEnemy(adventure.getEnemy());
         getFight().setActive(true);
-        getFight().setPlayerTurn(true);
         setFinishTime(LocalDateTime.now().plusMinutes(adventure.getAdventureTimeInMinutes()));
     }
 }

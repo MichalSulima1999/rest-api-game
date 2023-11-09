@@ -4,7 +4,10 @@ import com.michael1099.rest_rpg.auth.user.User;
 import com.michael1099.rest_rpg.character.model.dto.CharacterCreateRequestDto;
 import com.michael1099.rest_rpg.character_skill.CharacterSkill;
 import com.michael1099.rest_rpg.equipment.Equipment;
+import com.michael1099.rest_rpg.item.ItemService;
+import com.michael1099.rest_rpg.item.model.Item;
 import com.michael1099.rest_rpg.occupation.Occupation;
+import com.michael1099.rest_rpg.skill.model.Skill;
 import com.michael1099.rest_rpg.statistics.Statistics;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.CascadeType;
@@ -36,6 +39,7 @@ import org.openapitools.model.CharacterClass;
 import org.openapitools.model.CharacterRace;
 import org.openapitools.model.CharacterSex;
 import org.openapitools.model.CharacterStatus;
+import org.openapitools.model.ItemType;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -67,6 +71,7 @@ import java.util.Set;
         attributeNodes = {
                 @NamedAttributeNode("statistics"),
                 @NamedAttributeNode("skills"),
+                @NamedAttributeNode(value = "equipment", subgraph = "equipment-subgraph"),
                 @NamedAttributeNode(value = "occupation", subgraph = "occupation-subgraph")
         },
         subgraphs = {
@@ -84,12 +89,91 @@ import java.util.Set;
                         attributeNodes = {
                                 @NamedAttributeNode("enemy")
                         }
+                ),
+                @NamedSubgraph(
+                        name = "equipment-subgraph",
+                        attributeNodes = {
+                                @NamedAttributeNode("armor"),
+                                @NamedAttributeNode("weapon")
+                        }
+                )
+        }
+)
+@NamedEntityGraph(name = Character.CHARACTER_FIGHT,
+        attributeNodes = {
+                @NamedAttributeNode("statistics"),
+                @NamedAttributeNode(value = "occupation", subgraph = "occupation-subgraph")
+        },
+        subgraphs = {
+                @NamedSubgraph(
+                        name = "occupation-subgraph",
+                        attributeNodes = {
+                                @NamedAttributeNode(value = "fight", subgraph = "fight-subgraph")
+                        }
+                ),
+                @NamedSubgraph(
+                        name = "fight-subgraph",
+                        attributeNodes = {
+                                @NamedAttributeNode("fightEffects"),
+                                @NamedAttributeNode(value = "enemy", subgraph = "skill-subgraph")
+                        }
+                ),
+                @NamedSubgraph(
+                        name = "skill-subgraph",
+                        attributeNodes = {
+                                @NamedAttributeNode("skill")
+                        }
+                )
+        }
+)
+@NamedEntityGraph(name = Character.CHARACTER_FIGHT_ACTION,
+        attributeNodes = {
+                @NamedAttributeNode("statistics"),
+                @NamedAttributeNode(value = "occupation", subgraph = "occupation-subgraph")
+        },
+        subgraphs = {
+                @NamedSubgraph(
+                        name = "occupation-subgraph",
+                        attributeNodes = {
+                                @NamedAttributeNode(value = "fight", subgraph = "fight-subgraph")
+                        }
+                ),
+                @NamedSubgraph(
+                        name = "fight-subgraph",
+                        attributeNodes = {
+                                @NamedAttributeNode("fightEffects"),
+                                @NamedAttributeNode(value = "enemy", subgraph = "enemy-subgraph")
+                        }
+                ),
+                @NamedSubgraph(
+                        name = "enemy-subgraph",
+                        attributeNodes = {
+                                @NamedAttributeNode("skill"),
+                                @NamedAttributeNode("strategyElements")
+                        }
+                )
+        }
+)
+@NamedEntityGraph(name = Character.CHARACTER_FIGHT_LITE,
+        attributeNodes = {
+                @NamedAttributeNode("statistics"),
+                @NamedAttributeNode(value = "occupation", subgraph = "occupation-subgraph")
+        },
+        subgraphs = {
+                @NamedSubgraph(
+                        name = "occupation-subgraph",
+                        attributeNodes = {
+                                @NamedAttributeNode("fight")
+                        }
                 )
         }
 )
 public class Character {
 
     public static final String CHARACTER_BASIC = "CHARACTER_BASIC_GRAPH";
+    public static final String CHARACTER_FIGHT = "CHARACTER_FIGHT_GRAPH";
+    public static final String CHARACTER_FIGHT_ACTION = "CHARACTER_FIGHT_ACTION_GRAPH";
+    public static final String CHARACTER_FIGHT_LITE = "CHARACTER_FIGHT_LITE_GRAPH";
     public static final String CHARACTER_TEST = "CHARACTER_TEST_GRAPH";
 
     @Id
@@ -125,7 +209,7 @@ public class Character {
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
-    @OneToMany(mappedBy = "character", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "character", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<CharacterSkill> skills = new HashSet<>();
 
     @NotNull
@@ -152,6 +236,7 @@ public class Character {
                 .artwork(dto.getArtwork())
                 .race(dto.getRace())
                 .sex(dto.getSex())
+                .skills(new HashSet<>())
                 .equipment(Equipment.init())
                 .occupation(Occupation.init())
                 .statistics(Statistics.init())
@@ -164,5 +249,32 @@ public class Character {
         character.getEquipment().setCharacter(character);
 
         return character;
+    }
+
+    public void learnNewSkill(@NotNull Skill skill) {
+        var characterSkill = CharacterSkill.newSkill(skill, this);
+        if (skills == null) {
+            skills = new HashSet<>();
+        }
+        skills.add(characterSkill);
+    }
+
+    public void buyItem(@NotNull Item item) {
+        equipment.spendGold(item.getPrice());
+        if (item.getType() == ItemType.ARMOR) {
+            equipment.setArmor(item);
+        } else {
+            equipment.setWeapon(item);
+        }
+    }
+
+    public void buyPotion() {
+        equipment.spendGold(ItemService.POTION_PRICE);
+        equipment.addPotion(1);
+    }
+
+    public void usePotion() {
+        equipment.usePotion();
+        statistics.heal(ItemService.POTION_HEAL_PERCENT);
     }
 }

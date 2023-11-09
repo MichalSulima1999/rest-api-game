@@ -8,9 +8,8 @@ import com.michael1099.rest_rpg.enemy.EnemyRepository;
 import com.michael1099.rest_rpg.exceptions.AdventureNameExistsException;
 import com.michael1099.rest_rpg.exceptions.CharacterIsNotOnAdventureException;
 import com.michael1099.rest_rpg.exceptions.CharacterIsOccupiedException;
-import com.michael1099.rest_rpg.exceptions.CharacterNotFoundException;
 import com.michael1099.rest_rpg.exceptions.FightIsOngoingException;
-import com.michael1099.rest_rpg.fight.Fight;
+import com.michael1099.rest_rpg.fight.model.Fight;
 import com.michael1099.rest_rpg.helpers.SearchHelper;
 import com.michael1099.rest_rpg.occupation.Occupation;
 import jakarta.transaction.Transactional;
@@ -25,7 +24,6 @@ import org.openapitools.model.AdventureSearchRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -61,9 +59,8 @@ public class AdventureService {
 
     @Transactional
     public AdventureLite startAdventure(long adventureId, long characterId) {
-        var username = authenticationFacade.getAuthentication().getName();
         var character = characterRepository.getCharacterById(characterId);
-        checkIfCharacterBelongsToUser(character, username);
+        authenticationFacade.checkIfCharacterBelongsToUser(character);
         checkIfCharacterIsOccupied(character);
 
         var adventure = adventureRepository.getAdventureById(adventureId);
@@ -75,9 +72,8 @@ public class AdventureService {
 
     @Transactional
     public AdventureLite endAdventure(long characterId) {
-        var username = authenticationFacade.getAuthentication().getName();
         var character = characterRepository.getCharacterById(characterId);
-        checkIfCharacterBelongsToUser(character, username);
+        authenticationFacade.checkIfCharacterBelongsToUser(character);
         checkIfFightIsOngoing(character.getOccupation().getFight());
         var adventure = Optional.ofNullable(character.getOccupation())
                 .map(Occupation::getAdventure).orElseThrow(CharacterIsNotOnAdventureException::new);
@@ -91,12 +87,6 @@ public class AdventureService {
     private void checkIfAdventureExists(@NotBlank String adventureName) {
         if (adventureRepository.existsByNameIgnoreCase(adventureName)) {
             throw new AdventureNameExistsException();
-        }
-    }
-
-    private void checkIfCharacterBelongsToUser(@NotNull Character character, @NotBlank String username) {
-        if (!Objects.equals(character.getUser().getUsername(), username)) {
-            throw new CharacterNotFoundException();
         }
     }
 

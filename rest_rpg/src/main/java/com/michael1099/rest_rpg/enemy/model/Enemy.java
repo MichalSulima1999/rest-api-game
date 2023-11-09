@@ -1,7 +1,7 @@
 package com.michael1099.rest_rpg.enemy.model;
 
 import com.michael1099.rest_rpg.adventure.model.Adventure;
-import com.michael1099.rest_rpg.fight.Fight;
+import com.michael1099.rest_rpg.fight.model.Fight;
 import com.michael1099.rest_rpg.skill.model.Skill;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.CascadeType;
@@ -88,5 +88,9 @@ public class Enemy {
                 .skill(skill)
                 .deleted(false)
                 .build();
+    }
+
+    public void usePotion() {
+        numberOfPotions = Math.max(0, numberOfPotions - 1);
     }
 }

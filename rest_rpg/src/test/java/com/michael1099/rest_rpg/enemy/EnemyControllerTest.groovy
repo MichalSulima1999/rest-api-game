@@ -74,7 +74,7 @@ class EnemyControllerTest extends TestBase {
                             action: ElementAction.USE_POTION,
                             priority: 2),
                     EnemyHelper.createStrategyElementCreateRequest(
-                            event: ElementEvent.HEALTH_20_40,
+                            event: ElementEvent.PLAYER_HEALTH_20_40,
                             action: ElementAction.SPECIAL_ATTACK,
                             priority: 1)
             ]

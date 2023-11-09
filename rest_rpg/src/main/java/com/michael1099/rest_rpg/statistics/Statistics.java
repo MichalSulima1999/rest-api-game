@@ -2,7 +2,9 @@ package com.michael1099.rest_rpg.statistics;
 
 import com.michael1099.rest_rpg.character.model.Character;
 import com.michael1099.rest_rpg.exceptions.EnumValueNotFoundException;
+import com.michael1099.rest_rpg.exceptions.NotEnoughManaException;
 import com.michael1099.rest_rpg.exceptions.NotEnoughSkillPointsException;
+import com.michael1099.rest_rpg.item.model.Item;
 import com.michael1099.rest_rpg.statistics.dto.StatisticsUpdateRequestDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -18,6 +20,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.openapitools.model.CharacterRace;
 
+import java.util.Optional;
+
 @Entity
 @Getter
 @Setter
@@ -28,10 +32,12 @@ public class Statistics {
 
     public static final int HP_MULTIPLIER = 10;
     public static final int MANA_MULTIPLIER = 10;
-    public static final int DAMAGE_MULTIPLIER = 10;
-    public static final int MAGIC_DAMAGE_MULTIPLIER = 10;
+    public static final int DAMAGE_MULTIPLIER = 5;
+    public static final int MAGIC_DAMAGE_MULTIPLIER = 5;
     public static final int START_FREE_STATISTICS_POINTS = 50;
+    public static final int STATISTICS_POINTS_PER_LEVEL = 10;
     public static final int CHARACTER_RACE_BONUS = 5;
+    public static final int XP_TO_NEXT_LEVEL_BASE = 250;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,19 +52,7 @@ public class Statistics {
 
     private int currentMana;
 
-    private int damage;
-
-    private int magicDamage;
-
-    private int armor;
-
-    private float dodgeChance;
-
-    private float criticalChance;
-
     private int currentXp;
-
-    private int xpToNextLevel;
 
     private int currentLevel;
 
@@ -83,13 +77,7 @@ public class Statistics {
                 .currentHp(100)
                 .maxMana(100)
                 .currentMana(100)
-                .damage(10)
-                .magicDamage(10)
-                .armor(0)
-                .dodgeChance(9.5f)
-                .criticalChance(9.5f)
                 .currentXp(0)
-                .xpToNextLevel(500)
                 .currentLevel(1)
                 .freeStatisticPoints(START_FREE_STATISTICS_POINTS)
                 .strength(10)
@@ -97,6 +85,31 @@ public class Statistics {
                 .constitution(10)
                 .intelligence(10)
                 .build();
+    }
+
+    public int getDamage() {
+        return this.strength * DAMAGE_MULTIPLIER +
+                Optional.ofNullable(character.getEquipment().getWeapon()).map(Item::getPower).orElse(0);
+    }
+
+    public int getMagicDamage() {
+        return this.intelligence * MAGIC_DAMAGE_MULTIPLIER;
+    }
+
+    public int getArmor() {
+        return Optional.ofNullable(character.getEquipment().getArmor()).map(Item::getPower).orElse(0);
+    }
+
+    public float getDodgeChance() {
+        return criticalDodgeChance(this.dexterity);
+    }
+
+    public float getCriticalChance() {
+        return criticalDodgeChance(this.dexterity);
+    }
+
+    public int getXpToNextLevel() {
+        return XP_TO_NEXT_LEVEL_BASE * currentLevel * currentLevel;
     }
 
     public void addStatistics(@NotNull StatisticsUpdateRequestDto dto, @NotNull CharacterRace race) {
@@ -115,17 +128,38 @@ public class Statistics {
     }
 
     public void updateStats() {
-        // + items in future
-        this.dodgeChance = criticalDodgeChance(this.dexterity);
-        this.criticalChance = criticalDodgeChance(this.dexterity);
         var previousMaxHp = this.maxHp;
         this.maxHp = this.constitution * HP_MULTIPLIER;
         this.currentHp += this.maxHp - previousMaxHp;
         var previousMaxMana = this.maxMana;
         this.maxMana = this.intelligence * MANA_MULTIPLIER;
         this.currentMana += this.maxMana - previousMaxMana;
-        this.damage = this.strength * DAMAGE_MULTIPLIER;
-        this.magicDamage = this.intelligence * MAGIC_DAMAGE_MULTIPLIER;
+    }
+
+    public void takeDamage(int damage) {
+        currentHp = Math.max(0, currentHp - damage);
+    }
+
+    public void useMana(int mana) {
+        if (mana > currentMana) {
+            throw new NotEnoughManaException();
+        }
+        currentMana -= mana;
+    }
+
+    public void heal(int percent) {
+        currentHp += maxHp * percent / 100;
+        if (currentHp > maxHp) {
+            currentHp = maxHp;
+            freeStatisticPoints += STATISTICS_POINTS_PER_LEVEL;
+        }
+    }
+
+    public void earnXp(int xp) {
+        currentXp += xp;
+        if (currentXp >= getXpToNextLevel()) {
+            currentLevel++;
+        }
     }
 
     private void setRaceBonus(CharacterRace race) {

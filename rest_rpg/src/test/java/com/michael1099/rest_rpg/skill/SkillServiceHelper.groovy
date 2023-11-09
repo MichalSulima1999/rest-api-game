@@ -20,14 +20,20 @@ class SkillServiceHelper {
 
     Skill createSkill(Map customArgs = [:]) {
         Map args = [
-                name           : "John" + Math.random().toString(),
-                type           : SkillType.NORMAL_DAMAGE,
-                multiplier     : 2,
-                effect         : SkillEffect.BLEEDING,
-                enemy          : null,
-                characterClass : CharacterClass.WARRIOR,
-                characterSkills: new HashSet<CharacterSkill>(),
-                deleted        : false
+                name                    : "John" + Math.random().toString(),
+                type                    : SkillType.NORMAL_DAMAGE,
+                multiplier              : 1.3,
+                multiplierPerLevel      : 0.2,
+                effect                  : SkillEffect.BLEEDING,
+                effectDuration          : 3,
+                effectDurationPerLevel  : 1,
+                effectMultiplier        : 0.1,
+                effectMultiplierPerLevel: 0.05,
+                manaCost                : 10,
+                enemy                   : null,
+                characterClass          : CharacterClass.WARRIOR,
+                characterSkills         : new HashSet<CharacterSkill>(),
+                deleted                 : false
         ]
         args << customArgs
 
@@ -36,6 +42,11 @@ class SkillServiceHelper {
                 .type(args.type)
                 .multiplier(args.multiplier)
                 .effect(args.effect)
+                .effectDuration(args.effectDuration)
+                .effectDurationPerLevel(args.effectDurationPerLevel)
+                .effectMultiplier(args.effectMultiplier)
+                .effectMultiplierPerLevel(args.effectMultiplierPerLevel)
+                .manaCost(args.manaCost)
                 .enemy(args.enemy)
                 .characterClass(args.characterClass)
                 .characters(args.characterSkills)
