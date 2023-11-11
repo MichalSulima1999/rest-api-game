@@ -39,7 +39,13 @@ public class FightEffect {
     @Enumerated(EnumType.STRING)
     private SkillEffect skillEffect;
 
+    private float effectMultiplier;
+
     private int duration;
 
     private boolean isPlayerEffect;
+
+    public void passTurn() {
+        duration--;
+    }
 }

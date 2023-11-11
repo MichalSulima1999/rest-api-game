@@ -53,24 +53,19 @@ public class Skill {
 
     private float multiplier;
 
-    @Nullable
-    private Float multiplierPerLevel;
+    private float multiplierPerLevel;
 
     @Nullable
     @Enumerated(EnumType.STRING)
     private SkillEffect effect;
 
-    @Nullable
-    private Integer effectDuration;
+    private int effectDuration;
 
-    @Nullable
-    private Integer effectDurationPerLevel;
+    private int effectDurationPerLevel;
 
-    @Nullable
-    private Float effectMultiplier;
+    private float effectMultiplier;
 
-    @Nullable
-    private Float effectMultiplierPerLevel;
+    private float effectMultiplierPerLevel;
 
     @NotNull
     @Enumerated(EnumType.STRING)
@@ -103,13 +98,14 @@ public class Skill {
     }
 
     public float getDamageMultiplier(int skillLevel) {
-        return multiplier + Optional.ofNullable(multiplierPerLevel).orElse(0f) * skillLevel;
+        return multiplier + multiplierPerLevel * skillLevel;
+    }
+
+    public float getFinalEffectMultiplier(int skillLevel) {
+        return effectMultiplier + effectMultiplierPerLevel * skillLevel;
     }
 
     public int getFinalEffectDuration(int skillLevel) {
-        if (effectDuration == null) {
-            throw new SkillNotFoundException();
-        }
-        return effectDuration + Optional.ofNullable(effectDurationPerLevel).orElse(0) * skillLevel;
+        return effectDuration + effectDurationPerLevel * skillLevel;
     }
 }

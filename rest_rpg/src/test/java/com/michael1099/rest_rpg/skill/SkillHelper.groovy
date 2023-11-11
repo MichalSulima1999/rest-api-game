@@ -17,24 +17,32 @@ class SkillHelper {
 
     static SkillCreateRequest createSkillCreateRequest(Map customArgs = [:]) {
         Map args = [
-                name            : "Bash",
-                manaCost        : 10,
-                type            : SkillType.NORMAL_DAMAGE.toString(),
-                multiplier      : 1.2f,
-                effect          : SkillEffect.STUNNED.toString(),
-                effectDuration  : 2,
-                effectMultiplier: null,
-                characterClass  : CharacterClass.WARRIOR.toString()
+                name                    : "Bash",
+                manaCost                : 10,
+                type                    : SkillType.NORMAL_DAMAGE.toString(),
+                multiplier              : 1.2f,
+                multiplierPerLevel      : 0.1f,
+                effect                  : SkillEffect.STUNNED.toString(),
+                effectDuration          : 2,
+                effectDurationPerLevel  : 1,
+                effectMultiplier        : 0,
+                effectMultiplierPerLevel: 0,
+                characterClass          : CharacterClass.WARRIOR.toString()
         ]
 
         args << customArgs
-        def request = new SkillCreateRequest(args.name, args.manaCost, args.type, args.multiplier, args.characterClass)
-        request.multiplierPerLevel(args.multiplierPerLevel as Float)
+        def request = new SkillCreateRequest(args.name,
+                args.manaCost,
+                args.type,
+                args.multiplier,
+                args.multiplierPerLevel,
+                args.effectDuration,
+                args.effectDurationPerLevel,
+                args.effectMultiplier,
+                args.effectMultiplierPerLevel,
+                args.characterClass)
         request.effect(args.effect)
-        request.effectDuration(args.effectDuration)
-        request.effectDurationPerLevel(args.effectDurationPerLevel as Integer)
         request.effectMultiplier(args.effectMultiplier)
-        request.effectMultiplierPerLevel(args.effectMultiplierPerLevel as Float)
         return request
     }
 

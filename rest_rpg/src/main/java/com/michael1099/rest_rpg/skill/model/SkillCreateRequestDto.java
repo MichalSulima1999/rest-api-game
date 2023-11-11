@@ -21,23 +21,18 @@ public class SkillCreateRequestDto {
 
     float multiplier;
 
-    @Nullable
-    Float multiplierPerLevel;
+    float multiplierPerLevel;
 
     @Nullable
     SkillEffect effect;
 
-    @Nullable
-    Integer effectDuration;
+    int effectDuration;
 
-    @Nullable
-    Integer effectDurationPerLevel;
+    int effectDurationPerLevel;
 
-    @Nullable
-    Float effectMultiplier;
+    float effectMultiplier;
 
-    @Nullable
-    Float effectMultiplierPerLevel;
+    float effectMultiplierPerLevel;
 
     @NotNull
     CharacterClass characterClass;

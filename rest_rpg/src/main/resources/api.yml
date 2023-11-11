@@ -704,6 +704,11 @@ components:
         - manaCost
         - type
         - multiplier
+        - multiplierPerLevel
+        - effectDuration
+        - effectDurationPerLevel
+        - effectMultiplier
+        - effectMultiplierPerLevel
         - characterClass
       properties:
         name:

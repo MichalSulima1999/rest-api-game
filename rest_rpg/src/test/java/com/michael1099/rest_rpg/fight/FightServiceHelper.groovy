@@ -24,9 +24,10 @@ class FightServiceHelper {
 
     FightEffect saveFightEffect(Map customArgs = [:]) {
         Map args = [
-                skillEffect : SkillEffect.BLEEDING,
-                duration    : 3,
-                playerEffect: true
+                skillEffect     : SkillEffect.BLEEDING,
+                duration        : 3,
+                effectMultiplier: 0.2,
+                playerEffect    : true
         ]
 
         args << customArgs
@@ -34,6 +35,7 @@ class FightServiceHelper {
                 .skillEffect(args.skillEffect)
                 .duration(args.duration)
                 .isPlayerEffect(args.playerEffect)
+                .effectMultiplier(args.effectMultiplier)
                 .fight(args.fight as Fight)
                 .build()
         return fightEffectRepository.save(effect)

@@ -27,6 +27,8 @@ import org.springframework.validation.annotation.Validated;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,6 +41,11 @@ public class FightService {
     private final IAuthenticationFacade authenticationFacade;
     private final FightMapper fightMapper;
 
+    private final AtomicBoolean playerStunned = new AtomicBoolean(false);
+    private final AtomicBoolean enemyStunned = new AtomicBoolean(false);
+    private final AtomicReference<Float> playerDamageMultiplier = new AtomicReference<>((float) 1);
+    private final AtomicReference<Float> enemyDamageMultiplier = new AtomicReference<>((float) 1);
+
     @Transactional
     public FightDetails getFight(long characterId) {
         var character = characterRepository.getWithEntityGraph(characterId, Character.CHARACTER_FIGHT);
@@ -48,18 +55,60 @@ public class FightService {
 
     @Transactional
     public FightActionResponse performActionInFight(@NotNull FightActionRequest fightActionRequest) {
+        playerStunned.set(false);
+        enemyStunned.set(false);
+        playerDamageMultiplier.set(1f);
+        enemyDamageMultiplier.set(1f);
         var request = fightMapper.toDto(fightActionRequest);
         var character = characterRepository.getWithEntityGraph(request.getCharacterId(), Character.CHARACTER_FIGHT_ACTION);
         authenticationFacade.checkIfCharacterBelongsToUser(character);
         var fight = character.getOccupation().getFight();
         checkIfFightIsActive(fight);
         var response = new FightActionResponse();
-        switch (request.getAction()) {
-            case NORMAL_ATTACK -> attack(character, response, fight);
-            case USE_POTION -> usePotion(character);
-            case SPECIAL_ATTACK -> specialAttack(character, fight, response, fightActionRequest.getSkillId());
+
+        if (fight.getFightEffects() != null) {
+            var finalCharacter = character;
+            fight.getFightEffects().stream().filter(effect -> effect.getDuration() > 0).forEach(effect -> {
+                effect.passTurn();
+                switch (effect.getSkillEffect()) {
+                    case BLEEDING, BURNING -> {
+                        if (effect.isPlayerEffect()) {
+                            finalCharacter.getStatistics().takeDamage(
+                                    Math.round(finalCharacter.getStatistics().getMaxHp() * effect.getEffectMultiplier()));
+                        } else {
+                            var enemyMaxHp = Optional.ofNullable(fight.getEnemy()).map(Enemy::getHp).orElseThrow();
+                            fight.dealDamageToEnemy(Math.round(enemyMaxHp * effect.getEffectMultiplier()));
+                        }
+                    }
+                    case STUNNED -> {
+                        if (effect.isPlayerEffect()) {
+                            playerStunned.set(true);
+                        } else {
+                            enemyStunned.set(true);
+                        }
+                    }
+                    case WEAKNESS -> {
+                        if (effect.isPlayerEffect()) {
+                            playerDamageMultiplier.set(Math.max(0.1f, playerDamageMultiplier.get() - effect.getEffectMultiplier()));
+                        } else {
+                            enemyDamageMultiplier.set(Math.max(0.1f, enemyDamageMultiplier.get() - effect.getEffectMultiplier()));
+                        }
+                    }
+                }
+            });
         }
-        // TODO: Efekty w walce
+
+        if (!playerStunned.get()) {
+            switch (request.getAction()) {
+                case NORMAL_ATTACK -> attack(character, response, fight);
+                case USE_POTION -> usePotion(character);
+                case SPECIAL_ATTACK -> specialAttack(character, fight, response, fightActionRequest.getSkillId());
+            }
+        }
+        if (!enemyStunned.get()) {
+            enemyTurn(response, fight, character);
+        }
+
         if (fight.getEnemyCurrentHp() <= 0) {
             winFight(fight, character, response);
         } else if (character.getStatistics().getCurrentHp() <= 0) {
@@ -75,16 +124,14 @@ public class FightService {
 
     private void attack(@NotNull Character character, @NotNull FightActionResponse response, @NotNull Fight fight) {
         var playerStatistics = character.getStatistics();
-        var enemy = Optional.ofNullable(fight).map(Fight::getEnemy).orElseThrow();
 
-        var playerDamage = character.getStatistics().getDamage();
+        var playerDamage = Math.round(character.getStatistics().getDamage() * playerDamageMultiplier.get());
         if (new Random().nextFloat(0, 100) < playerStatistics.getCriticalChance()) {
             playerDamage *= 2;
             response.setPlayerCriticalStrike(true);
         }
         fight.dealDamageToEnemy(playerDamage);
         response.setPlayerDamage(playerDamage);
-        enemyTurn(response, playerStatistics, enemy, fight, character);
         character.setStatistics(playerStatistics);
         character.getOccupation().setFight(fight);
     }
@@ -115,6 +162,7 @@ public class FightService {
             fightEffect.setDuration(effectDuration);
             fightEffect.setPlayerEffect(false);
             fightEffect.setSkillEffect(skill.getEffect());
+            fightEffect.setEffectMultiplier(skill.getFinalEffectMultiplier(skillLevel));
         }
         var baseDamage = skill.isMagicDamage() ? statistics.getMagicDamage() : statistics.getDamage();
         var playerDamage = Math.round((skill.getDamageMultiplier(skillLevel) * baseDamage));
@@ -123,10 +171,13 @@ public class FightService {
         response.setPlayerDamage(playerDamage);
         response.setPlayerCurrentMana(statistics.getCurrentMana());
         character.setStatistics(statistics);
-        enemyTurn(response, statistics, fight.getEnemy(), fight, character);
     }
 
-    private void enemyTurn(@NotNull FightActionResponse response, @NotNull Statistics playerStatistics, @NotNull Enemy enemy, @NotNull Fight fight, @NotNull Character character) {
+    private void enemyTurn(@NotNull FightActionResponse response,
+                           @NotNull Fight fight,
+                           @NotNull Character character) {
+        var enemy = Optional.ofNullable(fight.getEnemy()).orElseThrow();
+        var playerStatistics = character.getStatistics();
         if (fight.getEnemyCurrentHp() > 0) {
             var enemyAction = decideEnemyAction(fight, character);
             response.setEnemyAction(enemyAction.getElementAction());
@@ -136,6 +187,8 @@ public class FightService {
                 case USE_POTION -> enemyUsePotion(response, playerStatistics, enemy, fight);
             }
         }
+        character.setStatistics(playerStatistics);
+        character.getOccupation().setFight(fight);
     }
 
     private void enemyNormalAttack(@NotNull FightActionResponse response, @NotNull Statistics playerStatistics, @NotNull Enemy enemy) {
@@ -153,31 +206,33 @@ public class FightService {
 
     private void enemySpecialAttack(@NotNull FightActionResponse response, @NotNull Statistics playerStatistics, @NotNull Enemy enemy, @NotNull Fight fight) {
         var skill = enemy.getSkill();
+        response.setEnemyHit(false);
         if (fight.getEnemyCurrentMana() < skill.getManaCost()) {
             enemyNormalAttack(response, playerStatistics, enemy);
         } else {
-            if (skill.getEffect() != null) {
-                var effects = Optional.ofNullable(fight.getFightEffects()).orElse(new HashSet<>()).stream().filter(fightEffect -> fightEffect.getDuration() <= 0).collect(Collectors.toSet());
-                FightEffect fightEffect = new FightEffect();
-                if (!effects.isEmpty()) {
-                    fightEffect = effects.stream().findFirst().get();
-                }
-                fightEffect.setFight(fight);
-                int effectDuration = Optional.ofNullable(skill.getEffectDuration()).orElseThrow();
-                fightEffect.setDuration(effectDuration);
-                fightEffect.setPlayerEffect(true);
-                response.setEnemyHit(false);
-                fightEffect.setSkillEffect(skill.getEffect());
-                var successfulHit = new Random().nextFloat(0, 100) > playerStatistics.getDodgeChance();
-                if (successfulHit) {
-                    var enemyDamage = Math.max(1,
-                            Math.round((enemy.getSkill().getMultiplier() + effectDuration * enemy.getSkillLevel()) *
-                                    enemy.getDamage() + enemy.getDamage() - playerStatistics.getArmor()));
-                    playerStatistics.takeDamage(enemyDamage);
-                    fight.enemyUseMana();
-                    response.setEnemyDamage(enemyDamage);
-                    response.setEnemyHit(true);
-                    response.setPlayerCurrentHp(playerStatistics.getCurrentHp());
+            var successfulHit = new Random().nextFloat(0, 100) > playerStatistics.getDodgeChance();
+            if (successfulHit) {
+                int effectDuration = skill.getEffectDuration();
+                var enemyDamage = Math.max(1,
+                        Math.round((enemy.getSkill().getMultiplier() + effectDuration * enemy.getSkillLevel()) *
+                                enemy.getDamage() + enemy.getDamage() - playerStatistics.getArmor()));
+                playerStatistics.takeDamage(enemyDamage);
+                fight.enemyUseMana();
+                response.setEnemyDamage(enemyDamage);
+                response.setEnemyHit(true);
+                response.setPlayerCurrentHp(playerStatistics.getCurrentHp());
+                if (skill.getEffect() != null) {
+                    var effects = Optional.ofNullable(fight.getFightEffects()).orElse(new HashSet<>()).stream()
+                            .filter(fightEffect -> fightEffect.getDuration() <= 0).collect(Collectors.toSet());
+                    FightEffect fightEffect = new FightEffect();
+                    if (!effects.isEmpty()) {
+                        fightEffect = effects.stream().findFirst().get();
+                    }
+                    fightEffect.setFight(fight);
+                    fightEffect.setDuration(effectDuration);
+                    fightEffect.setPlayerEffect(true);
+                    fightEffect.setSkillEffect(skill.getEffect());
+                    fightEffect.setEffectMultiplier(skill.getFinalEffectMultiplier(enemy.getSkillLevel()));
                 }
             }
         }
@@ -243,6 +298,9 @@ public class FightService {
         character.getStatistics().earnXp(adventure.getXpForAdventure());
         character.getOccupation().setAdventure(null);
         character.getOccupation().setFight(fight);
+        if (fight.getFightEffects() != null) {
+            fight.getFightEffects().forEach(fightEffect -> fightEffect.setDuration(0));
+        }
         response.setPlayerWon(true);
     }
 
@@ -251,6 +309,9 @@ public class FightService {
         fight.setEnemy(null);
         character.getOccupation().setAdventure(null);
         character.getOccupation().setFight(fight);
+        if (fight.getFightEffects() != null) {
+            fight.getFightEffects().forEach(fightEffect -> fightEffect.setDuration(0));
+        }
         response.setPlayerWon(false);
     }
 

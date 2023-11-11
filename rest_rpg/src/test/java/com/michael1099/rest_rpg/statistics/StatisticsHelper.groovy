@@ -93,7 +93,7 @@ class StatisticsHelper {
         assert statistics.magicDamage == dto.intelligence * Statistics.MAGIC_DAMAGE_MULTIPLIER
         assert statistics.armor == 0
         assert statistics.currentXp == 0
-        assert statistics.xpToNextLevel == 500
+        assert statistics.xpToNextLevel == 250
         assert statistics.currentLevel == 1
         assert statistics.freeStatisticPoints == Statistics.START_FREE_STATISTICS_POINTS -
                 dto.strength - dto.dexterity - dto.constitution - dto.intelligence

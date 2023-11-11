@@ -11,6 +11,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.NamedAttributeNode;
+import jakarta.persistence.NamedEntityGraph;
+import jakarta.persistence.NamedSubgraph;
 import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -28,7 +31,29 @@ import java.util.Optional;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@NamedEntityGraph(name = Statistics.STATISTICS_DETAILS,
+        attributeNodes = {
+                @NamedAttributeNode(value = "character", subgraph = "character-subgraph")
+        },
+        subgraphs = {
+                @NamedSubgraph(
+                        name = "character-subgraph",
+                        attributeNodes = {
+                                @NamedAttributeNode(value = "equipment", subgraph = "equipment-subgraph")
+                        }
+                ),
+                @NamedSubgraph(
+                        name = "equipment-subgraph",
+                        attributeNodes = {
+                                @NamedAttributeNode("armor"),
+                                @NamedAttributeNode("weapon")
+                        }
+                )
+        }
+)
 public class Statistics {
+
+    public static final String STATISTICS_DETAILS = "statistic-details-graph";
 
     public static final int HP_MULTIPLIER = 10;
     public static final int MANA_MULTIPLIER = 10;

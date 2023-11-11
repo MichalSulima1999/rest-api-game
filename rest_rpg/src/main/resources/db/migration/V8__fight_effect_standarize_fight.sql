@@ -7,10 +7,16 @@ ALTER TABLE fight_effect ADD CONSTRAINT FK_FIGHTEFFECT_ON_FIGHT FOREIGN KEY (fig
 ALTER TABLE fight_effect ADD is_player_effect BIT(1) NOT NULL;
 ALTER TABLE fight_effect MODIFY skill_effect VARCHAR(255) NOT NULL;
 ALTER TABLE fight_effect MODIFY duration INT NOT NULL;
+ALTER TABLE fight_effect ADD effect_multiplier FLOAT NOT NULL;
 
 ALTER TABLE fight DROP COLUMN player_turn;
 
 ALTER TABLE skill ADD magic_damage BIT(1) NOT NULL;
+ALTER TABLE skill MODIFY multiplier_per_level FLOAT NOT NULL;
+ALTER TABLE skill MODIFY effect_duration INT NOT NULL;
+ALTER TABLE skill MODIFY effect_duration_per_level INT NOT NULL;
+ALTER TABLE skill MODIFY effect_multiplier FLOAT NOT NULL;
+ALTER TABLE skill MODIFY effect_multiplier_per_level FLOAT NOT NULL;
 
 ALTER TABLE statistics DROP COLUMN damage;
 ALTER TABLE statistics DROP COLUMN magic_damage;
@@ -50,3 +56,9 @@ SET
 WHERE
   enemy_current_mana IS NULL;
 ALTER TABLE fight MODIFY enemy_current_mana INT NOT NULL;
+UPDATE
+  skill
+SET
+  effect_duration = '0'
+WHERE
+  effect_duration IS NULL;
