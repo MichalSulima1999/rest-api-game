@@ -37,4 +37,9 @@ public class AdventureController implements AdventureApi {
     public ResponseEntity<AdventureLite> startAdventure(Long adventureId, Long characterId) {
         return ResponseEntity.ok(adventureService.startAdventure(adventureId, characterId));
     }
+
+    @Override
+    public ResponseEntity<AdventureLite> endAdventure(Long characterId) {
+        return ResponseEntity.ok(adventureService.endAdventure(characterId));
+    }
 }

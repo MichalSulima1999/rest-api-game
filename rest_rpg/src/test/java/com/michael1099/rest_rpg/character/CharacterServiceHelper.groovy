@@ -3,13 +3,16 @@ package com.michael1099.rest_rpg.character
 import com.michael1099.rest_rpg.auth.user.User
 import com.michael1099.rest_rpg.character.model.Character
 import com.michael1099.rest_rpg.character.model.CharacterArtwork
+import com.michael1099.rest_rpg.character_skill.CharacterSkill
+import com.michael1099.rest_rpg.enemy.EnemyRepository
 import com.michael1099.rest_rpg.equipment.Equipment
 import com.michael1099.rest_rpg.equipment.EquipmentRepository
-import com.michael1099.rest_rpg.fight.Fight
 import com.michael1099.rest_rpg.fight.FightRepository
+import com.michael1099.rest_rpg.fight.model.Fight
 import com.michael1099.rest_rpg.occupation.Occupation
 import com.michael1099.rest_rpg.occupation.OccupationRepository
 import com.michael1099.rest_rpg.skill.SkillRepository
+import com.michael1099.rest_rpg.skill.model.Skill
 import com.michael1099.rest_rpg.statistics.StatisticsHelper
 import com.michael1099.rest_rpg.statistics.StatisticsRepository
 import org.openapitools.model.CharacterClass
@@ -29,6 +32,9 @@ class CharacterServiceHelper {
     SkillRepository skillRepository
 
     @Autowired
+    EnemyRepository enemyRepository
+
+    @Autowired
     StatisticsRepository statisticsRepository
 
     @Autowired
@@ -42,6 +48,7 @@ class CharacterServiceHelper {
 
     def clean() {
         characterRepository.deleteAll()
+        enemyRepository.deleteAll()
         skillRepository.deleteAll()
         statisticsRepository.deleteAll()
         occupationRepository.deleteAll()
@@ -57,7 +64,7 @@ class CharacterServiceHelper {
                 characterClass: CharacterClass.WARRIOR,
                 status        : CharacterStatus.IDLE,
                 artwork       : CharacterArtwork.HUMAN_FEMALE_1,
-                skills        : [],
+                skills        : new HashSet<Skill>(),
                 statistics    : StatisticsHelper.statistics(customArgs),
                 occupation    : Occupation.builder().fight(new Fight()).build(),
                 equipment     : Equipment.init()
@@ -73,6 +80,7 @@ class CharacterServiceHelper {
                 .equipment(args.equipment)
                 .occupation(args.occupation)
                 .statistics(args.statistics)
+                .skills(new HashSet<CharacterSkill>())
                 .status(args.status)
                 .user(user)
                 .build()
@@ -82,6 +90,16 @@ class CharacterServiceHelper {
         character.getOccupation().getFight().setOccupation(character.occupation)
         character.equipment.setCharacter(character)
 
+        character = save(character)
+
+        args.skills.forEach {
+            character.learnNewSkill(it)
+        }
+        
+        save(character)
+    }
+
+    Character save(Character character) {
         characterRepository.save(character)
     }
 

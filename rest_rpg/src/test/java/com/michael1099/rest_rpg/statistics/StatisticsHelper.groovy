@@ -29,11 +29,6 @@ class StatisticsHelper {
                 currentHp          : 300,
                 maxMana            : 100,
                 currentMana        : 100,
-                damage             : 40,
-                magicDamage        : 40,
-                armor              : 20,
-                dodgeChance        : 40.1,
-                criticalChance     : 50.6,
                 currentXp          : 100,
                 xpToNextLevel      : 250,
                 currentLevel       : 2,
@@ -52,13 +47,7 @@ class StatisticsHelper {
                 .currentHp(args.currentHp)
                 .maxMana(args.maxMana)
                 .currentMana(args.currentMana)
-                .damage(args.damage)
-                .magicDamage(args.magicDamage)
-                .armor(args.armor)
-                .dodgeChance(args.dodgeChance)
-                .criticalChance(args.criticalChance)
                 .currentXp(args.currentXp)
-                .xpToNextLevel(args.xpToNextLevel)
                 .currentLevel(args.currentLevel)
                 .freeStatisticPoints(args.freeStatisticPoints)
                 .strength(args.strength)
@@ -100,7 +89,7 @@ class StatisticsHelper {
         assert statistics.currentHp == statistics.maxHp;
         assert statistics.maxMana == dto.intelligence * Statistics.MANA_MULTIPLIER
         assert statistics.currentMana == statistics.maxMana
-        assert statistics.damage == dto.strength * Statistics.DAMAGE_MULTIPLIER
+        assert statistics.damage == (dto.strength + (race == CharacterRace.HUMAN ? Statistics.CHARACTER_RACE_BONUS : 0)) * Statistics.DAMAGE_MULTIPLIER
         assert statistics.magicDamage == dto.intelligence * Statistics.MAGIC_DAMAGE_MULTIPLIER
         assert statistics.armor == 0
         assert statistics.currentXp == 0

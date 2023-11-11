@@ -6,9 +6,12 @@ import com.michael1099.rest_rpg.character.CharacterRepository;
 import com.michael1099.rest_rpg.character.model.Character;
 import com.michael1099.rest_rpg.enemy.EnemyRepository;
 import com.michael1099.rest_rpg.exceptions.AdventureNameExistsException;
+import com.michael1099.rest_rpg.exceptions.CharacterIsNotOnAdventureException;
 import com.michael1099.rest_rpg.exceptions.CharacterIsOccupiedException;
-import com.michael1099.rest_rpg.exceptions.CharacterNotFoundException;
+import com.michael1099.rest_rpg.exceptions.FightIsOngoingException;
+import com.michael1099.rest_rpg.fight.model.Fight;
 import com.michael1099.rest_rpg.helpers.SearchHelper;
+import com.michael1099.rest_rpg.occupation.Occupation;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -21,7 +24,7 @@ import org.openapitools.model.AdventureSearchRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
-import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -56,13 +59,26 @@ public class AdventureService {
 
     @Transactional
     public AdventureLite startAdventure(long adventureId, long characterId) {
-        var username = authenticationFacade.getAuthentication().getName();
         var character = characterRepository.getCharacterById(characterId);
-        checkIfCharacterBelongsToUser(character, username);
+        authenticationFacade.checkIfCharacterBelongsToUser(character);
         checkIfCharacterIsOccupied(character);
 
         var adventure = adventureRepository.getAdventureById(adventureId);
         character.getOccupation().startAdventure(adventure);
+        characterRepository.save(character);
+
+        return mapper.toLite(adventure);
+    }
+
+    @Transactional
+    public AdventureLite endAdventure(long characterId) {
+        var character = characterRepository.getCharacterById(characterId);
+        authenticationFacade.checkIfCharacterBelongsToUser(character);
+        checkIfFightIsOngoing(character.getOccupation().getFight());
+        var adventure = Optional.ofNullable(character.getOccupation())
+                .map(Occupation::getAdventure).orElseThrow(CharacterIsNotOnAdventureException::new);
+
+        character.getOccupation().endAdventure(adventure);
         characterRepository.save(character);
 
         return mapper.toLite(adventure);
@@ -74,9 +90,9 @@ public class AdventureService {
         }
     }
 
-    private void checkIfCharacterBelongsToUser(@NotNull Character character, @NotBlank String username) {
-        if (!Objects.equals(character.getUser().getUsername(), username)) {
-            throw new CharacterNotFoundException();
+    private void checkIfFightIsOngoing(@NotNull Fight fight) {
+        if (fight.isActive()) {
+            throw new FightIsOngoingException();
         }
     }
 

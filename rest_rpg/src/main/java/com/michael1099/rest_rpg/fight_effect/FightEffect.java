@@ -1,9 +1,21 @@
 package com.michael1099.rest_rpg.fight_effect;
 
-import com.michael1099.rest_rpg.fight.Fight;
-import jakarta.annotation.Nullable;
-import jakarta.persistence.*;
-import lombok.*;
+import com.michael1099.rest_rpg.fight.model.Fight;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.openapitools.model.SkillEffect;
 
 @Getter
@@ -18,20 +30,16 @@ public class FightEffect {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Nullable
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fight_player_id")
-    private Fight fightPlayer;
+    @JoinColumn(name = "fight_id")
+    private Fight fight;
 
-    @Nullable
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fight_enemy_id")
-    private Fight fightEnemy;
-
-    @Nullable
+    @NotNull
     @Enumerated(EnumType.STRING)
     private SkillEffect skillEffect;
 
-    @Nullable
-    private Integer duration;
+    private int duration;
+
+    private boolean isPlayerEffect;
 }

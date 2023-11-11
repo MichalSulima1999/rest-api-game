@@ -1,14 +1,14 @@
 package com.michael1099.rest_rpg.equipment;
 
 import com.michael1099.rest_rpg.character.model.Character;
-import com.michael1099.rest_rpg.item_equipment.ItemEquipment;
+import com.michael1099.rest_rpg.item.model.Item;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -17,9 +17,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 @Getter
@@ -41,12 +38,33 @@ public class Equipment {
     @OneToOne(mappedBy = "equipment", fetch = FetchType.EAGER)
     private Character character;
 
-    @OneToMany(mappedBy = "equipment", fetch = FetchType.LAZY)
-    private Set<ItemEquipment> items = new HashSet<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Item armor;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Item weapon;
+
+    private int healthPotions;
 
     private boolean deleted;
 
     public static Equipment init() {
         return Equipment.builder().gold(0).build();
+    }
+
+    public void spendGold(int amount) {
+        gold -= amount;
+    }
+
+    public void earnGold(int amount) {
+        gold += amount;
+    }
+
+    public void addPotion(int amount) {
+        healthPotions += amount;
+    }
+
+    public void usePotion() {
+        healthPotions--;
     }
 }

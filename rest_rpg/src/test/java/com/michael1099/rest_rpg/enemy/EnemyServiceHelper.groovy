@@ -2,6 +2,8 @@ package com.michael1099.rest_rpg.enemy
 
 import com.michael1099.rest_rpg.enemy.model.Enemy
 import com.michael1099.rest_rpg.skill.SkillServiceHelper
+import org.openapitools.model.ElementAction
+import org.openapitools.model.ElementEvent
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -16,8 +18,12 @@ class EnemyServiceHelper {
     @Autowired
     EnemyRepository enemyRepository
 
+    @Autowired
+    StrategyElementRepository elementRepository
+
     def clean() {
         enemyRepository.deleteAll()
+        elementRepository.deleteAll()
         skillServiceHelper.clean()
     }
 
@@ -30,7 +36,16 @@ class EnemyServiceHelper {
                 numberOfPotions : 2,
                 skill           : skillServiceHelper.createSkill(),
                 skillLevel      : 1,
-                strategyElements: [EnemyHelper.createStrategyElement()],
+                strategyElements: [EnemyHelper.createStrategyElement(elementEvent: ElementEvent.ENEMY_HEALTH_0_20, elementAction: ElementAction.USE_POTION),
+                                   EnemyHelper.createStrategyElement(elementEvent: ElementEvent.ENEMY_HEALTH_20_40, elementAction: ElementAction.USE_POTION),
+                                   EnemyHelper.createStrategyElement(elementEvent: ElementEvent.ENEMY_HEALTH_40_60, elementAction: ElementAction.NORMAL_ATTACK),
+                                   EnemyHelper.createStrategyElement(elementEvent: ElementEvent.ENEMY_HEALTH_60_80, elementAction: ElementAction.SPECIAL_ATTACK),
+                                   EnemyHelper.createStrategyElement(elementEvent: ElementEvent.ENEMY_HEALTH_80_100, elementAction: ElementAction.NORMAL_ATTACK),
+                                   EnemyHelper.createStrategyElement(elementEvent: ElementEvent.PLAYER_HEALTH_0_20, elementAction: ElementAction.SPECIAL_ATTACK),
+                                   EnemyHelper.createStrategyElement(elementEvent: ElementEvent.PLAYER_HEALTH_20_40, elementAction: ElementAction.NORMAL_ATTACK),
+                                   EnemyHelper.createStrategyElement(elementEvent: ElementEvent.PLAYER_HEALTH_40_60, elementAction: ElementAction.SPECIAL_ATTACK),
+                                   EnemyHelper.createStrategyElement(elementEvent: ElementEvent.PLAYER_HEALTH_60_80, elementAction: ElementAction.SPECIAL_ATTACK),
+                                   EnemyHelper.createStrategyElement(elementEvent: ElementEvent.PLAYER_HEALTH_80_100, elementAction: ElementAction.SPECIAL_ATTACK)],
                 deleted         : false
         ]
 

@@ -5,8 +5,13 @@ import useSuccessToast from "../hooks/useSuccessToast";
 import { Error } from "../classes/error/Error";
 import { useTranslation } from "react-i18next";
 import { AxiosError } from "axios";
-import { DefaultApiFp, EnemyCreateRequest } from "../generated-sources/openapi";
+import {
+  DefaultApiFp,
+  EnemyCreateRequest,
+  EnemyLites,
+} from "../generated-sources/openapi";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import useServiceHelper from "./helpers/useServiceHelper";
 
 const useEnemyService = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -16,6 +21,7 @@ const useEnemyService = () => {
   const { t } = useTranslation();
   const axiosPrivate = useAxiosPrivate();
   const api = DefaultApiFp();
+  const { getResources } = useServiceHelper();
 
   const create = async (request: EnemyCreateRequest) => {
     setIsLoading(true);
@@ -39,9 +45,19 @@ const useEnemyService = () => {
       .finally(() => setIsLoading(false));
   };
 
+  const getAllEnemies = async (): Promise<EnemyLites | undefined> => {
+    setIsLoading(true);
+    const getEnemies = await api.getEnemies({
+      withCredentials: true,
+    });
+
+    return getResources(getEnemies, setIsLoading);
+  };
+
   return {
     isLoading,
     create,
+    getAllEnemies,
   };
 };
 

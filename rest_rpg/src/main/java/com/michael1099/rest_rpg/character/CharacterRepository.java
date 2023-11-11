@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface CharacterRepository extends JpaRepository<Character, Long> {
+public interface CharacterRepository extends JpaRepository<Character, Long>, CharacterRepositoryCustom {
 
     boolean existsByNameIgnoreCase(@NotNull String name);
 

@@ -53,7 +53,7 @@ public class EnemyService {
 
     private Set<StrategyElement> addExistingStrategies(@NotEmpty List<StrategyElementCreateRequestDto> strategyElementCreateRequest) {
         return strategyElementCreateRequest.stream().map(element ->
-                strategyElementRepository.findByElementEventAndElementActionAndPriority(element.getEvent(), element.getAction(), element.getPriority())
+                strategyElementRepository.findByElementEventAndElementActionAndPriority(element.getEvent(), element.getAction(), element.getPriority()).stream().findFirst()
                         .orElse(StrategyElement.builder()
                                 .elementAction(element.getAction())
                                 .elementEvent(element.getEvent())

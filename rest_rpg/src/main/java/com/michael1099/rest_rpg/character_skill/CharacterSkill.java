@@ -2,8 +2,15 @@ package com.michael1099.rest_rpg.character_skill;
 
 import com.michael1099.rest_rpg.character.model.Character;
 import com.michael1099.rest_rpg.skill.model.Skill;
-import jakarta.persistence.*;
+import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MapsId;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,6 +20,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class CharacterSkill {
 
     @EmbeddedId
@@ -31,4 +39,13 @@ public class CharacterSkill {
     private int level;
 
     private boolean deleted;
+
+    public static CharacterSkill newSkill(@NotNull Skill skill, @NotNull Character character) {
+        return CharacterSkill.builder()
+                .id(new CharacterSkillKey(character.getId(), skill.getId()))
+                .skill(skill)
+                .character(character)
+                .level(1)
+                .build();
+    }
 }

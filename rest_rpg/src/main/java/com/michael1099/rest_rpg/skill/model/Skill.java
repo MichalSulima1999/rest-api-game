@@ -2,6 +2,7 @@ package com.michael1099.rest_rpg.skill.model;
 
 import com.michael1099.rest_rpg.character_skill.CharacterSkill;
 import com.michael1099.rest_rpg.enemy.model.Enemy;
+import com.michael1099.rest_rpg.exceptions.SkillNotFoundException;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -25,6 +26,7 @@ import org.openapitools.model.SkillEffect;
 import org.openapitools.model.SkillType;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @Entity
@@ -80,6 +82,8 @@ public class Skill {
     @OneToMany(mappedBy = "skill", fetch = FetchType.LAZY)
     private Set<CharacterSkill> characters = new HashSet<>();
 
+    private boolean magicDamage;
+
     private boolean deleted;
 
     public static Skill of(@Valid SkillCreateRequestDto dto) {
@@ -96,5 +100,16 @@ public class Skill {
                 .effectMultiplierPerLevel(dto.getEffectMultiplierPerLevel())
                 .characterClass(dto.getCharacterClass())
                 .build();
+    }
+
+    public float getDamageMultiplier(int skillLevel) {
+        return multiplier + Optional.ofNullable(multiplierPerLevel).orElse(0f) * skillLevel;
+    }
+
+    public int getFinalEffectDuration(int skillLevel) {
+        if (effectDuration == null) {
+            throw new SkillNotFoundException();
+        }
+        return effectDuration + Optional.ofNullable(effectDurationPerLevel).orElse(0) * skillLevel;
     }
 }
