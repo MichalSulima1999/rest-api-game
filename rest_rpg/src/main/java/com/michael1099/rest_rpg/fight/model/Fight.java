@@ -1,6 +1,7 @@
 package com.michael1099.rest_rpg.fight.model;
 
 import com.michael1099.rest_rpg.enemy.model.Enemy;
+import com.michael1099.rest_rpg.fight.FightService;
 import com.michael1099.rest_rpg.fight_effect.FightEffect;
 import com.michael1099.rest_rpg.item.ItemService;
 import com.michael1099.rest_rpg.occupation.Occupation;
@@ -93,5 +94,10 @@ public class Fight {
 
     public void enemyUseMana() {
         setEnemyCurrentMana(Math.max(0, enemyCurrentMana - Optional.ofNullable(enemy).map(Enemy::getSkill).orElseThrow().getManaCost()));
+    }
+
+    public void regenerateEnemyManaPerTurn() {
+        int maxMana = Optional.ofNullable(enemy).map(Enemy::getMana).orElseThrow();
+        setEnemyCurrentMana(Math.min(maxMana, enemyCurrentMana + maxMana * FightService.MANA_REGENERATION_PERCENT_PER_TURN));
     }
 }

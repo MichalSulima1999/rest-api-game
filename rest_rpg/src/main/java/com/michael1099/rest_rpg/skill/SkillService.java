@@ -1,5 +1,8 @@
 package com.michael1099.rest_rpg.skill;
 
+import com.michael1099.rest_rpg.auth.auth.AuthenticationFacade;
+import com.michael1099.rest_rpg.character.CharacterRepository;
+import com.michael1099.rest_rpg.character.model.Character;
 import com.michael1099.rest_rpg.exceptions.SkillAlreadyExistsException;
 import com.michael1099.rest_rpg.helpers.SearchHelper;
 import com.michael1099.rest_rpg.skill.model.Skill;
@@ -7,6 +10,7 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import org.openapitools.model.CharacterSkillBasics;
 import org.openapitools.model.SkillBasicPage;
 import org.openapitools.model.SkillCreateRequest;
 import org.openapitools.model.SkillDetails;
@@ -22,6 +26,8 @@ import org.springframework.validation.annotation.Validated;
 public class SkillService {
 
     private final SkillRepository skillRepository;
+    private final CharacterRepository characterRepository;
+    private final AuthenticationFacade authenticationFacade;
     private final SkillMapper skillMapper;
 
     @Transactional
@@ -44,6 +50,24 @@ public class SkillService {
 
     public SkillLites getSkills() {
         return skillMapper.toLites(skillRepository.findByDeletedFalse());
+    }
+
+    public CharacterSkillBasics getCharacterSkills(long characterId) {
+        var character = characterRepository.getWithEntityGraph(characterId, Character.CHARACTER_SKILLS);
+        authenticationFacade.checkIfCharacterBelongsToUser(character);
+
+        return skillMapper.toCharacterSkillBasics(character);
+    }
+
+    @Transactional
+    public SkillLite learnSkill(long skillId, long characterId) {
+        var character = characterRepository.getWithEntityGraph(characterId, Character.CHARACTER_SKILLS);
+        authenticationFacade.checkIfCharacterBelongsToUser(character);
+        character.getOccupation().throwIfCharacterIsOccupied();
+        var skill = skillRepository.get(skillId);
+        character.learnNewSkill(skill);
+        characterRepository.save(character);
+        return skillMapper.toLite(skill);
     }
 
     private void checkIfSkillExists(@NotBlank String skillName) {

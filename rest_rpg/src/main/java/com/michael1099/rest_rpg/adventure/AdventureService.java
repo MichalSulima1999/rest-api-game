@@ -3,15 +3,12 @@ package com.michael1099.rest_rpg.adventure;
 import com.michael1099.rest_rpg.adventure.model.Adventure;
 import com.michael1099.rest_rpg.auth.auth.IAuthenticationFacade;
 import com.michael1099.rest_rpg.character.CharacterRepository;
-import com.michael1099.rest_rpg.character.model.Character;
 import com.michael1099.rest_rpg.enemy.EnemyRepository;
 import com.michael1099.rest_rpg.exceptions.AdventureNameExistsException;
 import com.michael1099.rest_rpg.exceptions.CharacterIsNotOnAdventureException;
-import com.michael1099.rest_rpg.exceptions.CharacterIsOccupiedException;
 import com.michael1099.rest_rpg.exceptions.FightIsOngoingException;
 import com.michael1099.rest_rpg.fight.model.Fight;
 import com.michael1099.rest_rpg.helpers.SearchHelper;
-import com.michael1099.rest_rpg.occupation.Occupation;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -61,7 +58,7 @@ public class AdventureService {
     public AdventureLite startAdventure(long adventureId, long characterId) {
         var character = characterRepository.getCharacterById(characterId);
         authenticationFacade.checkIfCharacterBelongsToUser(character);
-        checkIfCharacterIsOccupied(character);
+        character.getOccupation().throwIfCharacterIsOccupied();
 
         var adventure = adventureRepository.getAdventureById(adventureId);
         character.getOccupation().startAdventure(adventure);
@@ -75,8 +72,8 @@ public class AdventureService {
         var character = characterRepository.getCharacterById(characterId);
         authenticationFacade.checkIfCharacterBelongsToUser(character);
         checkIfFightIsOngoing(character.getOccupation().getFight());
-        var adventure = Optional.ofNullable(character.getOccupation())
-                .map(Occupation::getAdventure).orElseThrow(CharacterIsNotOnAdventureException::new);
+        var adventure = Optional.ofNullable(character.getOccupation().getAdventure())
+                .orElseThrow(CharacterIsNotOnAdventureException::new);
 
         character.getOccupation().endAdventure(adventure);
         characterRepository.save(character);
@@ -93,12 +90,6 @@ public class AdventureService {
     private void checkIfFightIsOngoing(@NotNull Fight fight) {
         if (fight.isActive()) {
             throw new FightIsOngoingException();
-        }
-    }
-
-    private void checkIfCharacterIsOccupied(@NotNull Character character) {
-        if (character.getOccupation().isOccupied()) {
-            throw new CharacterIsOccupiedException();
         }
     }
 }

@@ -4,6 +4,7 @@ import com.michael1099.rest_rpg.character.model.Character;
 import com.michael1099.rest_rpg.exceptions.EnumValueNotFoundException;
 import com.michael1099.rest_rpg.exceptions.NotEnoughManaException;
 import com.michael1099.rest_rpg.exceptions.NotEnoughSkillPointsException;
+import com.michael1099.rest_rpg.fight.FightService;
 import com.michael1099.rest_rpg.item.model.Item;
 import com.michael1099.rest_rpg.statistics.dto.StatisticsUpdateRequestDto;
 import jakarta.persistence.Column;
@@ -15,6 +16,7 @@ import jakarta.persistence.NamedAttributeNode;
 import jakarta.persistence.NamedEntityGraph;
 import jakarta.persistence.NamedSubgraph;
 import jakarta.persistence.OneToOne;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -112,6 +114,20 @@ public class Statistics {
                 .build();
     }
 
+    public void train(@NotNull @Valid StatisticsUpdateRequestDto dto) {
+        var sum = dto.getConstitution() + dto.getDexterity() + dto.getStrength() + dto.getIntelligence();
+        if (sum > freeStatisticPoints) {
+            throw new NotEnoughSkillPointsException();
+        }
+
+        this.strength += dto.getStrength();
+        this.dexterity += dto.getDexterity();
+        this.constitution += dto.getConstitution();
+        this.intelligence += dto.getIntelligence();
+        this.freeStatisticPoints -= sum;
+        updateStats();
+    }
+
     public int getDamage() {
         return this.strength * DAMAGE_MULTIPLIER +
                 Optional.ofNullable(character.getEquipment().getWeapon()).map(Item::getPower).orElse(0);
@@ -137,7 +153,7 @@ public class Statistics {
         return XP_TO_NEXT_LEVEL_BASE * currentLevel * currentLevel;
     }
 
-    public void addStatistics(@NotNull StatisticsUpdateRequestDto dto, @NotNull CharacterRace race) {
+    public void addStatistics(@NotNull @Valid StatisticsUpdateRequestDto dto, @NotNull CharacterRace race) {
         var sum = dto.getConstitution() + dto.getDexterity() + dto.getStrength() + dto.getIntelligence();
         if (sum > freeStatisticPoints) {
             throw new NotEnoughSkillPointsException();
@@ -147,7 +163,7 @@ public class Statistics {
         this.dexterity = dto.getDexterity();
         this.constitution = dto.getConstitution();
         this.intelligence = dto.getIntelligence();
-        this.freeStatisticPoints -= dto.getStrength() + dto.getDexterity() + dto.getConstitution() + dto.getIntelligence();
+        this.freeStatisticPoints -= sum;
         updateStats();
         setRaceBonus(race);
     }
@@ -177,6 +193,13 @@ public class Statistics {
         if (currentHp > maxHp) {
             currentHp = maxHp;
             freeStatisticPoints += STATISTICS_POINTS_PER_LEVEL;
+        }
+    }
+
+    public void regenerateManaPerTurn() {
+        currentMana += maxMana * FightService.MANA_REGENERATION_PERCENT_PER_TURN;
+        if (currentMana > maxMana) {
+            currentMana = maxMana;
         }
     }
 

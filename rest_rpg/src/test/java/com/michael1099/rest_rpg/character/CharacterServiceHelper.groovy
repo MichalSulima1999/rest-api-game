@@ -65,7 +65,7 @@ class CharacterServiceHelper {
                 status        : CharacterStatus.IDLE,
                 artwork       : CharacterArtwork.HUMAN_FEMALE_1,
                 skills        : new HashSet<Skill>(),
-                statistics    : StatisticsHelper.statistics(customArgs),
+                statistics    : StatisticsHelper.statistics(),
                 occupation    : Occupation.builder().fight(new Fight()).build(),
                 equipment     : Equipment.init()
         ]
@@ -95,7 +95,7 @@ class CharacterServiceHelper {
         args.skills.forEach {
             character.learnNewSkill(it)
         }
-        
+
         save(character)
     }
 

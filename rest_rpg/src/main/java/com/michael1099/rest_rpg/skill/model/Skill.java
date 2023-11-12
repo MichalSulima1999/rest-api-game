@@ -2,9 +2,10 @@ package com.michael1099.rest_rpg.skill.model;
 
 import com.michael1099.rest_rpg.character_skill.CharacterSkill;
 import com.michael1099.rest_rpg.enemy.model.Enemy;
-import com.michael1099.rest_rpg.exceptions.SkillNotFoundException;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -26,7 +27,6 @@ import org.openapitools.model.SkillEffect;
 import org.openapitools.model.SkillType;
 
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 
 @Entity
@@ -67,6 +67,9 @@ public class Skill {
 
     private float effectMultiplierPerLevel;
 
+    @Embedded
+    private SkillTraining skillTraining;
+
     @NotNull
     @Enumerated(EnumType.STRING)
     private CharacterClass characterClass;
@@ -93,6 +96,10 @@ public class Skill {
                 .effectDurationPerLevel(dto.getEffectDurationPerLevel())
                 .effectMultiplier(dto.getEffectMultiplier())
                 .effectMultiplierPerLevel(dto.getEffectMultiplierPerLevel())
+                .skillTraining(Skill.SkillTraining.builder()
+                        .goldCost(dto.getGoldCost())
+                        .statisticPointsCost(dto.getStatisticPointsCost())
+                        .build())
                 .characterClass(dto.getCharacterClass())
                 .build();
     }
@@ -107,5 +114,18 @@ public class Skill {
 
     public int getFinalEffectDuration(int skillLevel) {
         return effectDuration + effectDurationPerLevel * skillLevel;
+    }
+
+    @Embeddable
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class SkillTraining {
+
+        private int goldCost;
+
+        private int statisticPointsCost;
     }
 }

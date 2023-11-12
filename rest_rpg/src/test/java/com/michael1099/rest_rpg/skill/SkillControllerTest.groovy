@@ -1,6 +1,9 @@
 package com.michael1099.rest_rpg.skill
 
+import com.michael1099.rest_rpg.character.CharacterServiceHelper
 import com.michael1099.rest_rpg.configuration.TestBase
+import com.michael1099.rest_rpg.helpers.DeleteServiceHelper
+import org.openapitools.model.CharacterSkillBasics
 import org.openapitools.model.ErrorCodes
 import org.openapitools.model.SkillBasicPage
 import org.openapitools.model.SkillDetails
@@ -14,12 +17,20 @@ class SkillControllerTest extends TestBase {
     def baseUrl = "/skill"
     def searchUrl = baseUrl + "/search"
     def skillUrl = { long skillId -> baseUrl + "/" + skillId }
+    def characterSkillsUrl = { long characterId -> baseUrl + "/character/" + characterId }
+    def skillLearnUrl = { long skillId, long characterId -> baseUrl + "/" + skillId + "/learn/" + characterId }
 
     @Autowired
     SkillServiceHelper skillServiceHelper
 
+    @Autowired
+    CharacterServiceHelper characterServiceHelper
+
+    @Autowired
+    DeleteServiceHelper deleteServiceHelper
+
     void cleanup() {
-        skillServiceHelper.clean()
+        deleteServiceHelper.clean()
     }
 
     def "should create skill"() {
@@ -78,5 +89,34 @@ class SkillControllerTest extends TestBase {
         then:
             response.status == HttpStatus.OK
             SkillHelper.compare([skill1, skill2], response.body)
+    }
+
+    def "should get character skills"() {
+        given:
+            def skill1 = skillServiceHelper.createSkill(name: "Fireball")
+            def skill2 = skillServiceHelper.createSkill(name: "Skill")
+            skillServiceHelper.createSkill(name: "Dash")
+            def character = characterServiceHelper.createCharacter(user, [skills: [skill1, skill2] as Set])
+        when:
+            def response = httpGet(characterSkillsUrl(character.id), CharacterSkillBasics, [accessToken: userAccessToken])
+        then:
+            response.status == HttpStatus.OK
+            response.body.content.size() == 2
+            SkillHelper.compare([skill1, skill2], response.body)
+    }
+
+    def "should learn skill"() {
+        given:
+            def skill1 = skillServiceHelper.createSkill(name: "Fireball")
+            skillServiceHelper.createSkill(name: "Skill")
+            def character = characterServiceHelper.createCharacter(user)
+        when:
+            def response = httpGet(skillLearnUrl(skill1.id, character.id), SkillLite, [accessToken: userAccessToken])
+            character = characterServiceHelper.getCharacter(character.id)
+        then:
+            response.status == HttpStatus.OK
+            SkillHelper.compare(skill1, response.body)
+            character.skills.first().level == 1
+            SkillHelper.compare(character.skills.first().skill, skill1)
     }
 }

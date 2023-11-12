@@ -61,7 +61,6 @@ import java.util.Set;
                         name = "occupation-subgraph",
                         attributeNodes = {
                                 @NamedAttributeNode("adventure"),
-                                @NamedAttributeNode("training"),
                                 @NamedAttributeNode("work")
                         }
                 )
@@ -70,7 +69,7 @@ import java.util.Set;
 @NamedEntityGraph(name = Character.CHARACTER_TEST,
         attributeNodes = {
                 @NamedAttributeNode("statistics"),
-                @NamedAttributeNode("skills"),
+                @NamedAttributeNode(value = "skills", subgraph = "skills-subgraph"),
                 @NamedAttributeNode(value = "equipment", subgraph = "equipment-subgraph"),
                 @NamedAttributeNode(value = "occupation", subgraph = "occupation-subgraph")
         },
@@ -79,7 +78,6 @@ import java.util.Set;
                         name = "occupation-subgraph",
                         attributeNodes = {
                                 @NamedAttributeNode(value = "adventure", subgraph = "adventure-subgraph"),
-                                @NamedAttributeNode("training"),
                                 @NamedAttributeNode("work"),
                                 @NamedAttributeNode("fight")
                         }
@@ -95,6 +93,12 @@ import java.util.Set;
                         attributeNodes = {
                                 @NamedAttributeNode("armor"),
                                 @NamedAttributeNode("weapon")
+                        }
+                ),
+                @NamedSubgraph(
+                        name = "skills-subgraph",
+                        attributeNodes = {
+                                @NamedAttributeNode("skill")
                         }
                 )
         }
@@ -168,12 +172,26 @@ import java.util.Set;
                 )
         }
 )
+@NamedEntityGraph(name = Character.CHARACTER_SKILLS,
+        attributeNodes = {
+                @NamedAttributeNode(value = "skills", subgraph = "skills-subgraph")
+        },
+        subgraphs = {
+                @NamedSubgraph(
+                        name = "skills-subgraph",
+                        attributeNodes = {
+                                @NamedAttributeNode("skill")
+                        }
+                )
+        }
+)
 public class Character {
 
     public static final String CHARACTER_BASIC = "CHARACTER_BASIC_GRAPH";
     public static final String CHARACTER_FIGHT = "CHARACTER_FIGHT_GRAPH";
     public static final String CHARACTER_FIGHT_ACTION = "CHARACTER_FIGHT_ACTION_GRAPH";
     public static final String CHARACTER_FIGHT_LITE = "CHARACTER_FIGHT_LITE_GRAPH";
+    public static final String CHARACTER_SKILLS = "CHARACTER_SKILLS_GRAPH";
     public static final String CHARACTER_TEST = "CHARACTER_TEST_GRAPH";
 
     @Id

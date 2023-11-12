@@ -1,9 +1,13 @@
 package com.michael1099.rest_rpg.skill;
 
+import com.michael1099.rest_rpg.character.model.Character;
+import com.michael1099.rest_rpg.character_skill.CharacterSkill;
 import com.michael1099.rest_rpg.skill.model.Skill;
 import com.michael1099.rest_rpg.skill.model.SkillCreateRequestDto;
 import jakarta.validation.constraints.NotNull;
 import org.mapstruct.Mapper;
+import org.openapitools.model.CharacterSkillBasic;
+import org.openapitools.model.CharacterSkillBasics;
 import org.openapitools.model.SkillBasic;
 import org.openapitools.model.SkillBasicPage;
 import org.openapitools.model.SkillCreateRequest;
@@ -26,6 +30,12 @@ public interface SkillMapper {
     SkillCreateRequestDto toDto(@NotNull SkillCreateRequest source);
 
     SkillBasicPage toPage(@NotNull Page<Skill> source);
+
+    CharacterSkillBasic toCharacterSkillBasic(@NotNull CharacterSkill source);
+
+    default CharacterSkillBasics toCharacterSkillBasics(@NotNull Character source) {
+        return new CharacterSkillBasics().content(source.getSkills().stream().map(this::toCharacterSkillBasic).toList());
+    }
 
     default SkillLites toLites(@NotNull List<Skill> source) {
         return new SkillLites().content(source.stream().map(this::toLite).toList());

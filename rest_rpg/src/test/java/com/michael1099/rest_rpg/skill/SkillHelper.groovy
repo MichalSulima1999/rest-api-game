@@ -3,6 +3,8 @@ package com.michael1099.rest_rpg.skill
 import com.michael1099.rest_rpg.helpers.PageHelper
 import com.michael1099.rest_rpg.skill.model.Skill
 import org.openapitools.model.CharacterClass
+import org.openapitools.model.CharacterSkillBasic
+import org.openapitools.model.CharacterSkillBasics
 import org.openapitools.model.SkillBasic
 import org.openapitools.model.SkillBasicPage
 import org.openapitools.model.SkillCreateRequest
@@ -27,6 +29,8 @@ class SkillHelper {
                 effectDurationPerLevel  : 1,
                 effectMultiplier        : 0,
                 effectMultiplierPerLevel: 0,
+                goldCost                : 50,
+                statisticPointsCost     : 5,
                 characterClass          : CharacterClass.WARRIOR.toString()
         ]
 
@@ -40,6 +44,8 @@ class SkillHelper {
                 args.effectDurationPerLevel,
                 args.effectMultiplier,
                 args.effectMultiplierPerLevel,
+                args.goldCost,
+                args.statisticPointsCost,
                 args.characterClass)
         request.effect(args.effect)
         request.effectMultiplier(args.effectMultiplier)
@@ -94,6 +100,22 @@ class SkillHelper {
         skills = skills.sort { it.id }
         skillBasics = skillBasics.sort { it.id }
         assert skills.withIndex().every { compare(it.v1, skillBasics[it.v2]) }
+
+        true
+    }
+
+    static boolean compare(Skill skill, CharacterSkillBasic basic) {
+        assert compare(skill, basic)
+
+        true
+    }
+
+    static boolean compare(List<Skill> skills, CharacterSkillBasics basics) {
+        def basicsList = basics.content.skill
+        assert skills.size() == basicsList.size()
+        skills = skills.sort { it.id }
+        basicsList = basicsList.sort { it.id }
+        assert skills.withIndex().every { compare(it.v1, basicsList[it.v2]) }
 
         true
     }

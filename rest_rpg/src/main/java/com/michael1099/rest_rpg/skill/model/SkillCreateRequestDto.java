@@ -30,6 +30,10 @@ public class SkillCreateRequestDto {
 
     int effectDurationPerLevel;
 
+    int goldCost;
+
+    int statisticPointsCost;
+
     float effectMultiplier;
 
     float effectMultiplierPerLevel;

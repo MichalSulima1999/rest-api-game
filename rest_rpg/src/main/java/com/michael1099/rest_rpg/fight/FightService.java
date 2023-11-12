@@ -36,6 +36,8 @@ import java.util.stream.Collectors;
 @Validated
 public class FightService {
 
+    public static int MANA_REGENERATION_PERCENT_PER_TURN = 10;
+
     private final CharacterRepository characterRepository;
     private final SkillRepository skillRepository;
     private final IAuthenticationFacade authenticationFacade;
@@ -114,6 +116,12 @@ public class FightService {
         } else if (character.getStatistics().getCurrentHp() <= 0) {
             loseFight(fight, character, response);
         }
+
+        if (response.getPlayerWon() == null) {
+            character.getStatistics().regenerateManaPerTurn();
+            character.getOccupation().getFight().regenerateEnemyManaPerTurn();
+        }
+
         character = characterRepository.save(character);
         response.setPlayerCurrentMana(character.getStatistics().getCurrentMana());
         response.setPlayerCurrentHp(character.getStatistics().getCurrentHp());

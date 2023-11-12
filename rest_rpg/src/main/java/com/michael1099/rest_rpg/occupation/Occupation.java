@@ -2,8 +2,8 @@ package com.michael1099.rest_rpg.occupation;
 
 import com.michael1099.rest_rpg.adventure.model.Adventure;
 import com.michael1099.rest_rpg.character.model.Character;
+import com.michael1099.rest_rpg.exceptions.CharacterIsOccupiedException;
 import com.michael1099.rest_rpg.fight.model.Fight;
-import com.michael1099.rest_rpg.training.Training;
 import com.michael1099.rest_rpg.work.Work;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.CascadeType;
@@ -52,11 +52,6 @@ public class Occupation {
 
     @Nullable
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "training_id")
-    private Training training;
-
-    @Nullable
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "work_id")
     private Work work;
 
@@ -76,9 +71,14 @@ public class Occupation {
 
     public boolean isOccupied() {
         return adventure != null ||
-                training != null ||
                 work != null ||
                 fight.isActive();
+    }
+
+    public void throwIfCharacterIsOccupied() {
+        if (isOccupied()) {
+            throw new CharacterIsOccupiedException();
+        }
     }
 
     public String getOccupationType() {
@@ -87,9 +87,6 @@ public class Occupation {
         }
         if (adventure != null) {
             return Adventure.class.getSimpleName();
-        }
-        if (training != null) {
-            return Training.class.getSimpleName();
         }
         if (work != null) {
             return Work.class.getSimpleName();

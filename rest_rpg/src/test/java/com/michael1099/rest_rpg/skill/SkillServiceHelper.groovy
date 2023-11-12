@@ -30,6 +30,8 @@ class SkillServiceHelper {
                 effectMultiplier        : 0.1,
                 effectMultiplierPerLevel: 0.05,
                 manaCost                : 10,
+                goldCost                : 100,
+                statisticPointsCost     : 5,
                 enemy                   : null,
                 characterClass          : CharacterClass.WARRIOR,
                 characterSkills         : new HashSet<CharacterSkill>(),
@@ -47,6 +49,10 @@ class SkillServiceHelper {
                 .effectMultiplier(args.effectMultiplier)
                 .effectMultiplierPerLevel(args.effectMultiplierPerLevel)
                 .manaCost(args.manaCost)
+                .skillTraining(Skill.SkillTraining.builder()
+                        .goldCost(args.goldCost)
+                        .statisticPointsCost(args.statisticPointsCost)
+                        .build())
                 .enemy(args.enemy)
                 .characterClass(args.characterClass)
                 .characters(args.characterSkills)

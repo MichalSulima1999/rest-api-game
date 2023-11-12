@@ -3,6 +3,7 @@ package com.michael1099.rest_rpg.statistics;
 import lombok.RequiredArgsConstructor;
 import org.openapitools.api.StatisticsApi;
 import org.openapitools.model.StatisticsDetails;
+import org.openapitools.model.StatisticsUpdateRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,5 +18,10 @@ public class StatisticsController implements StatisticsApi {
     @Override
     public ResponseEntity<StatisticsDetails> getStatistics(Long characterId) {
         return ResponseEntity.ok(statisticsService.getStatistics(characterId));
+    }
+
+    @Override
+    public ResponseEntity<StatisticsDetails> trainCharacter(Long characterId, StatisticsUpdateRequest statisticsUpdateRequest) {
+        return ResponseEntity.ok(statisticsService.trainCharacter(characterId, statisticsUpdateRequest));
     }
 }

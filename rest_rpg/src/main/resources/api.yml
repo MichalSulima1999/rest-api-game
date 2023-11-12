@@ -142,6 +142,32 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/StatisticsDetails'
+  /statistics/{characterId}/train:
+    post:
+      summary: Train statistics
+      operationId: trainCharacter
+      x-preauth: "hasAuthority('USER')"
+      parameters:
+        - name: characterId
+          in: path
+          required: true
+          description: Character id
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StatisticsUpdateRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatisticsDetails'
   /enemy:
     get:
       summary: Get all enemies
@@ -341,6 +367,53 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SkillDetails'
+  /skill/character/{characterId}:
+    get:
+      summary: Info about character skills
+      operationId: getCharacterSkills
+      x-preauth: "hasAuthority('USER')"
+      parameters:
+        - name: characterId
+          in: path
+          required: true
+          description: Character id that has skills
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Info about learned skill
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CharacterSkillBasics'
+  /skill/{skillId}/learn/{characterId}:
+    get:
+      summary: Learn skill
+      operationId: learnSkill
+      x-preauth: "hasAuthority('USER')"
+      parameters:
+        - name: skillId
+          in: path
+          required: true
+          description: Skill id
+          schema:
+            type: integer
+            format: int64
+        - name: characterId
+          in: path
+          required: true
+          description: Character id that learns skill
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Info about learned skill
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SkillLite'
   /fight/{characterId}:
     get:
       summary: Get fight by character id
@@ -709,6 +782,8 @@ components:
         - effectDurationPerLevel
         - effectMultiplier
         - effectMultiplierPerLevel
+        - goldCost
+        - statisticPointsCost
         - characterClass
       properties:
         name:
@@ -745,6 +820,12 @@ components:
           description: Effect multiplier to add per level
           type: number
           format: float
+        goldCost:
+          description: Skill learn gold cost
+          type: integer
+        statisticPointsCost:
+          description: Skill learn statistics points cost
+          type: integer
         characterClass:
           description: Character class skill is for
           type: string
@@ -1078,6 +1159,24 @@ components:
               type: integer
             skill:
               $ref: '#/components/schemas/SkillBasic'
+    Page:
+      type: object
+      description: Page info
+      properties:
+        number:
+          type: integer
+        size:
+          type: integer
+        numberOfElements:
+          type: integer
+        totalElements:
+          type: integer
+        content:
+          type: boolean
+        first:
+          type: boolean
+        last:
+          type: boolean
     SkillLite:
       type: object
       required:
@@ -1098,24 +1197,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/SkillLite'
-    Page:
-      type: object
-      description: Page info
-      properties:
-        number:
-          type: integer
-        size:
-          type: integer
-        numberOfElements:
-          type: integer
-        totalElements:
-          type: integer
-        content:
-          type: boolean
-        first:
-          type: boolean
-        last:
-          type: boolean
     SkillBasic:
       description: "Basic info about skill"
       allOf:
@@ -1178,6 +1259,25 @@ components:
               description: Effect multiplier to add per level
               type: number
               format: float
+    CharacterSkillBasic:
+      type: object
+      description: "Info about character skill"
+      required:
+        - skill
+        - level
+      properties:
+        skill:
+          $ref: '#/components/schemas/SkillBasic'
+        level:
+          description: Skill current level
+          type: integer
+    CharacterSkillBasics:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/CharacterSkillBasic'
     AdventureLite:
       type: object
       required:
