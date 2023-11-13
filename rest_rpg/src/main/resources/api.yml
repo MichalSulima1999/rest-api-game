@@ -543,6 +543,81 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PotionLite'
+  /work:
+    post:
+      summary: Creates new work.
+      operationId: createWork
+      x-preauth: "hasAuthority('ADMIN')"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkCreateRequest'
+      responses:
+        '200':
+          description: Info about created work
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkLite'
+  /work/search:
+    post:
+      summary: Search works.
+      operationId: findWorks
+      x-preauth: "hasAnyAuthority('ADMIN', 'USER')"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkSearchRequest'
+      responses:
+        '200':
+          description: Info about found works
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkLitePage'
+  /work/{workId}/start/{characterId}:
+    get:
+      summary: Start work with character
+      operationId: startWork
+      x-preauth: "hasAuthority('USER')"
+      parameters:
+        - name: workId
+          in: path
+          required: true
+          description: Work id
+          schema:
+            type: integer
+            format: int64
+        - name: characterId
+          in: path
+          required: true
+          description: Character id that starts adventure
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: No content
+  /work/{characterId}/end:
+    get:
+      summary: End work with character
+      operationId: endWork
+      x-preauth: "hasAuthority('USER')"
+      parameters:
+        - name: characterId
+          in: path
+          required: true
+          description: Character id that ends work
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: No content
 components:
   schemas:
     ErrorCodes:
@@ -577,6 +652,10 @@ components:
         - ITEM_NOT_FOUND
         - NOT_ENOUGH_GOLD
         - NO_POTIONS_LEFT
+        - WORK_ALREADY_EXISTS
+        - WORK_NOT_FOUND
+        - CHARACTER_STILL_WORKING
+        - CHARACTER_STILL_ON_ADVENTURE
     ElementEvent:
       type: string
       enum:
@@ -966,6 +1045,42 @@ components:
           description: Item price greater or equals
           type: integer
         priceLessThanOrEqual:
+          description: Item price less or equals
+          type: integer
+    WorkCreateRequest:
+      type: object
+      required:
+        - name
+        - wage
+        - workMinutes
+      properties:
+        name:
+          description: Work name
+          type: string
+        wage:
+          description: Gold earned for work
+          type: integer
+        workMinutes:
+          description: Work length in minutes
+          type: integer
+    WorkSearchRequest:
+      type: object
+      properties:
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        nameLike:
+          description: Item name fragment
+          type: string
+        wageGreaterThanOrEqual:
+          description: Item attribute power greater or equals
+          type: integer
+        wageLessThanOrEqual:
+          description: Item attribute power less or equals
+          type: integer
+        workMinutesGreaterThanOrEqual:
+          description: Item price greater or equals
+          type: integer
+        workMinutesLessThanOrEqual:
           description: Item price less or equals
           type: integer
     CharacterLite:
@@ -1465,3 +1580,36 @@ components:
         price:
           description: Potion price
           type: integer
+    WorkLite:
+      type: object
+      description: Info about potion
+      required:
+        - id
+        - name
+        - wage
+        - workMinutes
+      properties:
+        id:
+          description: Work id
+          type: integer
+          format: int64
+        name:
+          description: Work name
+          type: string
+        wage:
+          description: Gold earned in work
+          type: integer
+        workMinutes:
+          description: Work length in minutes
+          type: integer
+    WorkLitePage:
+      allOf:
+        - $ref: '#/components/schemas/Page'
+        - type: object
+          required:
+            - content
+          properties:
+            content:
+              type: array
+              items:
+                $ref: '#/components/schemas/WorkLite'

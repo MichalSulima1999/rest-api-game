@@ -9,6 +9,7 @@ import com.michael1099.rest_rpg.item.ItemRepository
 import com.michael1099.rest_rpg.occupation.OccupationRepository
 import com.michael1099.rest_rpg.skill.SkillRepository
 import com.michael1099.rest_rpg.statistics.StatisticsRepository
+import com.michael1099.rest_rpg.work.WorkRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -42,6 +43,9 @@ class DeleteServiceHelper {
     @Autowired
     ItemRepository itemRepository
 
+    @Autowired
+    WorkRepository workRepository
+
     def clean() {
         characterRepository.deleteAll()
         enemyRepository.deleteAll()
@@ -52,5 +56,6 @@ class DeleteServiceHelper {
         equipmentRepository.deleteAll()
         fightEffectRepository.deleteAll()
         itemRepository.deleteAll()
+        workRepository.deleteAll()
     }
 }

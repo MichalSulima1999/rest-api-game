@@ -86,7 +86,7 @@ class FightControllerTest extends TestBase {
         then:
             response.status == HttpStatus.OK
             FightHelper.compare(fightServiceHelper.getById(fight.id), response.body.fight)
-            response.body.playerDamage == character.statistics.damage * 0.5
+            response.body.playerDamage == character.statistics.damage * 0.5 * (response.body.playerCriticalStrike ? 2 : 1)
     }
 
     def "should attack special"() {

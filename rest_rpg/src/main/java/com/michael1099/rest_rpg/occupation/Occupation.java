@@ -4,7 +4,7 @@ import com.michael1099.rest_rpg.adventure.model.Adventure;
 import com.michael1099.rest_rpg.character.model.Character;
 import com.michael1099.rest_rpg.exceptions.CharacterIsOccupiedException;
 import com.michael1099.rest_rpg.fight.model.Fight;
-import com.michael1099.rest_rpg.work.Work;
+import com.michael1099.rest_rpg.work.model.Work;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -102,6 +102,15 @@ public class Occupation {
     public void endAdventure(@NotNull Adventure adventure) {
         getFight().setEnemy(adventure.getEnemy());
         getFight().setActive(true);
-        setFinishTime(LocalDateTime.now().plusMinutes(adventure.getAdventureTimeInMinutes()));
+    }
+
+    public void startWork(@NotNull Work work) {
+        setWork(work);
+        setFinishTime(LocalDateTime.now().plusMinutes(work.getWorkMinutes()));
+    }
+
+    public void endWork(@NotNull Work work) {
+        character.getEquipment().earnGold(work.getWage());
+        setWork(null);
     }
 }

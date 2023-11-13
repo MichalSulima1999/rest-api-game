@@ -68,37 +68,7 @@ public class FightService {
         checkIfFightIsActive(fight);
         var response = new FightActionResponse();
 
-        if (fight.getFightEffects() != null) {
-            var finalCharacter = character;
-            fight.getFightEffects().stream().filter(effect -> effect.getDuration() > 0).forEach(effect -> {
-                effect.passTurn();
-                switch (effect.getSkillEffect()) {
-                    case BLEEDING, BURNING -> {
-                        if (effect.isPlayerEffect()) {
-                            finalCharacter.getStatistics().takeDamage(
-                                    Math.round(finalCharacter.getStatistics().getMaxHp() * effect.getEffectMultiplier()));
-                        } else {
-                            var enemyMaxHp = Optional.ofNullable(fight.getEnemy()).map(Enemy::getHp).orElseThrow();
-                            fight.dealDamageToEnemy(Math.round(enemyMaxHp * effect.getEffectMultiplier()));
-                        }
-                    }
-                    case STUNNED -> {
-                        if (effect.isPlayerEffect()) {
-                            playerStunned.set(true);
-                        } else {
-                            enemyStunned.set(true);
-                        }
-                    }
-                    case WEAKNESS -> {
-                        if (effect.isPlayerEffect()) {
-                            playerDamageMultiplier.set(Math.max(0.1f, playerDamageMultiplier.get() - effect.getEffectMultiplier()));
-                        } else {
-                            enemyDamageMultiplier.set(Math.max(0.1f, enemyDamageMultiplier.get() - effect.getEffectMultiplier()));
-                        }
-                    }
-                }
-            });
-        }
+        applyFightEffects(fight, character);
 
         if (!playerStunned.get()) {
             switch (request.getAction()) {
@@ -128,6 +98,39 @@ public class FightService {
         response.setFight(fightMapper.toDetails(character.getOccupation().getFight()));
         response.setPlayerPotions(character.getEquipment().getHealthPotions());
         return response;
+    }
+
+    private void applyFightEffects(@NotNull Fight fight, @NotNull Character character) {
+        if (fight.getFightEffects() != null) {
+            fight.getFightEffects().stream().filter(effect -> effect.getDuration() > 0).forEach(effect -> {
+                effect.passTurn();
+                switch (effect.getSkillEffect()) {
+                    case BLEEDING, BURNING -> {
+                        if (effect.isPlayerEffect()) {
+                            character.getStatistics().takeDamage(
+                                    Math.round(character.getStatistics().getMaxHp() * effect.getEffectMultiplier()));
+                        } else {
+                            var enemyMaxHp = Optional.ofNullable(fight.getEnemy()).map(Enemy::getHp).orElseThrow();
+                            fight.dealDamageToEnemy(Math.round(enemyMaxHp * effect.getEffectMultiplier()));
+                        }
+                    }
+                    case STUNNED -> {
+                        if (effect.isPlayerEffect()) {
+                            playerStunned.set(true);
+                        } else {
+                            enemyStunned.set(true);
+                        }
+                    }
+                    case WEAKNESS -> {
+                        if (effect.isPlayerEffect()) {
+                            playerDamageMultiplier.set(Math.max(0.1f, playerDamageMultiplier.get() - effect.getEffectMultiplier()));
+                        } else {
+                            enemyDamageMultiplier.set(Math.max(0.1f, enemyDamageMultiplier.get() - effect.getEffectMultiplier()));
+                        }
+                    }
+                }
+            });
+        }
     }
 
     private void attack(@NotNull Character character, @NotNull FightActionResponse response, @NotNull Fight fight) {

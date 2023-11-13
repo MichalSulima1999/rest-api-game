@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.parsing.Problem
 import org.springframework.http.HttpStatus
 
+import java.time.LocalDateTime
+
 class AdventureControllerTest extends TestBase {
 
     def baseUrl = "/adventure"
@@ -119,6 +121,8 @@ class AdventureControllerTest extends TestBase {
             def adventure = adventureServiceHelper.saveAdventure(name: "Adventure 1")
             def character = characterServiceHelper.createCharacter(user)
             character.occupation.setAdventure(adventure)
+            character.occupation.setFinishTime(LocalDateTime.now().minusDays(1))
+            character = characterServiceHelper.save(character)
             character = characterServiceHelper.save(character)
         when:
             def response = httpGet(endAdventureUrl(character.id), AdventureLite, [accessToken: userAccessToken])
@@ -137,6 +141,7 @@ class AdventureControllerTest extends TestBase {
             def adventure = adventureServiceHelper.saveAdventure(name: "Adventure 1")
             def character = characterServiceHelper.createCharacter(user)
             character.occupation.setAdventure(adventure)
+            character.occupation.setFinishTime(LocalDateTime.now().minusDays(1))
             character.occupation.fight.setActive(true)
             character = characterServiceHelper.save(character)
         when:
@@ -144,5 +149,13 @@ class AdventureControllerTest extends TestBase {
         then:
             response.status == HttpStatus.CONFLICT
             response.errorMessage == ErrorCodes.FIGHT_IS_ONGOING.toString()
+        when:
+            character.occupation.setFinishTime(LocalDateTime.now().plusDays(1))
+            character.occupation.fight.setActive(false)
+            character = characterServiceHelper.save(character)
+            response = httpGet(endAdventureUrl(character.id), AdventureLite, [accessToken: userAccessToken])
+        then:
+            response.status == HttpStatus.CONFLICT
+            response.errorMessage == ErrorCodes.CHARACTER_STILL_ON_ADVENTURE.toString()
     }
 }
