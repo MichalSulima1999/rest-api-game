@@ -44,6 +44,7 @@ public class Equipment {
     @ManyToOne(fetch = FetchType.LAZY)
     private Item weapon;
 
+    @Min(0)
     private int healthPotions;
 
     private boolean deleted;

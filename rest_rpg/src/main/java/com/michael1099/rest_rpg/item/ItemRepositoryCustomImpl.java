@@ -58,6 +58,9 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom {
     private BooleanBuilder buildPredicate(@NotNull QItem item, @NotNull ItemSearchRequest request) {
         var predicate = new BooleanBuilder();
 
+        if (request.getIdNotIn() != null) {
+            predicate.and(item.id.notIn(request.getIdNotIn()));
+        }
         if (request.getNameLike() != null) {
             predicate.and(item.name.contains(request.getNameLike()));
         }

@@ -3,6 +3,7 @@ package com.michael1099.rest_rpg.skill
 import com.michael1099.rest_rpg.character.CharacterServiceHelper
 import com.michael1099.rest_rpg.configuration.TestBase
 import com.michael1099.rest_rpg.helpers.DeleteServiceHelper
+import org.openapitools.model.CharacterClass
 import org.openapitools.model.CharacterSkillBasics
 import org.openapitools.model.ErrorCodes
 import org.openapitools.model.SkillBasicPage
@@ -118,5 +119,31 @@ class SkillControllerTest extends TestBase {
             SkillHelper.compare(skill1, response.body)
             character.skills.first().level == 1
             SkillHelper.compare(character.skills.first().skill, skill1)
+    }
+
+    def "should upgrade skill"() {
+        given:
+            def skill = skillServiceHelper.createSkill(name: "Fireball")
+            def character = characterServiceHelper.createCharacter(user, [name: "Carl", skills: [skill]])
+        when:
+            def response = httpGet(skillLearnUrl(skill.id, character.id), SkillLite, [accessToken: userAccessToken])
+            character = characterServiceHelper.getCharacter(character.id)
+        then:
+            response.status == HttpStatus.OK
+            SkillHelper.compare(skill, response.body)
+            character.skills.first().level == 2
+            SkillHelper.compare(character.skills.first().skill, skill)
+    }
+
+    def "should not learn skill"() {
+        given:
+            def skill1 = skillServiceHelper.createSkill(name: "Fireball", characterClass: CharacterClass.WARRIOR)
+            skillServiceHelper.createSkill(name: "Skill")
+            def character = characterServiceHelper.createCharacter(user, [characterClass: CharacterClass.MAGE])
+        when:
+            def response = httpGet(skillLearnUrl(skill1.id, character.id), SkillLite, [accessToken: userAccessToken])
+        then:
+            response.status == HttpStatus.CONFLICT
+            response.errorMessage == ErrorCodes.SKILL_CHARACTER_CLASS_MISMATCH.toString()
     }
 }

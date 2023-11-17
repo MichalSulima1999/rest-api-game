@@ -5,10 +5,10 @@ import com.michael1099.rest_rpg.auth.auth.IAuthenticationFacade;
 import com.michael1099.rest_rpg.character.CharacterRepository;
 import com.michael1099.rest_rpg.enemy.EnemyRepository;
 import com.michael1099.rest_rpg.exceptions.AdventureNameExistsException;
+import com.michael1099.rest_rpg.exceptions.AdventureNotFoundException;
 import com.michael1099.rest_rpg.exceptions.CharacterIsNotOnAdventureException;
 import com.michael1099.rest_rpg.exceptions.CharacterStillOnAdventureException;
 import com.michael1099.rest_rpg.exceptions.FightIsOngoingException;
-import com.michael1099.rest_rpg.exceptions.WorkNotFoundException;
 import com.michael1099.rest_rpg.fight.model.Fight;
 import com.michael1099.rest_rpg.helpers.SearchHelper;
 import jakarta.transaction.Transactional;
@@ -74,7 +74,7 @@ public class AdventureService {
     public AdventureLite endAdventure(long characterId) {
         var character = characterRepository.getCharacterById(characterId);
         authenticationFacade.checkIfCharacterBelongsToUser(character);
-        if (Optional.ofNullable(character.getOccupation().getFinishTime()).orElseThrow(WorkNotFoundException::new).isAfter(LocalDateTime.now())) {
+        if (Optional.ofNullable(character.getOccupation().getFinishTime()).orElseThrow(AdventureNotFoundException::new).isAfter(LocalDateTime.now())) {
             throw new CharacterStillOnAdventureException();
         }
         checkIfFightIsOngoing(character.getOccupation().getFight());

@@ -81,15 +81,20 @@ const useCharacterService = () => {
     return getResources(getCharacters, setIsLoading);
   };
 
-  const getUserCharacter = async (
-    characterId: number
-  ): Promise<CharacterBasic | undefined> => {
+  const getUserCharacter = async (characterId: number) => {
     setIsLoading(true);
     const getCharacter = await api.getUserCharacter(characterId, {
       withCredentials: true,
     });
 
-    return getResources(getCharacter, setIsLoading);
+    const character = getResources(getCharacter, setIsLoading);
+    character
+      .then((c) => {
+        if (c) {
+          characterStore.characterBasic(c);
+        }
+      })
+      .catch((e) => console.log(e));
   };
 
   const getCharacterStatistics = async (

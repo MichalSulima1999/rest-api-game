@@ -11,6 +11,14 @@ export const SkillCreateSchema = Yup.object().shape({
     .integer("MUST_BE_INTEGER")
     .min(1, "MUST_BE_GREATER_THAN_0")
     .required("REQUIRED"),
+  goldCost: Yup.number()
+    .integer("MUST_BE_INTEGER")
+    .min(1, "MUST_BE_GREATER_THAN_0")
+    .required("REQUIRED"),
+  statisticPointsCost: Yup.number()
+    .integer("MUST_BE_INTEGER")
+    .min(1, "MUST_BE_GREATER_THAN_0")
+    .required("REQUIRED"),
   type: Yup.string().oneOf(skillTypes, "WRONG_SKILL_TYPE").required("REQUIRED"),
   multiplier: Yup.number()
     .min(0.05, "MUST_BE_GREATER_THAN_0")
@@ -19,13 +27,19 @@ export const SkillCreateSchema = Yup.object().shape({
     .min(0.05, "MUST_BE_GREATER_THAN_0")
     .required("REQUIRED"),
   effect: Yup.string().oneOf(skillEffects, "WRONG_SKILL_EFFECT"),
-  effectDuration: Yup.number().min(1, "MUST_BE_GREATER_THAN_0"),
+  effectDuration: Yup.number()
+    .min(1, "MUST_BE_GREATER_THAN_0")
+    .required("REQUIRED"),
   effectDurationPerLevel: Yup.number()
     .integer("MUST_BE_INTEGER")
-    .min(1, "MUST_BE_POSITIVE"),
+    .min(1, "MUST_BE_POSITIVE")
+    .required("REQUIRED"),
   effectMultiplier: Yup.number()
-    .min(0.05, "MUST_BE_POSITIVE"),
-  effectMultiplierPerLevel: Yup.number().min(0.05, "MUST_BE_POSITIVE"),
+    .min(0.05, "MUST_BE_POSITIVE")
+    .required("REQUIRED"),
+  effectMultiplierPerLevel: Yup.number()
+    .min(0.05, "MUST_BE_POSITIVE")
+    .required("REQUIRED"),
   characterClass: Yup.string()
     .oneOf(classes, "WRONG_CLASS")
     .required("REQUIRED"),

@@ -270,11 +270,16 @@ public class Character {
     }
 
     public void learnNewSkill(@NotNull Skill skill) {
-        var characterSkill = CharacterSkill.newSkill(skill, this);
-        if (skills == null) {
-            skills = new HashSet<>();
-        }
-        skills.add(characterSkill);
+        var currentSkill = skills.stream().filter(s -> s.getSkill().getId().equals(skill.getId())).findFirst();
+        currentSkill.ifPresentOrElse(CharacterSkill::upgrade, () -> {
+            var characterSkill = CharacterSkill.newSkill(skill, this);
+            if (skills == null) {
+                skills = new HashSet<>();
+            }
+            skills.add(characterSkill);
+        });
+        equipment.spendGold(skill.getSkillTraining().getGoldCost());
+        statistics.useStatisticPoints(skill.getSkillTraining().getStatisticPointsCost());
     }
 
     public void buyItem(@NotNull Item item) {

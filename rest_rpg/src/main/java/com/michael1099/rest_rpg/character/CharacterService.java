@@ -17,9 +17,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.EnumUtils;
-import org.openapitools.model.CharacterBasic;
 import org.openapitools.model.CharacterBasics;
 import org.openapitools.model.CharacterCreateRequest;
+import org.openapitools.model.CharacterDetails;
 import org.openapitools.model.CharacterLite;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -86,14 +86,14 @@ public class CharacterService {
     }
 
     @Transactional
-    public CharacterBasic getUserCharacter(long characterId) {
+    public CharacterDetails getUserCharacter(long characterId) {
         var username = authenticationFacade.getAuthentication().getName();
         var character = characterRepository.getCharacterById(characterId);
         if (!Objects.equals(character.getUser().getId(), userRepository.getByUsername(username).getId())) {
             throw new CharacterNotFoundException();
         }
 
-        return characterMapper.toBasic(character);
+        return characterMapper.toDetails(character);
     }
 
     private void assertCharacterDoesNotExist(@NotNull String name) {

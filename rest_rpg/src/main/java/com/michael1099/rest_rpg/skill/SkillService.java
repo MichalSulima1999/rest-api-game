@@ -3,7 +3,10 @@ package com.michael1099.rest_rpg.skill;
 import com.michael1099.rest_rpg.auth.auth.AuthenticationFacade;
 import com.michael1099.rest_rpg.character.CharacterRepository;
 import com.michael1099.rest_rpg.character.model.Character;
+import com.michael1099.rest_rpg.exceptions.NotEnoughGoldException;
+import com.michael1099.rest_rpg.exceptions.NotEnoughSkillPointsException;
 import com.michael1099.rest_rpg.exceptions.SkillAlreadyExistsException;
+import com.michael1099.rest_rpg.exceptions.SkillCharacterClassMismatchException;
 import com.michael1099.rest_rpg.helpers.SearchHelper;
 import com.michael1099.rest_rpg.skill.model.Skill;
 import jakarta.transaction.Transactional;
@@ -65,6 +68,7 @@ public class SkillService {
         authenticationFacade.checkIfCharacterBelongsToUser(character);
         character.getOccupation().throwIfCharacterIsOccupied();
         var skill = skillRepository.get(skillId);
+        validateSkillLearning(character, skill);
         character.learnNewSkill(skill);
         characterRepository.save(character);
         return skillMapper.toLite(skill);
@@ -73,6 +77,18 @@ public class SkillService {
     private void checkIfSkillExists(@NotBlank String skillName) {
         if (skillRepository.existsByNameIgnoreCase(skillName)) {
             throw new SkillAlreadyExistsException();
+        }
+    }
+
+    private void validateSkillLearning(@NotNull Character character, @NotNull Skill skill) {
+        if (!skill.getCharacterClass().equals(character.getCharacterClass())) {
+            throw new SkillCharacterClassMismatchException();
+        }
+        if (character.getEquipment().getGold() < skill.getSkillTraining().getGoldCost()) {
+            throw new NotEnoughGoldException();
+        }
+        if (character.getStatistics().getFreeStatisticPoints() < skill.getSkillTraining().getStatisticPointsCost()) {
+            throw new NotEnoughSkillPointsException();
         }
     }
 }

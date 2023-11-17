@@ -50,11 +50,8 @@ const CharacterDetails = () => {
 
   useEffect(() => {
     async function getCharacter() {
-      if (characterId) {
-        const character = await getUserCharacter(parseInt(characterId));
-        if (character) {
-          characterStore.characterBasic(character);
-        }
+      if (characterStore.id == -1 && characterId) {
+        await getUserCharacter(parseInt(characterId));
       }
     }
     getCharacter().catch((error) => console.log(error));

@@ -2,6 +2,7 @@ package com.michael1099.rest_rpg.item;
 
 import com.michael1099.rest_rpg.auth.auth.IAuthenticationFacade;
 import com.michael1099.rest_rpg.character.CharacterRepository;
+import com.michael1099.rest_rpg.exceptions.ItemAlreadyBoughtException;
 import com.michael1099.rest_rpg.exceptions.ItemAlreadyExistsException;
 import com.michael1099.rest_rpg.exceptions.NotEnoughGoldException;
 import com.michael1099.rest_rpg.helpers.SearchHelper;
@@ -51,6 +52,10 @@ public class ItemService {
         authenticationFacade.checkIfCharacterBelongsToUser(character);
 
         var item = itemRepository.getItemById(itemId);
+        if (item.getId().equals(character.getEquipment().getArmor().getId()) ||
+                item.getId().equals(character.getEquipment().getWeapon().getId())) {
+            throw new ItemAlreadyBoughtException();
+        }
         if (item.getPrice() > character.getEquipment().getGold()) {
             throw new NotEnoughGoldException();
         }

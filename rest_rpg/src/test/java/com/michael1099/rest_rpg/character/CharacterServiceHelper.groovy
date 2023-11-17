@@ -67,7 +67,7 @@ class CharacterServiceHelper {
                 skills        : new HashSet<Skill>(),
                 statistics    : StatisticsHelper.statistics(),
                 occupation    : Occupation.builder().fight(new Fight()).build(),
-                equipment     : Equipment.init()
+                equipment     : Equipment.builder().gold(1000).build()
         ]
         args << customArgs
 

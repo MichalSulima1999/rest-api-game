@@ -3,6 +3,7 @@ package com.michael1099.rest_rpg.enemy;
 import com.michael1099.rest_rpg.enemy.model.Enemy;
 import com.michael1099.rest_rpg.enemy.model.EnemyCreateRequestDto;
 import com.michael1099.rest_rpg.enemy.model.StrategyElementCreateRequestDto;
+import com.michael1099.rest_rpg.skill.SkillMapper;
 import jakarta.validation.constraints.NotNull;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -15,7 +16,7 @@ import org.openapitools.model.StrategyElementCreateRequest;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = SkillMapper.class)
 public interface EnemyMapper {
 
     @Mapping(source = "enemyStrategy", target = "strategyElementCreateRequest", qualifiedByName = "strategyElementCreateRequestDto")

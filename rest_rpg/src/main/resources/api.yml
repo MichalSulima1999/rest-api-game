@@ -121,7 +121,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CharacterBasic'
+                $ref: '#/components/schemas/CharacterDetails'
   /statistics/{characterId}:
     get:
       summary: Get user character statistics by character id
@@ -656,6 +656,8 @@ components:
         - WORK_NOT_FOUND
         - CHARACTER_STILL_WORKING
         - CHARACTER_STILL_ON_ADVENTURE
+        - SKILL_CHARACTER_CLASS_MISMATCH
+        - ITEM_ALREADY_BOUGHT
     ElementEvent:
       type: string
       enum:
@@ -913,6 +915,12 @@ components:
       properties:
         pagination:
           $ref: '#/components/schemas/Pagination'
+        idNotIn:
+          description: Skill id not in
+          type: array
+          items:
+            type: integer
+            format: int64
         nameLike:
           description: Skill name fragment
           type: string
@@ -1027,6 +1035,12 @@ components:
       properties:
         pagination:
           $ref: '#/components/schemas/Pagination'
+        idNotIn:
+          description: Item id not in
+          type: array
+          items:
+            type: integer
+            format: int64
         nameLike:
           description: Item name fragment
           type: string
@@ -1131,6 +1145,15 @@ components:
               $ref: '#/components/schemas/StatisticsLite'
             occupation:
               $ref: '#/components/schemas/OccupationBasic'
+    CharacterDetails:
+      allOf:
+        - $ref: '#/components/schemas/CharacterBasic'
+        - type: object
+          properties:
+            skills:
+              type: array
+              items:
+                $ref: '#/components/schemas/SkillDetails'
     StatisticsLite:
       type: object
       required:
@@ -1321,6 +1344,7 @@ components:
             - type
             - multiplier
             - characterClass
+            - skillTraining
           properties:
             type:
               description: Skill type
@@ -1331,6 +1355,20 @@ components:
             characterClass:
               description: Character class skill is for
               type: string
+            skillTraining:
+              $ref: '#/components/schemas/SkillTraining'
+    SkillTraining:
+      type: object
+      required:
+        - goldCost
+        - statisticPointsCost
+      properties:
+        goldCost:
+          description: Skill learn gold cost
+          type: integer
+        statisticPointsCost:
+          description: Skill learn statistics points cost
+          type: integer
     SkillBasicPage:
       allOf:
         - $ref: '#/components/schemas/Page'

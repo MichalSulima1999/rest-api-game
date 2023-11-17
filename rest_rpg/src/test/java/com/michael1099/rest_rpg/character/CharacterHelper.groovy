@@ -2,10 +2,12 @@ package com.michael1099.rest_rpg.character
 
 import com.michael1099.rest_rpg.character.model.Character
 import com.michael1099.rest_rpg.character.model.CharacterArtwork
+import com.michael1099.rest_rpg.skill.SkillHelper
 import com.michael1099.rest_rpg.statistics.StatisticsHelper
 import org.openapitools.model.CharacterBasic
 import org.openapitools.model.CharacterClass
 import org.openapitools.model.CharacterCreateRequest
+import org.openapitools.model.CharacterDetails
 import org.openapitools.model.CharacterLite
 import org.openapitools.model.CharacterRace
 import org.openapitools.model.CharacterSex
@@ -49,6 +51,24 @@ class CharacterHelper {
         assert character.statistics.currentLevel == dto.statistics.currentLevel
         assert character.occupation?.finishTime?.toString() == dto.occupation?.finishTime
         assert character.occupation?.occupationType == dto.occupation?.occupationType
+
+        true
+    }
+
+    static boolean compare(Character character, CharacterDetails dto) {
+        assert character.id == dto.id
+        assert character.sex.toString() == dto.sex
+        assert character.artwork.toString() == dto.artwork
+        assert character.characterClass.toString() == dto.characterClass
+        assert character.race.toString() == dto.race
+        assert character.name.toString() == dto.name
+        assert character.statistics.currentXp == dto.statistics.currentXp
+        assert character.statistics.xpToNextLevel == dto.statistics.xpToNextLevel
+        assert character.statistics.currentLevel == dto.statistics.currentLevel
+        assert character.occupation?.finishTime?.toString() == dto.occupation?.finishTime
+        assert character.occupation?.occupationType == dto.occupation?.occupationType
+        def skills = character.skills.skill
+        assert SkillHelper.compare(skills, dto.skills)
 
         true
     }

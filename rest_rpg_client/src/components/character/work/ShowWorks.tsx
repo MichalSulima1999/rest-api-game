@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   ChakraProvider,
   extendTheme,
@@ -10,19 +10,17 @@ import {
   Td,
   Box,
   Skeleton,
-  useDisclosure,
   Text,
   Button,
 } from "@chakra-ui/react";
-import { AdventureBasicPage } from "../../generated-sources/openapi";
-import useAdventureService from "../../services/useAdventureService";
-import Pagination from "../tables/Pagination";
 import { useTranslation } from "react-i18next";
-import AdventureDetailsModal from "./AdventureDetailsModal";
-import { useStores } from "../../store/RootStore";
-import { secondsToTime } from "../../helpers/DateHelper";
-import { Link, useParams } from "react-router-dom";
-import useCharacterService from "../../services/useCharacterService";
+import { useParams } from "react-router-dom";
+import useWorkService from "../../../services/useWorkService";
+import { WorkLitePage } from "../../../generated-sources/openapi";
+import { useStores } from "../../../store/RootStore";
+import useCharacterService from "../../../services/useCharacterService";
+import { secondsToTime } from "../../../helpers/DateHelper";
+import Pagination from "../../tables/Pagination";
 
 const theme = extendTheme({
   components: {
@@ -37,15 +35,13 @@ const theme = extendTheme({
 
 const pageSize = 10;
 
-function ShowAdventures() {
+function ShowWorks() {
   const { t } = useTranslation();
-  const adventureService = useAdventureService();
+  const workService = useWorkService();
   const characterService = useCharacterService();
   const [page, setPage] = useState(0);
-  const [data, setData] = useState<AdventureBasicPage | null>(null);
-  const [currentAdventureId, setCurrentAdventureId] = useState(0);
+  const [data, setData] = useState<WorkLitePage | null>(null);
   const { characterStore } = useStores();
-  const { isOpen, onOpen, onClose } = useDisclosure();
   const { characterId } = useParams();
 
   useEffect(() => {
@@ -55,74 +51,75 @@ function ShowAdventures() {
       }
     }
     getCharacterIfNeeded().catch((error) => console.log(error));
-  }, []);
+  }, [characterId]);
 
   useEffect(() => {
-    async function getAdventurePage() {
-      const adventures = await adventureService.findAdventures({
+    async function getWorksPage() {
+      const works = await workService.findWorks({
         pagination: { pageNumber: page, elements: pageSize },
       });
-      if (adventures) {
-        setData(adventures);
+      if (works) {
+        setData(works);
       }
     }
-    getAdventurePage().catch((error) => console.log(error));
+    getWorksPage().catch((error) => console.log(error));
   }, [page]);
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
   };
 
-  const handleEndAdventure = () => {
+  const handleStartWork = (workId: number) => {
     if (characterId) {
-      adventureService
-        .endAdventure(Number(characterId))
+      workService
+        .startWork(workId, Number(characterId))
         .catch((e) => console.log(e));
+    }
+  };
+
+  const handleEndWork = () => {
+    if (characterId) {
+      workService.endWork(Number(characterId)).catch((e) => console.log(e));
     }
   };
 
   return (
     <ChakraProvider theme={theme}>
       <Box p={4} bgColor={"gray.800"} color={"white"}>
-        <Text>{`${t("ADVENTURE.TIME")}: ${secondsToTime(
+        <Text>{`${t("WORK.TIME")}: ${secondsToTime(
           characterStore.occupationTime
         )}`}</Text>
         {characterStore.occupationType}
         <Button
-          onClick={handleEndAdventure}
+          onClick={handleEndWork}
           isDisabled={
             characterStore.occupationTime > 0 ||
             characterStore.occupationType == "Fight"
           }
         >
-          {t("ADVENTURE.END")}
+          {t("WORK.END")}
         </Button>
-        <Button as={Link} to={`/user/character/${characterId!}/fight`}>
-          {t("FIGHT.NAME")}
-        </Button>
-        <Skeleton isLoaded={!adventureService.isLoading}>
+        <Skeleton isLoaded={!workService.isLoading}>
           <Table variant="simple" bgColor={"gray.900"} size="md" mb={4}>
             <Thead>
               <Tr>
-                <Th>{t("ADVENTURE.NAME")}</Th>
-                <Th>{t("CHARACTER.STATISTICS.XP")}</Th>
+                <Th>{t("WORK.NAME")}</Th>
                 <Th>{t("CHARACTER.STATISTICS.GOLD")}</Th>
-                <Th>{t("ENEMY.NAME")}</Th>
+                <Th>{t("WORK.WORK_TIME")}</Th>
+                <Th>{t("WORK.START")}</Th>
               </Tr>
             </Thead>
             <Tbody>
-              {data?.content.map((item, index) => (
-                <Tr
-                  key={index}
-                  onClick={() => {
-                    onOpen();
-                    setCurrentAdventureId(item.id);
-                  }}
-                >
+              {data?.content.map((item) => (
+                <Tr key={item.id}>
                   <Td>{item.name}</Td>
-                  <Td>{item.xpForAdventure}</Td>
-                  <Td>{item.goldForAdventure}</Td>
-                  <Td>{item.enemy?.name}</Td>
+                  <Td>{item.wage}</Td>
+                  <Td>{item.workMinutes}m</Td>
+                  <Td>
+                    <Button onClick={() => handleStartWork(item.id)}>
+                      {t("WORK.START")}
+                    </Button>
+                  </Td>
                 </Tr>
               ))}
             </Tbody>
@@ -141,14 +138,8 @@ function ShowAdventures() {
           )}
         </Skeleton>
       </Box>
-
-      <AdventureDetailsModal
-        isOpen={isOpen}
-        onClose={onClose}
-        adventureId={currentAdventureId}
-      />
     </ChakraProvider>
   );
 }
 
-export default ShowAdventures;
+export default ShowWorks;

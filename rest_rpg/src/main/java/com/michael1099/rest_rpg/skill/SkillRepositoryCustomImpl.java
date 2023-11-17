@@ -1,5 +1,6 @@
 package com.michael1099.rest_rpg.skill;
 
+import com.michael1099.rest_rpg.exceptions.EnumValueNotFoundException;
 import com.michael1099.rest_rpg.skill.model.QSkill;
 import com.michael1099.rest_rpg.skill.model.Skill;
 import com.querydsl.core.BooleanBuilder;
@@ -62,21 +63,29 @@ public class SkillRepositoryCustomImpl implements SkillRepositoryCustom {
     private BooleanBuilder buildPredicate(@NotNull QSkill skill, @NotNull SkillSearchRequest request) {
         var predicate = new BooleanBuilder();
 
+        if (request.getIdNotIn() != null) {
+            predicate.and(skill.id.notIn(request.getIdNotIn()));
+        }
+
         if (request.getNameLike() != null) {
             predicate.and(skill.name.contains(request.getNameLike()));
         }
 
-        Optional.ofNullable(request.getSkillTypeIn())
-                .map(types -> types.stream().map(SkillType::fromValue).toList())
-                .ifPresent(skillTypeIn -> predicate.and(skill.type.in(skillTypeIn)));
+        try {
+            Optional.ofNullable(request.getSkillTypeIn())
+                    .map(types -> types.stream().map(SkillType::fromValue).toList())
+                    .ifPresent(skillTypeIn -> predicate.and(skill.type.in(skillTypeIn)));
 
-        Optional.ofNullable(request.getSkillEffectIn())
-                .map(effects -> effects.stream().map(SkillEffect::fromValue).toList())
-                .ifPresent(skillEffectIn -> predicate.and(skill.effect.in(skillEffectIn)));
+            Optional.ofNullable(request.getSkillEffectIn())
+                    .map(effects -> effects.stream().map(SkillEffect::fromValue).toList())
+                    .ifPresent(skillEffectIn -> predicate.and(skill.effect.in(skillEffectIn)));
 
-        Optional.ofNullable(request.getCharacterClassIn())
-                .map(classes -> classes.stream().map(CharacterClass::fromValue).toList())
-                .ifPresent(characterClassIn -> predicate.and(skill.characterClass.in(characterClassIn)));
+            Optional.ofNullable(request.getCharacterClassIn())
+                    .map(classes -> classes.stream().map(CharacterClass::fromValue).toList())
+                    .ifPresent(characterClassIn -> predicate.and(skill.characterClass.in(characterClassIn)));
+        } catch (IllegalArgumentException e) {
+            throw new EnumValueNotFoundException();
+        }
 
         return predicate;
     }

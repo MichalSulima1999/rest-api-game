@@ -86,6 +86,7 @@ public class Enemy {
                 .name(dto.getName())
                 .numberOfPotions(dto.getNumberOfPotions())
                 .skill(skill)
+                .skillLevel(dto.getSkillLevel())
                 .deleted(false)
                 .build();
     }

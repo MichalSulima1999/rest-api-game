@@ -48,4 +48,8 @@ public class CharacterSkill {
                 .level(1)
                 .build();
     }
+
+    public void upgrade() {
+        level += 1;
+    }
 }

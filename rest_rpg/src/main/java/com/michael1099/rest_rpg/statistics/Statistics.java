@@ -210,6 +210,13 @@ public class Statistics {
         }
     }
 
+    public void useStatisticPoints(int points) {
+        if (points > freeStatisticPoints) {
+            throw new NotEnoughSkillPointsException();
+        }
+        freeStatisticPoints -= points;
+    }
+
     private void setRaceBonus(CharacterRace race) {
         switch (race) {
             case ELF -> this.dexterity += CHARACTER_RACE_BONUS;

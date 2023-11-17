@@ -1,6 +1,7 @@
 package com.michael1099.rest_rpg.work;
 
 import com.michael1099.rest_rpg.adventure.model.QAdventure;
+import com.michael1099.rest_rpg.work.model.QWork;
 import com.michael1099.rest_rpg.work.model.Work;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.PathBuilderFactory;

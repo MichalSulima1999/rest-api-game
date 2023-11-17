@@ -24,14 +24,16 @@ const CreateSkill = () => {
     initialValues: {
       name: "",
       manaCost: 0,
+      goldCost: 0,
+      statisticPointsCost: 0,
       type: skillTypes[0],
       multiplier: 0,
       multiplierPerLevel: 0,
       effect: "",
-      effectDuration: undefined,
-      effectDurationPerLevel: undefined,
-      effectMultiplier: undefined,
-      effectMultiplierPerLevel: undefined,
+      effectDuration: 0,
+      effectDurationPerLevel: 0,
+      effectMultiplier: 0,
+      effectMultiplierPerLevel: 0,
       characterClass: classes[0],
     },
     validationSchema: SkillCreateSchema,
@@ -71,6 +73,24 @@ const CreateSkill = () => {
             translationKey="CHARACTER.CLASS"
           />
           <HStack spacing="8px" align={"end"}>
+            <FormikInput
+              error={errors.goldCost}
+              touched={touched.goldCost}
+              value={values.goldCost}
+              handleChange={handleChange}
+              inputType="number"
+              inputName="goldCost"
+              translationKey="SKILL.GOLD_COST"
+            />
+            <FormikInput
+              error={errors.statisticPointsCost}
+              touched={touched.statisticPointsCost}
+              value={values.statisticPointsCost}
+              handleChange={handleChange}
+              inputType="number"
+              inputName="statisticPointsCost"
+              translationKey="SKILL.STATISTIC_POINTS_COST"
+            />
             <FormikInput
               error={errors.manaCost}
               touched={touched.manaCost}

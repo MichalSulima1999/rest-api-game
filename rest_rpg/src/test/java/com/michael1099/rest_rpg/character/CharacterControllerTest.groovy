@@ -6,8 +6,8 @@ import com.michael1099.rest_rpg.fight.model.Fight
 import com.michael1099.rest_rpg.occupation.Occupation
 import com.michael1099.rest_rpg.statistics.StatisticsHelper
 import com.michael1099.rest_rpg.statistics.StatisticsServiceHelper
-import org.openapitools.model.CharacterBasic
 import org.openapitools.model.CharacterBasics
+import org.openapitools.model.CharacterDetails
 import org.openapitools.model.CharacterLite
 import org.openapitools.model.CharacterSex
 import org.openapitools.model.ErrorCodes
@@ -130,7 +130,7 @@ class CharacterControllerTest extends TestBase {
     def "should get user character"() {
         when:
             def character = characterServiceHelper.createCharacter(user, [name: "Carl", occupation: Occupation.builder().fight(Fight.builder().isActive(true).build()).build()])
-            def response = httpGet(userCharacterUrl(character.getId()), CharacterBasic, [accessToken: userAccessToken])
+            def response = httpGet(userCharacterUrl(character.getId()), CharacterDetails, [accessToken: userAccessToken])
         then:
             response.status == HttpStatus.OK
             CharacterHelper.compare(character, response.body)

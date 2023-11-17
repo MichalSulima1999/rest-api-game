@@ -90,6 +90,8 @@ class SkillHelper {
         assert skill.type.toString() == skillBasic.type
         assert skill.effect.toString() == skillBasic.effect
         assert skill.characterClass.toString() == skillBasic.characterClass
+        assert skill.skillTraining.goldCost == skillBasic.skillTraining.goldCost
+        assert skill.skillTraining.statisticPointsCost == skillBasic.skillTraining.statisticPointsCost
 
         true
     }
@@ -133,6 +135,15 @@ class SkillHelper {
         assert skill.effectMultiplier == skillDetails.effectMultiplier
         assert skill.effectDurationPerLevel == skillDetails.effectDurationPerLevel
         assert skill.effectMultiplierPerLevel == skillDetails.effectMultiplierPerLevel
+
+        true
+    }
+
+    static boolean compare(Collection<Skill> skills, List<SkillDetails> details) {
+        assert skills.size() == details.size()
+        skills = skills.sort { it.id }
+        details = details.sort { it.id }
+        assert skills.withIndex().every { compare(it.v1, details[it.v2]) }
 
         true
     }

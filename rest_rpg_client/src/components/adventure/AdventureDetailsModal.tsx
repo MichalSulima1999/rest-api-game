@@ -118,7 +118,7 @@ const AdventureDetailsModal: React.FC<AdventureDetailsProps> = ({
               colorScheme="blue"
               onClick={handleStartAdventure}
               mr={3}
-              isDisabled={characterStore.occupationType != ""}
+              isDisabled={characterStore.occupationType != null}
             >
               {t("ADVENTURE.START")}
             </Button>

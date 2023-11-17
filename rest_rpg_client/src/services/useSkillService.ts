@@ -5,10 +5,14 @@ import { Error } from "../classes/error/Error";
 import { useTranslation } from "react-i18next";
 import { AxiosError } from "axios";
 import {
+  CharacterSkillBasics,
   DefaultApiFp,
+  SkillBasicPage,
   SkillCreateRequest,
+  SkillDetails,
   SkillLite,
   SkillLites,
+  SkillSearchRequest,
 } from "../generated-sources/openapi";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import useServiceHelper from "./helpers/useServiceHelper";
@@ -50,6 +54,28 @@ const useSkillService = () => {
       .finally(() => setIsLoading(false));
   };
 
+  const findSkills = async (
+    request: SkillSearchRequest
+  ): Promise<SkillBasicPage | undefined> => {
+    setIsLoading(true);
+    const findSkills = await api.findSkills(request, {
+      withCredentials: true,
+    });
+
+    return getResources(findSkills, setIsLoading);
+  };
+
+  const getSkill = async (
+    skillId: number
+  ): Promise<SkillDetails | undefined> => {
+    setIsLoading(true);
+    const getSkill = await api.getSkill(skillId, {
+      withCredentials: true,
+    });
+
+    return getResources(getSkill, setIsLoading);
+  };
+
   const getAllSkills = async (): Promise<SkillLites | undefined> => {
     setIsLoading(true);
     const getSkills = await api.getSkills({
@@ -59,10 +85,37 @@ const useSkillService = () => {
     return getResources(getSkills, setIsLoading);
   };
 
+  const getCharacterSkills = async (
+    characterId: number
+  ): Promise<CharacterSkillBasics | undefined> => {
+    setIsLoading(true);
+    const getCharacterSkills = await api.getCharacterSkills(characterId, {
+      withCredentials: true,
+    });
+
+    return getResources(getCharacterSkills, setIsLoading);
+  };
+
+  const learnSkill = async (
+    skillId: number,
+    characterId: number
+  ): Promise<SkillLite | undefined> => {
+    setIsLoading(true);
+    const learnSkill = await api.learnSkill(skillId, characterId, {
+      withCredentials: true,
+    });
+
+    return getResources(learnSkill, setIsLoading, "SKILL.LEARNED_SUCCESSFULLY");
+  };
+
   return {
     isLoading,
     create,
+    findSkills,
     getAllSkills,
+    getSkill,
+    getCharacterSkills,
+    learnSkill,
   };
 };
 

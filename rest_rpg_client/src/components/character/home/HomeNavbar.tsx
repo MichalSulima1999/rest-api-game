@@ -40,6 +40,30 @@ const HomeNavbar = () => {
             >
               {t("ADVENTURE.SHOW")}
             </Link>
+            <Link
+              as={RouterLink}
+              to={`/user/character/${characterId}/skill/show`}
+              fontSize="xl"
+              fontWeight="bold"
+            >
+              {t("SKILL.SHOW")}
+            </Link>
+            <Link
+              as={RouterLink}
+              to={`/user/character/${characterId}/shop/show`}
+              fontSize="xl"
+              fontWeight="bold"
+            >
+              {t("SHOP.SHOW")}
+            </Link>
+            <Link
+              as={RouterLink}
+              to={`/user/character/${characterId}/work/show`}
+              fontSize="xl"
+              fontWeight="bold"
+            >
+              {t("WORK.SHOW")}
+            </Link>
           </Flex>
         </>
       )}

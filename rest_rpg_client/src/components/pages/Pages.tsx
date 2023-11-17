@@ -6,7 +6,7 @@ import Register from "../auth/Register";
 import CharacterHome from "../character/home/CharacterHome";
 import CharacterCreator from "../character/character_creator/CharacterCreator";
 import CharacterDetails from "../character/CharacterDetails";
-import CharacterStatistics from "../character/CharacterStatistics";
+import CharacterStatistics from "../character/statistics/CharacterStatistics";
 import UserHome from "../home/UserHome";
 import AdminHome from "../admin/admin_home/AdminHome";
 import CreateEnemy from "../admin/enemy/CreateEnemy";
@@ -14,6 +14,12 @@ import CreateSkill from "../admin/skill/CreateSkill";
 import CreateAdventure from "../admin/adventure/CreateAdventure";
 import AdminShowAdventures from "../admin/adventure/AdminShowAdventures";
 import ShowAdventures from "../adventure/ShowAdventures";
+import CreateItem from "../admin/item/CreateItem";
+import CreateWork from "../admin/work/CreateWork";
+import CharacterSkills from "../character/skills/CharacterSkills";
+import Shop from "../character/shop/Shop";
+import ShowWorks from "../character/work/ShowWorks";
+import Fight from "../character/fight/Fight";
 
 function Pages() {
   const location = useLocation();
@@ -29,6 +35,16 @@ function Pages() {
               <Route path="adventure">
                 <Route path="show" element={<ShowAdventures />} />
               </Route>
+              <Route path="skill">
+                <Route path="show" element={<CharacterSkills />} />
+              </Route>
+              <Route path="shop">
+                <Route path="show" element={<Shop />} />
+              </Route>
+              <Route path="work">
+                <Route path="show" element={<ShowWorks />} />
+              </Route>
+              <Route path="fight" element={<Fight />} />
             </Route>
             <Route path="character/create" element={<CharacterCreator />} />
             <Route path="home" element={<UserHome />} />
@@ -44,6 +60,12 @@ function Pages() {
             <Route path="adventure">
               <Route path="create" element={<CreateAdventure />} />
               <Route path="show" element={<AdminShowAdventures />} />
+            </Route>
+            <Route path="item">
+              <Route path="create" element={<CreateItem />} />
+            </Route>
+            <Route path="work">
+              <Route path="create" element={<CreateWork />} />
             </Route>
           </Route>
         </Route>
