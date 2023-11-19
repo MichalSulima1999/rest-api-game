@@ -7,6 +7,7 @@ import org.openapitools.model.ItemLite;
 import org.openapitools.model.ItemLitePage;
 import org.openapitools.model.ItemSearchRequest;
 import org.openapitools.model.PotionLite;
+import org.openapitools.model.StatisticsLite;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RestController;
@@ -37,6 +38,11 @@ public class ItemController implements ItemApi {
     public ResponseEntity<Void> buyPotion(Long characterId) {
         itemService.buyPotion(characterId);
         return ResponseEntity.noContent().build();
+    }
+
+    @Override
+    public ResponseEntity<StatisticsLite> usePotion(Long characterId) {
+        return ResponseEntity.ok(itemService.usePotion(characterId));
     }
 
     @Override

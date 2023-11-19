@@ -20,6 +20,8 @@ import useSkillService from "../../../services/useSkillService";
 import { ItemLitePage, PotionLite } from "../../../generated-sources/openapi";
 import Pagination from "../../tables/Pagination";
 import useEquipmentService from "../../../services/useEquipmentService";
+import { useStores } from "../../../store/RootStore";
+import useCharacterService from "../../../services/useCharacterService";
 
 const theme = extendTheme({
   components: {
@@ -38,10 +40,21 @@ function Shop() {
   const { t } = useTranslation();
   const skillService = useSkillService();
   const equipmentService = useEquipmentService();
+  const characterService = useCharacterService();
   const [page, setPage] = useState(0);
   const [data, setData] = useState<ItemLitePage | null>(null);
   const [potionData, setPotionData] = useState<PotionLite | null>(null);
   const { characterId } = useParams();
+  const { equipmentStore, characterStore } = useStores();
+
+  useEffect(() => {
+    async function getCharacterIfNeeded() {
+      if (characterStore.id == -1 && characterId) {
+        await characterService.getUserCharacter(parseInt(characterId));
+      }
+    }
+    getCharacterIfNeeded().catch((error) => console.log(error));
+  }, []);
 
   useEffect(() => {
     async function getPotionData() {
@@ -87,6 +100,7 @@ function Shop() {
       <Box p={4} bgColor={"gray.800"} color={"white"}>
         <Skeleton isLoaded={!skillService.isLoading}>
           <Heading mb={4}>{t("SHOP.NAME")}</Heading>
+          <Text>Gold: {equipmentStore.gold}</Text>
           <Table variant="simple" bgColor={"gray.900"} size="md" mb={4}>
             <Thead>
               <Tr>

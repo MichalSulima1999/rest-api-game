@@ -91,7 +91,7 @@ class FightControllerTest extends TestBase {
 
     def "should attack special"() {
         given:
-            def skill = skillServiceHelper.createSkill()
+            def skill = skillServiceHelper.createSkill(effect: SkillEffect.BLEEDING)
             def character = characterServiceHelper.createCharacter(user, [name: "Carl", skills: [skill]])
             def adventure = adventureServiceHelper.saveAdventure()
             character.occupation.setAdventure(adventure)
@@ -105,8 +105,9 @@ class FightControllerTest extends TestBase {
             response.status == HttpStatus.OK
             response.body.with {
                 FightHelper.compare(fightServiceHelper.getById(fight.id), it.fight)
-                assert it.playerCurrentMana == character.statistics.maxMana - skill.manaCost
+                assert it.playerCurrentMana == character.statistics.maxMana - skill.manaCost + character.statistics.maxMana * FightService.MANA_REGENERATION_PERCENT_PER_TURN / 100
                 assert it.playerCurrentHp
+                assert it.fight.fightEffects.first().skillEffect == SkillEffect.BLEEDING.toString()
             }
     }
 
@@ -158,6 +159,29 @@ class FightControllerTest extends TestBase {
             character.getOccupation().adventure == null
             character.statistics.currentXp == adventure.xpForAdventure
             character.equipment.gold == adventure.goldForAdventure
+    }
+
+    def "should level up after fight"() {
+        given:
+            def character = characterServiceHelper.createCharacter(user, [
+                    statistics: StatisticsHelper.statistics(currentXp: 0, currentLevel: 1),
+                    equipment : Equipment.builder().gold(0).build(),
+            ])
+            def adventure = adventureServiceHelper.saveAdventure(xpForAdventure: 2000)
+            character.occupation.setAdventure(adventure)
+            character = characterServiceHelper.save(character)
+            def fight = prepareFight(character)
+            fight.setEnemyCurrentHp(10)
+            fightServiceHelper.save(fight)
+        and:
+            def request = new FightActionRequest(character.id, ElementAction.NORMAL_ATTACK.toString())
+        when:
+            def response = httpPost(baseUrl, request, FightActionResponse, [accessToken: userAccessToken])
+            character = characterServiceHelper.getCharacter(character.id)
+        then:
+            response.status == HttpStatus.OK
+            response.body.playerWon == true
+            character.statistics.currentLevel == 3
     }
 
     def "should lose fight"() {

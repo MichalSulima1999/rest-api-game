@@ -59,8 +59,8 @@ public class Statistics {
 
     public static final int HP_MULTIPLIER = 10;
     public static final int MANA_MULTIPLIER = 10;
-    public static final int DAMAGE_MULTIPLIER = 5;
-    public static final int MAGIC_DAMAGE_MULTIPLIER = 5;
+    public static final int DAMAGE_MULTIPLIER = 2;
+    public static final int MAGIC_DAMAGE_MULTIPLIER = 3;
     public static final int START_FREE_STATISTICS_POINTS = 50;
     public static final int STATISTICS_POINTS_PER_LEVEL = 10;
     public static final int CHARACTER_RACE_BONUS = 5;
@@ -192,12 +192,11 @@ public class Statistics {
         currentHp += maxHp * percent / 100;
         if (currentHp > maxHp) {
             currentHp = maxHp;
-            freeStatisticPoints += STATISTICS_POINTS_PER_LEVEL;
         }
     }
 
     public void regenerateManaPerTurn() {
-        currentMana += maxMana * FightService.MANA_REGENERATION_PERCENT_PER_TURN;
+        currentMana += maxMana * FightService.MANA_REGENERATION_PERCENT_PER_TURN / 100;
         if (currentMana > maxMana) {
             currentMana = maxMana;
         }
@@ -205,8 +204,9 @@ public class Statistics {
 
     public void earnXp(int xp) {
         currentXp += xp;
-        if (currentXp >= getXpToNextLevel()) {
+        while (currentXp >= getXpToNextLevel()) {
             currentLevel++;
+            freeStatisticPoints += STATISTICS_POINTS_PER_LEVEL;
         }
     }
 

@@ -5,6 +5,8 @@ import {
   Radio,
   RadioGroup,
   Stack,
+  Wrap,
+  WrapItem,
 } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
 import React from "react";
@@ -41,23 +43,22 @@ const FormikRadioGroup = ({
     >
       <FormLabel>{t(`${translationKey}.NAME`)}</FormLabel>
       <RadioGroup value={value}>
-        <Stack direction="row">
+        <Wrap spacing="30px">
           {!isRequired && (
-            <Radio onChange={handleChange} name={inputName} value={""}>
-              {t("INPUT.NONE")}
-            </Radio>
+            <WrapItem>
+              <Radio onChange={handleChange} name={inputName} value={""}>
+                {t("INPUT.NONE")}
+              </Radio>
+            </WrapItem>
           )}
           {radioValues.map((val) => (
-            <Radio
-              key={val}
-              onChange={handleChange}
-              name={inputName}
-              value={val}
-            >
-              {t(`${translationKey}.${val}`)}
-            </Radio>
+            <WrapItem key={val}>
+              <Radio onChange={handleChange} name={inputName} value={val}>
+                {t(`${translationKey}.${val}`)}
+              </Radio>
+            </WrapItem>
           ))}
-        </Stack>
+        </Wrap>
       </RadioGroup>
       <FormErrorMessage>{error && t(`VALIDATION.${error}`)}</FormErrorMessage>
     </FormControl>

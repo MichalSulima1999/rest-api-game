@@ -29,7 +29,7 @@ class SkillServiceHelper {
                 effectDurationPerLevel  : 1,
                 effectMultiplier        : 0.1,
                 effectMultiplierPerLevel: 0.05,
-                manaCost                : 10,
+                manaCost                : 20,
                 goldCost                : 100,
                 statisticPointsCost     : 5,
                 enemy                   : null,

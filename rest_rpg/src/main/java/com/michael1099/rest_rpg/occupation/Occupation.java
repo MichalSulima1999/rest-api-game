@@ -100,8 +100,11 @@ public class Occupation {
     }
 
     public void endAdventure(@NotNull Adventure adventure) {
-        getFight().setEnemy(adventure.getEnemy());
+        var enemy = adventure.getEnemy();
+        getFight().setEnemy(enemy);
         getFight().setActive(true);
+        getFight().setEnemyCurrentHp(enemy.getHp());
+        getFight().setEnemyCurrentMana(enemy.getMana());
     }
 
     public void startWork(@NotNull Work work) {

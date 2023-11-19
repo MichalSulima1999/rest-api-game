@@ -47,6 +47,8 @@ public class FightService {
     private final AtomicBoolean enemyStunned = new AtomicBoolean(false);
     private final AtomicReference<Float> playerDamageMultiplier = new AtomicReference<>((float) 1);
     private final AtomicReference<Float> enemyDamageMultiplier = new AtomicReference<>((float) 1);
+    private final AtomicReference<Float> playerDefenceMultiplier = new AtomicReference<>((float) 1);
+    private final AtomicReference<Float> enemyDefenceMultiplier = new AtomicReference<>((float) 1);
 
     @Transactional
     public FightDetails getFight(long characterId) {
@@ -61,6 +63,8 @@ public class FightService {
         enemyStunned.set(false);
         playerDamageMultiplier.set(1f);
         enemyDamageMultiplier.set(1f);
+        playerDefenceMultiplier.set(1f);
+        enemyDefenceMultiplier.set(1f);
         var request = fightMapper.toDto(fightActionRequest);
         var character = characterRepository.getWithEntityGraph(request.getCharacterId(), Character.CHARACTER_FIGHT_ACTION);
         authenticationFacade.checkIfCharacterBelongsToUser(character);
@@ -128,6 +132,29 @@ public class FightService {
                             enemyDamageMultiplier.set(Math.max(0.1f, enemyDamageMultiplier.get() - effect.getEffectMultiplier()));
                         }
                     }
+                    case DAMAGE_BOOST -> {
+                        if (effect.isPlayerEffect()) {
+                            playerDamageMultiplier.set(Math.max(0.1f, playerDamageMultiplier.get() + effect.getEffectMultiplier()));
+                        } else {
+                            enemyDamageMultiplier.set(Math.max(0.1f, enemyDamageMultiplier.get() + effect.getEffectMultiplier()));
+                        }
+                    }
+                    case DEFENCE_BOOST -> {
+                        if (effect.isPlayerEffect()) {
+                            playerDefenceMultiplier.set(Math.max(0.1f, playerDefenceMultiplier.get() + effect.getEffectMultiplier()));
+                        } else {
+                            enemyDefenceMultiplier.set(Math.max(0.1f, enemyDefenceMultiplier.get() + effect.getEffectMultiplier()));
+                        }
+                    }
+                    case DAMAGE_DEFENCE_BOOST -> {
+                        if (effect.isPlayerEffect()) {
+                            playerDamageMultiplier.set(Math.max(0.1f, playerDamageMultiplier.get() + effect.getEffectMultiplier()));
+                            playerDefenceMultiplier.set(Math.max(0.1f, playerDefenceMultiplier.get() + effect.getEffectMultiplier()));
+                        } else {
+                            enemyDamageMultiplier.set(Math.max(0.1f, enemyDamageMultiplier.get() + effect.getEffectMultiplier()));
+                            enemyDefenceMultiplier.set(Math.max(0.1f, enemyDefenceMultiplier.get() + effect.getEffectMultiplier()));
+                        }
+                    }
                 }
             });
         }
@@ -136,7 +163,7 @@ public class FightService {
     private void attack(@NotNull Character character, @NotNull FightActionResponse response, @NotNull Fight fight) {
         var playerStatistics = character.getStatistics();
 
-        var playerDamage = Math.round(character.getStatistics().getDamage() * playerDamageMultiplier.get());
+        var playerDamage = Math.round(character.getStatistics().getDamage() * playerDamageMultiplier.get() / enemyDefenceMultiplier.get());
         if (new Random().nextFloat(0, 100) < playerStatistics.getCriticalChance()) {
             playerDamage *= 2;
             response.setPlayerCriticalStrike(true);
@@ -174,9 +201,10 @@ public class FightService {
             fightEffect.setPlayerEffect(false);
             fightEffect.setSkillEffect(skill.getEffect());
             fightEffect.setEffectMultiplier(skill.getFinalEffectMultiplier(skillLevel));
+            fight.addFightEffect(fightEffect);
         }
         var baseDamage = skill.isMagicDamage() ? statistics.getMagicDamage() : statistics.getDamage();
-        var playerDamage = Math.round((skill.getDamageMultiplier(skillLevel) * baseDamage));
+        var playerDamage = Math.round(skill.getDamageMultiplier(skillLevel) * baseDamage / enemyDefenceMultiplier.get());
         statistics.useMana(skill.getManaCost());
         fight.dealDamageToEnemy(playerDamage);
         response.setPlayerDamage(playerDamage);
@@ -207,7 +235,7 @@ public class FightService {
         response.setEnemyHit(false);
         response.setEnemyDamage(0);
         if (successfulHit) {
-            var enemyDamage = Math.max(1, enemy.getDamage() - playerStatistics.getArmor());
+            var enemyDamage = Math.max(1, enemy.getDamage() - Math.round(playerStatistics.getArmor() * playerDefenceMultiplier.get()));
             playerStatistics.takeDamage(enemyDamage);
             response.setEnemyHit(true);
             response.setEnemyDamage(enemyDamage);
@@ -226,7 +254,7 @@ public class FightService {
                 int effectDuration = skill.getEffectDuration();
                 var enemyDamage = Math.max(1,
                         Math.round((enemy.getSkill().getMultiplier() + effectDuration * enemy.getSkillLevel()) *
-                                enemy.getDamage() + enemy.getDamage() - playerStatistics.getArmor()));
+                                enemy.getDamage() + enemy.getDamage() - playerStatistics.getArmor() * playerDefenceMultiplier.get()));
                 playerStatistics.takeDamage(enemyDamage);
                 fight.enemyUseMana();
                 response.setEnemyDamage(enemyDamage);
@@ -244,6 +272,7 @@ public class FightService {
                     fightEffect.setPlayerEffect(true);
                     fightEffect.setSkillEffect(skill.getEffect());
                     fightEffect.setEffectMultiplier(skill.getFinalEffectMultiplier(enemy.getSkillLevel()));
+                    fight.addFightEffect(fightEffect);
                 }
             }
         }
@@ -262,8 +291,8 @@ public class FightService {
         var enemy = Optional.ofNullable(fight.getEnemy()).orElseThrow();
         StrategyElement enemyAction;
         var strategy = enemy.getStrategyElements();
-        var enemyHpPercent = (float) fight.getEnemyCurrentHp() / (float) enemy.getHp();
-        var playerHpPercent = (float) character.getStatistics().getCurrentHp() / (float) character.getStatistics().getMaxHp();
+        var enemyHpPercent = (float) fight.getEnemyCurrentHp() / (float) enemy.getHp() * 100;
+        var playerHpPercent = (float) character.getStatistics().getCurrentHp() / (float) character.getStatistics().getMaxHp() * 100;
         if (enemyHpPercent < 20) {
             enemyAction = strategy.stream().filter(s ->
                     s.getElementEvent() == ElementEvent.ENEMY_HEALTH_0_20).findFirst().orElseThrow();

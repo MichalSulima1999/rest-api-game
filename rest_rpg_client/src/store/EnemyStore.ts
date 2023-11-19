@@ -1,6 +1,6 @@
 import { makeAutoObservable } from "mobx";
 import RootStore from "./RootStore";
-import { EnemyLite } from "../generated-sources/openapi";
+import { EnemyBasic, EnemyLite } from "../generated-sources/openapi";
 
 export class EnemyStore {
   private _id = 0;
@@ -63,13 +63,20 @@ export class EnemyStore {
     return this._rootStore;
   }
 
-  public enemyLite(enemyLite: EnemyLite) {
-    this.id = enemyLite.id;
-    this.name = enemyLite.name;
-    this.hp = enemyLite.hp;
-    this.mana = enemyLite.mana;
-    this.damage = enemyLite.damage;
-    this.numberOfPotions = enemyLite.numberOfPotions;
+  public enemyLite(lite: EnemyLite) {
+    this.id = lite.id;
+    this.name = lite.name;
+  }
+
+  public enemyBasic(basic?: EnemyBasic) {
+    if (basic) {
+      this.id = basic.id;
+      this.name = basic.name;
+      this.hp = basic.hp;
+      this.damage = basic.damage;
+      this.mana = basic.mana;
+      this.numberOfPotions = basic.numberOfPotions;
+    }
   }
 
   constructor(rootStore: RootStore) {

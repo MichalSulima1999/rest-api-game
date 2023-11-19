@@ -4,11 +4,13 @@ import com.michael1099.rest_rpg.character.CharacterServiceHelper
 import com.michael1099.rest_rpg.configuration.TestBase
 import com.michael1099.rest_rpg.equipment.Equipment
 import com.michael1099.rest_rpg.helpers.DeleteServiceHelper
+import com.michael1099.rest_rpg.statistics.StatisticsHelper
 import org.openapitools.model.ErrorCodes
 import org.openapitools.model.ItemLite
 import org.openapitools.model.ItemLitePage
 import org.openapitools.model.ItemType
 import org.openapitools.model.PotionLite
+import org.openapitools.model.StatisticsLite
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 
@@ -18,6 +20,7 @@ class ItemControllerTest extends TestBase {
     def searchUrl = baseUrl + "/search"
     def buyItemUrl = { long itemId, long characterId -> baseUrl + "/" + itemId + "/buy/" + characterId }
     def buyPotionUrl = { long characterId -> baseUrl + "/potion/buy/" + characterId }
+    def usePotionUrl = { long characterId -> baseUrl + "/potion/use/" + characterId }
     def potionInfoUrl = baseUrl + "/potion/info"
 
     @Autowired
@@ -144,5 +147,18 @@ class ItemControllerTest extends TestBase {
             response.status == HttpStatus.OK
             response.body.price == ItemService.POTION_PRICE
             response.body.healPercent == ItemService.POTION_HEAL_PERCENT
+    }
+
+    def "should use potion out of fight"() {
+        given:
+            def character = characterServiceHelper.createCharacter(user, [maxHp: 100, currentHp: 50, equipment: Equipment.builder().healthPotions(1).build()])
+        when:
+            def response = httpGet(usePotionUrl(character.id), StatisticsLite, [accessToken: userAccessToken])
+            character = characterServiceHelper.getCharacter(character.id)
+        then:
+            response.status == HttpStatus.OK
+            StatisticsHelper.compare(character.statistics, response.body)
+            character.equipment.healthPotions == 0
+            character.statistics.currentHp == Math.round(50 + character.statistics.maxHp * ItemService.POTION_HEAL_PERCENT / 100)
     }
 }

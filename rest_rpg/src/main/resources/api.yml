@@ -543,6 +543,26 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PotionLite'
+  /item/potion/use/{characterId}:
+    get:
+      summary: Heal character out of combat
+      operationId: usePotion
+      x-preauth: "hasAuthority('USER')"
+      parameters:
+        - name: characterId
+          in: path
+          required: true
+          description: Character id
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Statistics info
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatisticsLite'
   /work:
     post:
       summary: Creates new work.
@@ -682,9 +702,6 @@ components:
       enum:
         - NORMAL_DAMAGE
         - MAGIC_DAMAGE
-        - DAMAGE_BOOST
-        - DEFENCE_BOOST
-        - DAMAGE_DEFENCE_BOOST
     SkillEffect:
       type: string
       enum:
@@ -692,6 +709,9 @@ components:
         - BURNING
         - STUNNED
         - WEAKNESS
+        - DAMAGE_BOOST
+        - DEFENCE_BOOST
+        - DAMAGE_DEFENCE_BOOST
     CharacterClass:
       type: string
       enum:
@@ -1154,6 +1174,32 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/SkillDetails'
+            equipment:
+              $ref: '#/components/schemas/EquipmentDetails'
+    EquipmentDetails:
+      description: Detailed info about equipment
+      type: object
+      required:
+        - id
+        - gold
+        - healthPotions
+      properties:
+        id:
+          description: Equipment id
+          type: integer
+          format: int64
+        gold:
+          description: Character gold
+          type: integer
+        armor:
+          description: Info about character armor
+          $ref: '#/components/schemas/ItemLite'
+        weapon:
+          description: Info about character weapon
+          $ref: '#/components/schemas/ItemLite'
+        healthPotions:
+          description: Character potions
+          type: integer
     StatisticsLite:
       type: object
       required:

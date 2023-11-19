@@ -1,27 +1,23 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import useFightService from "../../../services/useFightService";
 import { useParams } from "react-router-dom";
 import {
-  CharacterSkillBasics,
   ElementAction,
   FightActionRequest,
   FightDetails,
 } from "../../../generated-sources/openapi";
-import { Box, Button, Flex, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, Text, Tooltip } from "@chakra-ui/react";
 import useCharacterService from "../../../services/useCharacterService";
 import { useStores } from "../../../store/RootStore";
 import { useTranslation } from "react-i18next";
-import useSkillService from "../../../services/useSkillService";
 
 const Fight = () => {
   const { t } = useTranslation();
   const fightService = useFightService();
   const characterService = useCharacterService();
-  const skillService = useSkillService();
-  const { characterStore, statisticsStore } = useStores();
+  const { characterStore, statisticsStore, fightStore, enemyStore } =
+    useStores();
   const { characterId } = useParams();
-  const [fight, setFight] = useState<FightDetails | null>(null);
-  const [characterSkills, setCharacterSkills] = useState<CharacterSkillBasics | null>(null);
 
   useEffect(() => {
     async function getCharacterIfNeeded() {
@@ -33,30 +29,23 @@ const Fight = () => {
 
     async function getFightInfo() {
       if (characterId) {
-        const fightInfo = await fightService.getFight(Number(characterId));
-        const characterSkills = await skillService.getCharacterSkills(Number(characterId));
-        if (fightInfo) {
-          setFight(fightInfo);
-        }
-        if (characterSkills) {
-            setCharacterSkills(characterSkills);
-          }
+        await fightService.getFight(Number(characterId));
       }
     }
     getFightInfo().catch((error) => console.log(error));
   }, []);
 
-  const handleFight = (action: ElementAction) => {
+  const handleFight = (action: ElementAction, skillId?: number) => {
     const request: FightActionRequest = {
       characterId: Number(characterId),
       action: action,
+      skillId: skillId,
     };
     fightService.performActionInFight(request).catch((e) => console.log(e));
   };
 
   return (
     <Box p={4}>
-      {/* Pasek informacji o graczu i przeciwniku */}
       <Flex justify="space-between" mb={4}>
         <Box>
           <Text fontSize="xl" fontWeight="bold">
@@ -68,16 +57,17 @@ const Fight = () => {
           <Text>
             Mana: {statisticsStore.currentMana}/{statisticsStore.maxMana}
           </Text>
+          <Text>Potions: {fightStore.fightInfo?.playerPotions}</Text>
         </Box>
         <Box>
           <Text fontSize="xl" fontWeight="bold">
-            {fight?.enemy?.name}
+            {enemyStore.name}
           </Text>
           <Text>
-            Health: {fight?.enemyCurrentHp}/{fight?.enemy?.hp}
+            Health: {fightStore.enemyCurrentHp}/{enemyStore.hp}
           </Text>
           <Text>
-            Mana: {fight?.enemyCurrentMana}/{fight?.enemy?.mana}
+            Mana: {fightStore.enemyCurrentMana}/{enemyStore.mana}
           </Text>
         </Box>
       </Flex>
@@ -86,15 +76,45 @@ const Fight = () => {
         <Text fontSize="lg" fontWeight="bold">
           Battle Log
         </Text>
-        <Text></Text>
+        <Text>Enemy hit: {fightStore.fightInfo?.enemyHit}</Text>
+        <Text>Enemy damage: {fightStore.fightInfo?.enemyDamage}</Text>
+        <Text>Enemy action: {fightStore.fightInfo?.enemyAction}</Text>
+        <Text>
+          Player critical strike: {fightStore.fightInfo?.playerCriticalStrike}
+        </Text>
+        <Text>Player damage: {fightStore.fightInfo?.playerDamage}</Text>
+        <Text>Player won: {fightStore.fightInfo?.playerWon}</Text>
       </Box>
 
-      {/* Pasek z przyciskami */}
       <Flex justify="center">
-        <Button onClick={() => handleFight(ElementAction.NormalAttack)} colorScheme="red" mr={4}>
+        <Button
+          onClick={() => handleFight(ElementAction.NormalAttack)}
+          colorScheme="red"
+          mr={4}
+        >
           {t("FIGHT.ATTACK.NORMAL")}
         </Button>
-        {characterSkills?.content?.map(skill => skill.skill.)}
+        {characterStore.skills?.map((skill) => (
+          <Tooltip
+            label={skill.multiplier * statisticsStore.damage}
+            aria-label="A tooltip"
+          >
+            <Button
+              onClick={() => handleFight(ElementAction.SpecialAttack, skill.id)}
+              colorScheme="blue"
+              mr={4}
+            >
+              {skill.name}
+            </Button>
+          </Tooltip>
+        ))}
+        <Button
+          onClick={() => handleFight(ElementAction.UsePotion)}
+          colorScheme="red"
+          mr={4}
+        >
+          {t("FIGHT.ATTACK.USE_POTION")}
+        </Button>
       </Flex>
     </Box>
   );

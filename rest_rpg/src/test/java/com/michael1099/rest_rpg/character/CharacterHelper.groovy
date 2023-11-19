@@ -2,6 +2,7 @@ package com.michael1099.rest_rpg.character
 
 import com.michael1099.rest_rpg.character.model.Character
 import com.michael1099.rest_rpg.character.model.CharacterArtwork
+import com.michael1099.rest_rpg.equipment.EquipmentHelper
 import com.michael1099.rest_rpg.skill.SkillHelper
 import com.michael1099.rest_rpg.statistics.StatisticsHelper
 import org.openapitools.model.CharacterBasic
@@ -69,6 +70,7 @@ class CharacterHelper {
         assert character.occupation?.occupationType == dto.occupation?.occupationType
         def skills = character.skills.skill
         assert SkillHelper.compare(skills, dto.skills)
+        assert EquipmentHelper.compare(character.equipment, dto.equipment)
 
         true
     }

@@ -1,6 +1,10 @@
 import { makeAutoObservable } from "mobx";
 import RootStore from "./RootStore";
-import { CharacterBasic, CharacterLite } from "../generated-sources/openapi";
+import {
+  CharacterDetails,
+  CharacterLite,
+  SkillDetails,
+} from "../generated-sources/openapi";
 import { dateToSeconds } from "../helpers/DateHelper";
 
 export class CharacterStore {
@@ -12,6 +16,7 @@ export class CharacterStore {
   private _artwork = "";
   private _occupationType: string | undefined = "";
   private _occupationTime = 0;
+  private _skills?: Array<SkillDetails> = [];
   private _rootStore: RootStore;
 
   get id() {
@@ -78,6 +83,14 @@ export class CharacterStore {
     this._occupationTime = val;
   }
 
+  get skills() {
+    return this._skills;
+  }
+
+  set skills(val: Array<SkillDetails> | undefined) {
+    this._skills = val;
+  }
+
   get rootStore() {
     return this._rootStore;
   }
@@ -90,26 +103,27 @@ export class CharacterStore {
     this.artwork = characterLite.artwork;
   }
 
-  public characterBasic(characterBasic: CharacterBasic) {
-    this.id = characterBasic.id;
-    this.name = characterBasic.name;
-    this.race = characterBasic.race;
-    this.sex = characterBasic.sex;
-    this.characterClass = characterBasic.characterClass;
-    this.artwork = characterBasic.artwork;
-    this.occupationType = characterBasic.occupation.occupationType;
-    if (characterBasic.occupation.finishTime) {
+  public characterDetails(characterDetails: CharacterDetails) {
+    this.id = characterDetails.id;
+    this.name = characterDetails.name;
+    this.race = characterDetails.race;
+    this.sex = characterDetails.sex;
+    this.characterClass = characterDetails.characterClass;
+    this.artwork = characterDetails.artwork;
+    this.occupationType = characterDetails.occupation.occupationType;
+    this.skills = characterDetails.skills;
+    if (characterDetails.occupation.finishTime) {
       const time = dateToSeconds(
-        new Date(characterBasic.occupation.finishTime)
+        new Date(characterDetails.occupation.finishTime)
       );
       if (time < 0) {
         this.occupationTime = 0;
       } else {
         this.occupationTime = time;
       }
-      console.log(this.occupationTime);
     }
-    this.rootStore.statisticsStore.statisticsLite(characterBasic.statistics);
+    this.rootStore.statisticsStore.statisticsLite(characterDetails.statistics);
+    this.rootStore.equipmentStore.equipmentDetails(characterDetails.equipment);
   }
 
   constructor(rootStore: RootStore) {

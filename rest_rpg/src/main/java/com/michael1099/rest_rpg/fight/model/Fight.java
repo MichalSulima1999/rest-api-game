@@ -28,8 +28,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -73,7 +75,6 @@ public class Fight {
 
     private int enemyCurrentMana;
 
-    @Nullable
     @OneToMany(mappedBy = "fight", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<FightEffect> fightEffects = new HashSet<>();
 
@@ -89,7 +90,7 @@ public class Fight {
     }
 
     public void healEnemy() {
-        setEnemyCurrentHp(Math.min(Optional.ofNullable(enemy).map(Enemy::getHp).orElseThrow(), enemyCurrentHp + ItemService.POTION_HEAL_PERCENT * enemyCurrentHp / 100));
+        setEnemyCurrentHp(Math.min(Optional.ofNullable(enemy).map(Enemy::getHp).orElseThrow(), enemyCurrentHp + ItemService.POTION_HEAL_PERCENT * enemy.getHp() / 100));
     }
 
     public void enemyUseMana() {
@@ -99,5 +100,15 @@ public class Fight {
     public void regenerateEnemyManaPerTurn() {
         int maxMana = Optional.ofNullable(enemy).map(Enemy::getMana).orElseThrow();
         setEnemyCurrentMana(Math.min(maxMana, enemyCurrentMana + maxMana * FightService.MANA_REGENERATION_PERCENT_PER_TURN));
+    }
+
+    public void addFightEffect(@NotNull FightEffect fightEffect) {
+        if (fightEffect.getId() != null) {
+            var effects = fightEffects.stream().filter(fe -> !Objects.equals(fe.getId(), fightEffect.getId())).collect(Collectors.toSet());
+            effects.add(fightEffect);
+            setFightEffects(effects);
+        } else {
+            fightEffects.add(fightEffect);
+        }
     }
 }

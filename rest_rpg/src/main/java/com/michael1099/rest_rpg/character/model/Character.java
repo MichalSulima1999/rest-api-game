@@ -188,6 +188,7 @@ import java.util.Set;
 public class Character {
 
     public static final String CHARACTER_BASIC = "CHARACTER_BASIC_GRAPH";
+    public static final String CHARACTER_DETAILS = "CHARACTER_DETAILS_GRAPH";
     public static final String CHARACTER_FIGHT = "CHARACTER_FIGHT_GRAPH";
     public static final String CHARACTER_FIGHT_ACTION = "CHARACTER_FIGHT_ACTION_GRAPH";
     public static final String CHARACTER_FIGHT_LITE = "CHARACTER_FIGHT_LITE_GRAPH";

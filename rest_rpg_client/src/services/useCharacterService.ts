@@ -6,7 +6,6 @@ import { Error } from "../classes/error/Error";
 import { useTranslation } from "react-i18next";
 import { AxiosError } from "axios";
 import {
-  CharacterBasic,
   CharacterBasics,
   CharacterCreateRequest,
   DefaultApiFp,
@@ -91,7 +90,7 @@ const useCharacterService = () => {
     character
       .then((c) => {
         if (c) {
-          characterStore.characterBasic(c);
+          characterStore.characterDetails(c);
         }
       })
       .catch((e) => console.log(e));

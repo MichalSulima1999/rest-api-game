@@ -129,10 +129,12 @@ class AdventureControllerTest extends TestBase {
         then:
             response.status == HttpStatus.OK
             AdventureHelper.compare(adventure, response.body)
-            characterServiceHelper.getCharacter(character.id).with {
+            characterServiceHelper.getCharacter(character.id).every {
                 AdventureHelper.compare(it.occupation.adventure, adventure)
                 it.occupation.fight.enemy.id == adventure.enemy.id
                 it.occupation.fight.active
+                it.occupation.fight.enemyCurrentHp == adventure.enemy.hp
+                it.occupation.fight.enemyCurrentMana == adventure.enemy.mana
             }
     }
 

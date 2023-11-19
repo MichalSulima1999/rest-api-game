@@ -2,12 +2,16 @@ package com.michael1099.rest_rpg.item;
 
 import com.michael1099.rest_rpg.auth.auth.IAuthenticationFacade;
 import com.michael1099.rest_rpg.character.CharacterRepository;
+import com.michael1099.rest_rpg.character.model.Character;
+import com.michael1099.rest_rpg.exceptions.CharacterIsOccupiedException;
 import com.michael1099.rest_rpg.exceptions.ItemAlreadyBoughtException;
 import com.michael1099.rest_rpg.exceptions.ItemAlreadyExistsException;
+import com.michael1099.rest_rpg.exceptions.NoPotionsLeftException;
 import com.michael1099.rest_rpg.exceptions.NotEnoughGoldException;
 import com.michael1099.rest_rpg.helpers.SearchHelper;
 import com.michael1099.rest_rpg.item.model.Item;
 import com.michael1099.rest_rpg.item.model.ItemCreateRequestDto;
+import com.michael1099.rest_rpg.statistics.StatisticsMapper;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +20,7 @@ import org.openapitools.model.ItemLite;
 import org.openapitools.model.ItemLitePage;
 import org.openapitools.model.ItemSearchRequest;
 import org.openapitools.model.PotionLite;
+import org.openapitools.model.StatisticsLite;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -31,6 +36,7 @@ public class ItemService {
     private final CharacterRepository characterRepository;
     private final IAuthenticationFacade authenticationFacade;
     private final ItemMapper itemMapper;
+    private final StatisticsMapper statisticsMapper;
 
     @Transactional
     public ItemLite createItem(@NotNull ItemCreateRequest request) {
@@ -50,14 +56,13 @@ public class ItemService {
     public ItemLite buyItem(long itemId, long characterId) {
         var character = characterRepository.getCharacterById(characterId);
         authenticationFacade.checkIfCharacterBelongsToUser(character);
+        checkIfCharacterOccupied(character);
 
         var item = itemRepository.getItemById(itemId);
-        if (item.getId().equals(character.getEquipment().getArmor().getId()) ||
-                item.getId().equals(character.getEquipment().getWeapon().getId())) {
+        checkIfEnoughGold(item.getPrice(), character.getEquipment().getGold());
+        if (character.getEquipment().getArmor() != null && item.getId().equals(character.getEquipment().getArmor().getId()) ||
+                character.getEquipment().getWeapon() != null && item.getId().equals(character.getEquipment().getWeapon().getId())) {
             throw new ItemAlreadyBoughtException();
-        }
-        if (item.getPrice() > character.getEquipment().getGold()) {
-            throw new NotEnoughGoldException();
         }
         character.buyItem(item);
         characterRepository.save(character);
@@ -68,12 +73,23 @@ public class ItemService {
     public void buyPotion(long characterId) {
         var character = characterRepository.getCharacterById(characterId);
         authenticationFacade.checkIfCharacterBelongsToUser(character);
-
-        if (POTION_PRICE > character.getEquipment().getGold()) {
-            throw new NotEnoughGoldException();
-        }
+        checkIfEnoughGold(POTION_PRICE, character.getEquipment().getGold());
+        checkIfCharacterOccupied(character);
         character.buyPotion();
         characterRepository.save(character);
+    }
+
+    @Transactional
+    public StatisticsLite usePotion(long characterId) {
+        var character = characterRepository.getCharacterById(characterId);
+        authenticationFacade.checkIfCharacterBelongsToUser(character);
+        checkIfCharacterOccupied(character);
+        if (character.getEquipment().getHealthPotions() <= 0) {
+            throw new NoPotionsLeftException();
+        }
+        character.usePotion();
+        characterRepository.save(character);
+        return statisticsMapper.toLite(character.getStatistics());
     }
 
     @Transactional
@@ -84,6 +100,18 @@ public class ItemService {
     private void checkIfItemExists(@NotNull ItemCreateRequestDto requestDto) {
         if (itemRepository.existsByNameAndTypeAllIgnoreCase(requestDto.getName(), requestDto.getType())) {
             throw new ItemAlreadyExistsException();
+        }
+    }
+
+    private void checkIfCharacterOccupied(@NotNull Character character) {
+        if (character.getOccupation().isOccupied()) {
+            throw new CharacterIsOccupiedException();
+        }
+    }
+
+    private void checkIfEnoughGold(int price, int characterGold) {
+        if (price > characterGold) {
+            throw new NotEnoughGoldException();
         }
     }
 }

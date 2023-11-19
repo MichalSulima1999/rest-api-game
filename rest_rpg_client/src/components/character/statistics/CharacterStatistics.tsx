@@ -156,7 +156,7 @@ const CharacterStatistics = () => {
                   <Box flex="2">
                     <Statistic
                       name={t("CHARACTER.STATISTICS.INTELLIGENCE")}
-                      value={statisticsStore.strength}
+                      value={statisticsStore.intelligence}
                     />
                   </Box>
                   <Box flex="1">

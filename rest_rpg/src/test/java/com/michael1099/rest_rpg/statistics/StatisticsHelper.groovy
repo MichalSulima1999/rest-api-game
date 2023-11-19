@@ -2,6 +2,7 @@ package com.michael1099.rest_rpg.statistics
 
 import org.openapitools.model.CharacterRace
 import org.openapitools.model.StatisticsDetails
+import org.openapitools.model.StatisticsLite
 import org.openapitools.model.StatisticsUpdateRequest
 
 class StatisticsHelper {
@@ -57,6 +58,18 @@ class StatisticsHelper {
                 .character(args.character)
                 .deleted(args.deleted)
                 .build()
+    }
+
+    static boolean compare(Statistics statistics, StatisticsLite dto) {
+        assert statistics.maxHp == dto.maxHp
+        assert statistics.currentHp == dto.currentHp
+        assert statistics.maxMana == dto.maxMana
+        assert statistics.currentMana == dto.currentMana
+        assert statistics.currentXp == dto.currentXp
+        assert statistics.xpToNextLevel == dto.xpToNextLevel
+        assert statistics.currentLevel == dto.currentLevel
+
+        true
     }
 
     static boolean compare(Statistics statistics, StatisticsDetails dto) {
