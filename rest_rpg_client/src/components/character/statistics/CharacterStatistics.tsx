@@ -202,7 +202,7 @@ const CharacterStatistics = () => {
                   isLoading={statisticsService.isLoading}
                   type="submit"
                 >
-                  {t("STATISTICS.UPDATE")}
+                  {t("CHARACTER.STATISTICS.UPDATE")}
                 </Button>
               </form>
             </VStack>

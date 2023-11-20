@@ -239,7 +239,7 @@ paths:
               $ref: '#/components/schemas/AdventureCreateRequest'
       responses:
         '200':
-          description: Info about created skill
+          description: Info about created adventure
           content:
             application/json:
               schema:
@@ -264,6 +264,50 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AdventureDetails'
+    put:
+      summary: Edits adventure.
+      operationId: editAdventure
+      x-preauth: "hasAuthority('ADMIN')"
+      parameters:
+        - name: adventureId
+          in: path
+          required: true
+          description: Adventure id
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdventureCreateRequest'
+      responses:
+        '200':
+          description: Info about edited adventure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdventureLite'
+    delete:
+      summary: Deletes adventure.
+      operationId: deleteAdventure
+      x-preauth: "hasAuthority('ADMIN')"
+      parameters:
+        - name: adventureId
+          in: path
+          required: true
+          description: Adventure id
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Info about deleted adventure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdventureLite'
   /adventure/{adventureId}/start/{characterId}:
     get:
       summary: Start adventure with character
@@ -678,6 +722,7 @@ components:
         - CHARACTER_STILL_ON_ADVENTURE
         - SKILL_CHARACTER_CLASS_MISMATCH
         - ITEM_ALREADY_BOUGHT
+        - CHARACTER_HP_FULL
     ElementEvent:
       type: string
       enum:
@@ -1547,6 +1592,9 @@ components:
         duration:
           description: How many turns effect will last
           type: integer
+        playerEffect:
+          description: Is effect on player?
+          type: boolean
     FightLite:
       type: object
       description: Necessary info about fight

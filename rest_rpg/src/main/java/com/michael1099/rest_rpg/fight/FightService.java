@@ -5,7 +5,9 @@ import com.michael1099.rest_rpg.character.CharacterRepository;
 import com.michael1099.rest_rpg.character.model.Character;
 import com.michael1099.rest_rpg.enemy.model.Enemy;
 import com.michael1099.rest_rpg.enemy.model.StrategyElement;
+import com.michael1099.rest_rpg.equipment.Equipment;
 import com.michael1099.rest_rpg.exceptions.AdventureNotFoundException;
+import com.michael1099.rest_rpg.exceptions.CharacterHpFullException;
 import com.michael1099.rest_rpg.exceptions.FightIsNotActiveException;
 import com.michael1099.rest_rpg.exceptions.NoPotionsLeftException;
 import com.michael1099.rest_rpg.exceptions.NotEnoughManaException;
@@ -175,9 +177,8 @@ public class FightService {
     }
 
     private void usePotion(@NotNull Character character) {
-        if (character.getEquipment().getHealthPotions() <= 0) {
-            throw new NoPotionsLeftException();
-        }
+        checkIfHpAlreadyFull(character.getStatistics());
+        checkIfCharacterHasPotions(character.getEquipment());
         character.usePotion();
     }
 
@@ -358,6 +359,18 @@ public class FightService {
     private void checkIfFightIsActive(@NotNull Fight fight) {
         if (!fight.isActive()) {
             throw new FightIsNotActiveException();
+        }
+    }
+
+    private void checkIfHpAlreadyFull(@NotNull Statistics statistics) {
+        if (statistics.getCurrentHp() >= statistics.getMaxHp()) {
+            throw new CharacterHpFullException();
+        }
+    }
+
+    private void checkIfCharacterHasPotions(@NotNull Equipment equipment) {
+        if (equipment.getHealthPotions() <= 0) {
+            throw new NoPotionsLeftException();
         }
     }
 }

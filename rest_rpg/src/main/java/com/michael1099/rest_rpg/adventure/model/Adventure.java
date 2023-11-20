@@ -85,4 +85,12 @@ public class Adventure {
                 .enemy(enemy)
                 .build();
     }
+
+    public void modify(@NotNull @Valid AdventureCreateRequestDto dto, @NotNull Enemy enemy) {
+        setName(dto.getName());
+        setAdventureTimeInMinutes(dto.getAdventureLengthInMinutes());
+        setXpForAdventure(dto.getXpForAdventure());
+        setGoldForAdventure(dto.getGoldForAdventure());
+        setEnemy(enemy);
+    }
 }

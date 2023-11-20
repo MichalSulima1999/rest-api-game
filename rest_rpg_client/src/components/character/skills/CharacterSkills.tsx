@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   ChakraProvider,
   extendTheme,
@@ -10,8 +10,6 @@ import {
   Td,
   Box,
   Skeleton,
-  useDisclosure,
-  Text,
   Button,
   Heading,
 } from "@chakra-ui/react";
@@ -47,9 +45,7 @@ function CharacterSkills() {
   const [data, setData] = useState<SkillBasicPage | null>(null);
   const [characterSkills, setCharacterSkills] =
     useState<CharacterSkillBasics | null>(null);
-  const [currentAdventureId, setCurrentAdventureId] = useState(0);
   const { characterStore } = useStores();
-  const { isOpen, onOpen, onClose } = useDisclosure();
   const { characterId } = useParams();
 
   useEffect(() => {
@@ -102,9 +98,9 @@ function CharacterSkills() {
             <Thead>
               <Tr>
                 <Th>{t("SKILL.NAME")}</Th>
-                <Th>{t("SKILL.TYPE")}</Th>
-                <Th>{t("CHARACTER.CLASS")}</Th>
-                <Th>{t("SKILL.EFFECT")}</Th>
+                <Th>{t("SKILL.TYPE.NAME")}</Th>
+                <Th>{t("CHARACTER.CLASS.NAME")}</Th>
+                <Th>{t("SKILL.EFFECT.NAME")}</Th>
                 <Th>{t("SKILL.LEVEL")}</Th>
                 <Th>{t("SKILL.GOLD_COST")}</Th>
                 <Th>{t("SKILL.STATISTIC_POINTS_COST")}</Th>
@@ -113,17 +109,14 @@ function CharacterSkills() {
             </Thead>
             <Tbody>
               {characterSkills?.content?.map((item, index) => (
-                <Tr
-                  key={index}
-                  onClick={() => {
-                    onOpen();
-                    setCurrentAdventureId(item.skill.id);
-                  }}
-                >
+                <Tr key={index}>
                   <Td>{item.skill.name}</Td>
-                  <Td>{item.skill.type}</Td>
-                  <Td>{item.skill.characterClass}</Td>
-                  <Td>{item.skill.effect}</Td>
+                  <Td>{t(`SKILL.TYPE.${item.skill.type}`)}</Td>
+                  <Td>{t(`CHARACTER.CLASS.${item.skill.characterClass}`)}</Td>
+                  <Td>
+                    {item.skill.effect &&
+                      t(`SKILL.EFFECT.${item.skill.effect}`)}
+                  </Td>
                   <Td>{item.level}</Td>
                   <Td>{item.skill.skillTraining.goldCost}</Td>
                   <Td>{item.skill.skillTraining.statisticPointsCost}</Td>
@@ -142,9 +135,9 @@ function CharacterSkills() {
             <Thead>
               <Tr>
                 <Th>{t("SKILL.NAME")}</Th>
-                <Th>{t("SKILL.TYPE")}</Th>
-                <Th>{t("CHARACTER.CLASS")}</Th>
-                <Th>{t("SKILL.EFFECT")}</Th>
+                <Th>{t("SKILL.TYPE.NAME")}</Th>
+                <Th>{t("CHARACTER.CLASS.NAME")}</Th>
+                <Th>{t("SKILL.EFFECT.NAME")}</Th>
                 <Th>{t("SKILL.GOLD_COST")}</Th>
                 <Th>{t("SKILL.STATISTIC_POINTS_COST")}</Th>
                 <Th>{t("SKILL.LEARN")}</Th>
@@ -152,17 +145,11 @@ function CharacterSkills() {
             </Thead>
             <Tbody>
               {data?.content.map((item, index) => (
-                <Tr
-                  key={index}
-                  onClick={() => {
-                    onOpen();
-                    setCurrentAdventureId(item.id);
-                  }}
-                >
+                <Tr key={index}>
                   <Td>{item.name}</Td>
-                  <Td>{item.type}</Td>
-                  <Td>{item.characterClass}</Td>
-                  <Td>{item.effect}</Td>
+                  <Td>{t(`SKILL.TYPE.${item.type}`)}</Td>
+                  <Td>{t(`CHARACTER.CLASS.${item.characterClass}`)}</Td>
+                  <Td>{item.effect && t(`SKILL.EFFECT.${item.effect}`)}</Td>
                   <Td>{item.skillTraining.goldCost}</Td>
                   <Td>{item.skillTraining.statisticPointsCost}</Td>
                   <Td>

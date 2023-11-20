@@ -3,6 +3,8 @@ package com.michael1099.rest_rpg.item;
 import com.michael1099.rest_rpg.auth.auth.IAuthenticationFacade;
 import com.michael1099.rest_rpg.character.CharacterRepository;
 import com.michael1099.rest_rpg.character.model.Character;
+import com.michael1099.rest_rpg.equipment.Equipment;
+import com.michael1099.rest_rpg.exceptions.CharacterHpFullException;
 import com.michael1099.rest_rpg.exceptions.CharacterIsOccupiedException;
 import com.michael1099.rest_rpg.exceptions.ItemAlreadyBoughtException;
 import com.michael1099.rest_rpg.exceptions.ItemAlreadyExistsException;
@@ -11,6 +13,7 @@ import com.michael1099.rest_rpg.exceptions.NotEnoughGoldException;
 import com.michael1099.rest_rpg.helpers.SearchHelper;
 import com.michael1099.rest_rpg.item.model.Item;
 import com.michael1099.rest_rpg.item.model.ItemCreateRequestDto;
+import com.michael1099.rest_rpg.statistics.Statistics;
 import com.michael1099.rest_rpg.statistics.StatisticsMapper;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
@@ -84,9 +87,8 @@ public class ItemService {
         var character = characterRepository.getCharacterById(characterId);
         authenticationFacade.checkIfCharacterBelongsToUser(character);
         checkIfCharacterOccupied(character);
-        if (character.getEquipment().getHealthPotions() <= 0) {
-            throw new NoPotionsLeftException();
-        }
+        checkIfHpAlreadyFull(character.getStatistics());
+        checkIfCharacterHasPotions(character.getEquipment());
         character.usePotion();
         characterRepository.save(character);
         return statisticsMapper.toLite(character.getStatistics());
@@ -112,6 +114,18 @@ public class ItemService {
     private void checkIfEnoughGold(int price, int characterGold) {
         if (price > characterGold) {
             throw new NotEnoughGoldException();
+        }
+    }
+
+    private void checkIfHpAlreadyFull(@NotNull Statistics statistics) {
+        if (statistics.getCurrentHp() >= statistics.getMaxHp()) {
+            throw new CharacterHpFullException();
+        }
+    }
+
+    private void checkIfCharacterHasPotions(@NotNull Equipment equipment) {
+        if (equipment.getHealthPotions() <= 0) {
+            throw new NoPotionsLeftException();
         }
     }
 }

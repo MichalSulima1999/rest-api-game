@@ -54,7 +54,7 @@ const HomeNavbar = () => {
               fontSize="xl"
               fontWeight="bold"
             >
-              {t("SHOP.SHOW")}
+              {t("SHOP.NAME")}
             </Link>
             <Link
               as={RouterLink}

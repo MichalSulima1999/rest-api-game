@@ -7,13 +7,21 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface AdventureRepository extends JpaRepository<Adventure, Long>, AdventureRepositoryCustom {
 
-    boolean existsByNameIgnoreCase(@NotBlank String name);
+    boolean existsByNameIgnoreCaseAndDeletedFalse(@NotBlank String name);
+
+    Optional<Adventure> findByNameIgnoreCaseAndDeletedFalse(@NotBlank String name);
 
     @EntityGraph(value = Adventure.ADVENTURE_DETAILS)
     default Adventure getAdventureById(long adventureId) {
-        return findById(adventureId).orElseThrow(AdventureNotFoundException::new);
+        var adventure = findById(adventureId).orElseThrow(AdventureNotFoundException::new);
+        if (adventure.isDeleted()) {
+            throw new AdventureNotFoundException();
+        }
+        return adventure;
     }
 }

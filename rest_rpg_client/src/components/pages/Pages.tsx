@@ -20,6 +20,7 @@ import CharacterSkills from "../character/skills/CharacterSkills";
 import Shop from "../character/shop/Shop";
 import ShowWorks from "../character/work/ShowWorks";
 import Fight from "../character/fight/Fight";
+import EditAdventure from "../admin/adventure/EditAdventure";
 
 function Pages() {
   const location = useLocation();
@@ -59,6 +60,7 @@ function Pages() {
             </Route>
             <Route path="adventure">
               <Route path="create" element={<CreateAdventure />} />
+              <Route path=":adventureId/edit" element={<EditAdventure />} />
               <Route path="show" element={<AdminShowAdventures />} />
             </Route>
             <Route path="item">

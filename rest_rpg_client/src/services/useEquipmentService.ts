@@ -13,6 +13,7 @@ import {
 } from "../generated-sources/openapi";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import useServiceHelper from "./helpers/useServiceHelper";
+import { useStores } from "../store/RootStore";
 
 const useEquipmentService = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -22,6 +23,7 @@ const useEquipmentService = () => {
   const axiosPrivate = useAxiosPrivate();
   const api = DefaultApiFp();
   const { getResources } = useServiceHelper();
+  const { statisticsStore, equipmentStore } = useStores();
 
   const create = async (request: ItemCreateRequest) => {
     setIsLoading(true);
@@ -61,29 +63,46 @@ const useEquipmentService = () => {
     characterId: number
   ): Promise<ItemLite | undefined> => {
     setIsLoading(true);
-    const findItems = await api.buyItem(itemId, characterId, {
+    const buyItem = await api.buyItem(itemId, characterId, {
       withCredentials: true,
     });
 
-    return getResources(findItems, setIsLoading, "ITEM.BOUGHT_SUCCESSFULLY");
+    return getResources(buyItem, setIsLoading, "ITEM.BOUGHT_SUCCESSFULLY");
   };
 
   const buyPotion = async (characterId: number) => {
     setIsLoading(true);
-    const findItems = await api.buyPotion(characterId, {
+    const buyPotion = await api.buyPotion(characterId, {
       withCredentials: true,
     });
 
-    return getResources(findItems, setIsLoading, "ITEM.BOUGHT_SUCCESSFULLY");
+    return getResources(buyPotion, setIsLoading, "ITEM.BOUGHT_SUCCESSFULLY");
   };
 
   const getPotionInfo = async () => {
     setIsLoading(true);
-    const findItems = await api.getPotionInfo({
+    const getPotionInfo = await api.getPotionInfo({
       withCredentials: true,
     });
 
-    return getResources(findItems, setIsLoading);
+    return getResources(getPotionInfo, setIsLoading);
+  };
+
+  const usePotion = async (characterId: number) => {
+    setIsLoading(true);
+    const usePotion = await api.usePotion(characterId, {
+      withCredentials: true,
+    });
+
+    const response = getResources(usePotion, setIsLoading, "ITEM.POTION_USED");
+    response
+      .then((r) => {
+        if (r) {
+          statisticsStore.statisticsLite(r);
+          equipmentStore.healthPotions--;
+        }
+      })
+      .catch((e) => console.log(e));
   };
 
   return {
@@ -93,6 +112,7 @@ const useEquipmentService = () => {
     buyItem,
     buyPotion,
     getPotionInfo,
+    usePotion,
   };
 };
 

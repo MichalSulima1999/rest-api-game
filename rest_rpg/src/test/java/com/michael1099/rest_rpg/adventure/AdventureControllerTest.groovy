@@ -48,6 +48,32 @@ class AdventureControllerTest extends TestBase {
             AdventureHelper.compare(request, response.body)
     }
 
+    def "should edit adventure"() {
+        given:
+            def adventure = adventureServiceHelper.saveAdventure(name: "Adventure 1")
+            def enemy = enemyServiceHelper.saveEnemy()
+        and:
+            def request = AdventureHelper.createAdventureCreateRequest(enemy, [name: "Modified adventure"])
+        when:
+            def response = httpPut(adventureUrl(adventure.id), request, AdventureLite, [accessToken: adminAccessToken])
+        then:
+            response.status == HttpStatus.OK
+            AdventureHelper.compare(request, response.body)
+            adventure.id == response.body.id
+    }
+
+    def "should delete adventure"() {
+        given:
+            def adventure = adventureServiceHelper.saveAdventure()
+        when:
+            def response = httpDelete(adventureUrl(adventure.id), AdventureLite, [accessToken: adminAccessToken])
+            adventure = adventureServiceHelper.getAdventure(adventure.id)
+        then:
+            response.status == HttpStatus.OK
+            adventure.id == response.body.id
+            adventure.deleted
+    }
+
     def "should not create adventure"() {
         given:
             adventureServiceHelper.saveAdventure(name: "Adventure 1")

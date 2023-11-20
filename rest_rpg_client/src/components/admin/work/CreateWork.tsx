@@ -69,7 +69,7 @@ const CreateWork = () => {
             isLoading={workService.isLoading}
             type="submit"
           >
-            {t("ITEM.CREATE")}
+            {t("ADVENTURE.CREATE")}
           </Button>
         </Box>
       </Flex>

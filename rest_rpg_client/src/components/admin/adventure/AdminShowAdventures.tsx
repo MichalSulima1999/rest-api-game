@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   ChakraProvider,
   extendTheme,
@@ -10,11 +10,13 @@ import {
   Td,
   Box,
   Skeleton,
+  Button,
 } from "@chakra-ui/react";
 import { AdventureBasicPage } from "../../../generated-sources/openapi";
 import useAdventureService from "../../../services/useAdventureService";
 import Pagination from "../../tables/Pagination";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 
 const theme = extendTheme({
   components: {
@@ -36,19 +38,29 @@ function AdminShowAdventures() {
   const [data, setData] = useState<AdventureBasicPage | null>(null);
 
   useEffect(() => {
-    async function getAdventurePage() {
-      const adventures = await adventureService.findAdventures({
-        pagination: { pageNumber: page, elements: pageSize },
-      });
-      if (adventures) {
-        setData(adventures);
-      }
-    }
     getAdventurePage().catch((error) => console.log(error));
   }, [page]);
 
+  async function getAdventurePage() {
+    const adventures = await adventureService.findAdventures({
+      pagination: { pageNumber: page, elements: pageSize },
+    });
+    if (adventures) {
+      setData(adventures);
+    }
+  }
+
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
+  };
+
+  const handleDeleteAdventure = (adventureId: number) => {
+    adventureService
+      .deleteAdventure(adventureId)
+      .catch((e) => console.log(e))
+      .finally(() => {
+        getAdventurePage().catch((error) => console.log(error));
+      });
   };
 
   return (
@@ -62,6 +74,8 @@ function AdminShowAdventures() {
                 <Th>{t("CHARACTER.STATISTICS.XP")}</Th>
                 <Th>{t("CHARACTER.STATISTICS.GOLD")}</Th>
                 <Th>{t("ENEMY.NAME")}</Th>
+                <Th>{t("ADVENTURE.EDIT")}</Th>
+                <Th>{t("ADVENTURE.DELETE")}</Th>
               </Tr>
             </Thead>
             <Tbody>
@@ -71,6 +85,16 @@ function AdminShowAdventures() {
                   <Td>{item.xpForAdventure}</Td>
                   <Td>{item.goldForAdventure}</Td>
                   <Td>{item.enemy?.name}</Td>
+                  <Td>
+                    <Button as={Link} to={`/admin/adventure/${item.id}/edit`}>
+                      {t("ADVENTURE.EDIT")}
+                    </Button>
+                  </Td>
+                  <Td>
+                    <Button onClick={() => handleDeleteAdventure(item.id)}>
+                      {t("ADVENTURE.DELETE")}
+                    </Button>
+                  </Td>
                 </Tr>
               ))}
             </Tbody>

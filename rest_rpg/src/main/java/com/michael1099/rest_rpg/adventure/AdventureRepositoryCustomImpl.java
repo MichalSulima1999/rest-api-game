@@ -82,6 +82,7 @@ public class AdventureRepositoryCustomImpl implements AdventureRepositoryCustom 
         if (request.getEnemyNameLike() != null) {
             predicate.and(adventure.enemy.name.contains(request.getEnemyNameLike()));
         }
+        predicate.and(adventure.deleted.eq(false));
 
         return predicate;
     }

@@ -151,7 +151,7 @@ class ItemControllerTest extends TestBase {
 
     def "should use potion out of fight"() {
         given:
-            def character = characterServiceHelper.createCharacter(user, [maxHp: 100, currentHp: 50, equipment: Equipment.builder().healthPotions(1).build()])
+            def character = characterServiceHelper.createCharacter(user, [statistics: StatisticsHelper.statistics(maxHp: 100, currentHp: 50), equipment: Equipment.builder().healthPotions(1).build()])
         when:
             def response = httpGet(usePotionUrl(character.id), StatisticsLite, [accessToken: userAccessToken])
             character = characterServiceHelper.getCharacter(character.id)

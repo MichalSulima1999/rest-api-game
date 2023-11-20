@@ -105,7 +105,7 @@ function Shop() {
             <Thead>
               <Tr>
                 <Th>{t("ITEM.NAME")}</Th>
-                <Th>{t("ITEM.TYPE")}</Th>
+                <Th>{t("ITEM.TYPE.NAME")}</Th>
                 <Th>{t("ITEM.POWER")}</Th>
                 <Th>{t("ITEM.PRICE")}</Th>
                 <Th>{t("ITEM.BUY")}</Th>
@@ -115,7 +115,7 @@ function Shop() {
               {data?.content.map((item, index) => (
                 <Tr key={index}>
                   <Td>{item.name}</Td>
-                  <Td>{item.type}</Td>
+                  <Td>{t(`ITEM.TYPE.${item.type}`)}</Td>
                   <Td>{item.power}</Td>
                   <Td>{item.price}</Td>
                   <Td>
@@ -141,8 +141,8 @@ function Shop() {
           )}
 
           <Text>
-            Potion cost: {potionData?.price}, heal percent:{" "}
-            {potionData?.healPercent}
+            {t("ITEM.POTION.PRICE")} {potionData?.price},{" "}
+            {t("ITEM.POTION.HEAL_PERCENT")}: {potionData?.healPercent}%
           </Text>
           <Button onClick={handlePotionBuy}>Buy potion</Button>
         </Skeleton>

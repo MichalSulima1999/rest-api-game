@@ -47,6 +47,23 @@ public class AdventureService {
     }
 
     @Transactional
+    public AdventureLite editAdventure(long adventureId, @NotNull AdventureCreateRequest request) {
+        var dto = mapper.toDto(request);
+        checkIfEditedAdventureExists(dto.getName(), adventureId);
+        var enemy = enemyRepository.getById(dto.getEnemy());
+        var adventure = adventureRepository.getAdventureById(adventureId);
+        adventure.modify(dto, enemy);
+        return mapper.toLite(adventureRepository.save(adventure));
+    }
+
+    @Transactional
+    public AdventureLite deleteAdventure(long adventureId) {
+        var adventure = adventureRepository.getAdventureById(adventureId);
+        adventure.setDeleted(true);
+        return mapper.toLite(adventureRepository.save(adventure));
+    }
+
+    @Transactional
     public AdventureBasicPage findAdventures(@NotNull AdventureSearchRequest request) {
         var pageable = SearchHelper.getPageable(request.getPagination());
         return mapper.toPage(adventureRepository.findAdventures(request, pageable));
@@ -88,7 +105,14 @@ public class AdventureService {
     }
 
     private void checkIfAdventureExists(@NotBlank String adventureName) {
-        if (adventureRepository.existsByNameIgnoreCase(adventureName)) {
+        if (adventureRepository.existsByNameIgnoreCaseAndDeletedFalse(adventureName)) {
+            throw new AdventureNameExistsException();
+        }
+    }
+
+    private void checkIfEditedAdventureExists(@NotBlank String adventureName, long adventureId) {
+        var optionalAdventure = adventureRepository.findByNameIgnoreCaseAndDeletedFalse(adventureName);
+        if (optionalAdventure.isPresent() && !optionalAdventure.get().getId().equals(adventureId)) {
             throw new AdventureNameExistsException();
         }
     }

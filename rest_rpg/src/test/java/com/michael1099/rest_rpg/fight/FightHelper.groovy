@@ -23,6 +23,7 @@ class FightHelper {
         assert effect.id == lite.id
         assert effect.skillEffect.toString() == lite.skillEffect
         assert effect.duration == lite.duration
+        assert effect.playerEffect == lite.playerEffect
 
         true
     }

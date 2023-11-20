@@ -1,10 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import useFightService from "../../../services/useFightService";
 import { useParams } from "react-router-dom";
 import {
   ElementAction,
   FightActionRequest,
-  FightDetails,
 } from "../../../generated-sources/openapi";
 import { Box, Button, Flex, Text, Tooltip } from "@chakra-ui/react";
 import useCharacterService from "../../../services/useCharacterService";
@@ -76,14 +75,34 @@ const Fight = () => {
         <Text fontSize="lg" fontWeight="bold">
           Battle Log
         </Text>
-        <Text>Enemy hit: {fightStore.fightInfo?.enemyHit}</Text>
+        <Text>
+          Enemy hit: {fightStore.fightInfo?.enemyHit ? "true" : "false"}
+        </Text>
         <Text>Enemy damage: {fightStore.fightInfo?.enemyDamage}</Text>
         <Text>Enemy action: {fightStore.fightInfo?.enemyAction}</Text>
         <Text>
-          Player critical strike: {fightStore.fightInfo?.playerCriticalStrike}
+          Player critical strike:{" "}
+          {fightStore.fightInfo?.playerCriticalStrike ? "true" : "false"}
         </Text>
         <Text>Player damage: {fightStore.fightInfo?.playerDamage}</Text>
-        <Text>Player won: {fightStore.fightInfo?.playerWon}</Text>
+        <Text>
+          Player won:{" "}
+          {fightStore.fightInfo?.playerWon == null
+            ? ""
+            : fightStore.fightInfo?.playerWon
+            ? "true"
+            : "false"}
+        </Text>
+        <Text>
+          {fightStore.fightEffects
+            ?.filter((e) => e.duration > 0)
+            .map((effect) => (
+              <Text key={effect.id}>
+                {effect.skillEffect} {effect.playerEffect ? "player" : "enemy"}:{" "}
+                {effect.duration}
+              </Text>
+            ))}
+        </Text>
       </Box>
 
       <Flex justify="center">

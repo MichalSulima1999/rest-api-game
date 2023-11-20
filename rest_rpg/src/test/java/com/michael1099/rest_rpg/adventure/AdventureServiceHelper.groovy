@@ -44,4 +44,8 @@ class AdventureServiceHelper {
 
         adventureRepository.save(adventure)
     }
+
+    Adventure getAdventure(long adventureId) {
+        adventureRepository.findById(adventureId).get()
+    }
 }

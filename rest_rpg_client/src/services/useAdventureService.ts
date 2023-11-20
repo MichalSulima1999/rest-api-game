@@ -56,6 +56,27 @@ const useAdventureService = () => {
       .finally(() => setIsLoading(false));
   };
 
+  const editAdventure = async (
+    adventureId: number,
+    request: AdventureCreateRequest
+  ): Promise<AdventureLite | undefined> => {
+    setIsLoading(true);
+    const editAdventure = await api.editAdventure(adventureId, request, {
+      withCredentials: true,
+    });
+
+    return getResources(editAdventure, setIsLoading, "ADVENTURE.EDITED");
+  };
+
+  const deleteAdventure = async (adventureId: number) => {
+    setIsLoading(true);
+    const deleteAdventure = await api.deleteAdventure(adventureId, {
+      withCredentials: true,
+    });
+
+    return getResources(deleteAdventure, setIsLoading, "ADVENTURE.DELETED");
+  };
+
   const getAdventure = async (
     adventureId: number
   ): Promise<AdventureDetails | undefined> => {
@@ -144,6 +165,8 @@ const useAdventureService = () => {
   return {
     isLoading,
     create,
+    editAdventure,
+    deleteAdventure,
     getAdventure,
     findAdventures,
     startAdventure,

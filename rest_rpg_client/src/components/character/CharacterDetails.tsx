@@ -10,6 +10,8 @@ import {
   GridItem,
   Progress,
   ThemeTypings,
+  Button,
+  Heading,
 } from "@chakra-ui/react";
 import { useStores } from "../../store/RootStore";
 import useCharacterService, {
@@ -17,6 +19,7 @@ import useCharacterService, {
 } from "../../services/useCharacterService";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import useEquipmentService from "../../services/useEquipmentService";
 
 interface ProgressStatProps {
   currentValue: number;
@@ -43,7 +46,8 @@ const ProgressStat = ({ currentValue, maxValue, color }: ProgressStatProps) => {
 };
 
 const CharacterDetails = () => {
-  const { characterStore, statisticsStore } = useStores();
+  const { characterStore, statisticsStore, equipmentStore } = useStores();
+  const equipmentService = useEquipmentService();
   const { getUserCharacter, isLoading } = useCharacterService();
   const { characterId } = useParams();
   const { t } = useTranslation();
@@ -56,6 +60,14 @@ const CharacterDetails = () => {
     }
     getCharacter().catch((error) => console.log(error));
   }, []);
+
+  const handleUsePotion = () => {
+    if (characterId) {
+      equipmentService
+        .usePotion(Number(characterId))
+        .catch((e) => console.log(e));
+    }
+  };
 
   return (
     <Box backgroundColor="gray.900">
@@ -142,6 +154,85 @@ const CharacterDetails = () => {
                 </GridItem>
               </Grid>
             </Flex>
+            <Heading as="h3" size="lg">
+              {t("EQUIPMENT.NAME")}
+            </Heading>
+            <Flex
+              color="white"
+              w="100%"
+              direction={{ base: "column", md: "row" }}
+              gap={2}
+            >
+              <Box
+                gap={4}
+                backgroundColor="gray.800"
+                border="1px"
+                borderRadius="lg"
+                textAlign="left"
+                p="8px"
+                flex={1}
+              >
+                <Heading as="h3" size="lg">
+                  {t("ITEM.TYPE.ARMOR")}
+                </Heading>
+                <Grid templateColumns="repeat(6, 1fr)">
+                  <GridItem colSpan={2}>
+                    <Text>{t("ITEM.NAME")}:</Text>
+                    <Text>{t("ITEM.POWER")}:</Text>
+                  </GridItem>
+                  <GridItem colSpan={4}>
+                    <Text>{equipmentStore.armor?.name}</Text>
+                    <Text>{equipmentStore.armor?.power}</Text>
+                  </GridItem>
+                </Grid>
+              </Box>
+              <Box
+                gap={4}
+                backgroundColor="gray.800"
+                border="1px"
+                borderRadius="lg"
+                textAlign="left"
+                p="8px"
+                flex={1}
+              >
+                <Heading as="h3" size="lg">
+                  {t("ITEM.TYPE.WEAPON")}
+                </Heading>
+                <Grid templateColumns="repeat(6, 1fr)">
+                  <GridItem colSpan={2}>
+                    <Text>{t("ITEM.NAME")}:</Text>
+                    <Text>{t("ITEM.POWER")}:</Text>
+                  </GridItem>
+                  <GridItem colSpan={4}>
+                    <Text>{equipmentStore.weapon?.name}</Text>
+                    <Text>{equipmentStore.weapon?.power}</Text>
+                  </GridItem>
+                </Grid>
+              </Box>
+            </Flex>
+            <Box
+              gap={4}
+              backgroundColor="gray.800"
+              border="1px"
+              borderRadius="lg"
+              textAlign="left"
+              p="8px"
+              flex={1}
+            >
+              <Grid templateColumns="repeat(6, 1fr)">
+                <GridItem colSpan={2}>
+                  <Text>{t("CHARACTER.STATISTICS.GOLD")}:</Text>
+                  <Text>{t("CHARACTER.STATISTICS.NUMBER_OF_POTIONS")}:</Text>
+                </GridItem>
+                <GridItem colSpan={4}>
+                  <Text>{equipmentStore.gold}</Text>
+                  <Text>{equipmentStore.healthPotions}</Text>
+                </GridItem>
+              </Grid>
+            </Box>
+            <Button mt={4} onClick={handleUsePotion}>
+              {t("ITEM.USE_POTION")}
+            </Button>
           </Box>
         </Flex>
       </Skeleton>

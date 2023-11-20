@@ -8,6 +8,7 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
+  Text,
 } from "@chakra-ui/react";
 import { Link as RouterLink } from "react-router-dom";
 import { useStores } from "../../store/RootStore";
@@ -93,7 +94,7 @@ const Navbar = observer(() => {
               ))}
             </MenuList>
           </Menu>
-          {authStore.username}
+          <Text me={3}>{authStore.username}</Text>
           {!logged && (
             <>
               <Link as={RouterLink} to="/register" mx={2}>
@@ -106,7 +107,7 @@ const Navbar = observer(() => {
           )}
           {logged && (
             <Button variant="link" onClick={() => logout()}>
-              Logout
+              {t("AUTH.LOGOUT")}
             </Button>
           )}
         </Flex>

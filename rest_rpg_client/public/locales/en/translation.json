@@ -23,6 +23,7 @@
         "ARTWORK": "Artwork",
         "CHOOSE_ARTWORK": "Choose artwork",
         "LEVEL": "Level",
+        "MAIN": "Character screen",
         "RACE": {
             "NAME": "Race",
             "HUMAN": "Human",
@@ -54,11 +55,126 @@
             "MAGIC_DAMAGE": "Magic damage",
             "ARMOR": "Armor",
             "DODGE_CHANCE": "Dodge chance",
-            "CRITICAL_CHANCE": "Critical chance"
+            "CRITICAL_CHANCE": "Critical chance",
+            "NUMBER_OF_POTIONS": "Number of potions",
+            "GOLD": "Gold",
+            "UPDATE": "Train"
         }
     },
     "ENEMY": {
+        "MAIN": "Enemy",
+        "NAME": "Enemy name",
+        "CREATE": "Create enemy",
         "CREATION_SUCCESSFUL": "Enemy created successfully"
+    },
+    "STRATEGY": {
+        "NAME": "Special attack strategy",
+        "EVENT": "Event",
+        "NORMAL_ATTACK": "Normal attack",
+        "SPECIAL_ATTACK": "Special attack",
+        "USE_POTION": "Use health potion",
+        "PRIORITY": "Priority",
+        "PLAYER_HEALTH_0_20": "Player health 0%-20%",
+        "PLAYER_HEALTH_20_40": "Player health 20%-40%",
+        "PLAYER_HEALTH_40_60": "Player health 40%-60%",
+        "PLAYER_HEALTH_60_80": "Player health 60%-80%",
+        "PLAYER_HEALTH_80_100": "Player health 80%-100%",
+        "ENEMY_HEALTH_0_20": "Enemy health 0%-20%",
+        "ENEMY_HEALTH_20_40": "Enemy health 20%-40%",
+        "ENEMY_HEALTH_40_60": "Enemy health 40%-60%",
+        "ENEMY_HEALTH_60_80": "Enemy health 60%-80%",
+        "ENEMY_HEALTH_80_100": "Enemy health 80%-100%",
+        "ACTION": {
+            "NAME": "Action"
+        }
+    },
+    "SKILL": {
+        "MAIN": "Skill",
+        "NAME": "Skill name",
+        "CREATION_SUCCESSFUL": "Skill created successfully",
+        "CREATE": "Create skill",
+        "LEVEL": "Skill level",
+        "TYPE": {
+            "NAME": "Skill type",
+            "NORMAL_DAMAGE": "Normal damage",
+            "MAGIC_DAMAGE": "Magic damage"
+        },
+        "MANA_COST": "Mana cost",
+        "MULTIPLIER": "Skill strength multiplier",
+        "MULTIPLIER_PER_LEVEL": "Multiplier per level",
+        "GOLD_COST": "Skill cost in gold",
+        "STATISTIC_POINTS_COST": "Required skill points",
+        "SHOW": "Skills",
+        "LEARNED": "Learned skills",
+        "LEARN": "Learn skill",
+        "EFFECT": {
+            "NAME": "Effect",
+            "BLEEDING": "Bleeding",
+            "BURNING": "Burning",
+            "STUNNED": "Stunned",
+            "WEAKNESS": "Weakness",
+            "DAMAGE_BOOST": "Damage boost",
+            "DEFENCE_BOOST": "Defense boost",
+            "DAMAGE_DEFENCE_BOOST": "Damage and defense boost",
+            "DURATION": "Duration",
+            "DURATION_PER_LEVEL": "Duration per level",
+            "MULTIPLIER": "Effect strength multiplier",
+            "MULTIPLIER_PER_LEVEL": "Multiplier per level"
+        }
+    },
+    "ADVENTURE": {
+        "CREATE": "Create adventure",
+        "SHOW": "Show adventures",
+        "EDIT": "Edit adventure",
+        "DELETE": "Delete adventure",
+        "NAME": "Adventure name",
+        "LENGTH": "Adventure length (minutes)",
+        "END": "End adventure",
+        "TIME": "Adventure time",
+        "START": "Start adventure",
+        "STARTED": "Started adventure"
+    },
+    "ITEM": {
+        "CREATE": "Create item",
+        "NAME": "Item name",
+        "STATS": "Item statistics",
+        "TYPE": {
+            "NAME": "Item type",
+            "WEAPON": "Weapon",
+            "ARMOR": "Armor"
+        },
+        "POWER": "Item power",
+        "PRICE": "Item price",
+        "USE_POTION": "Use health potion",
+        "BUY": "Buy",
+        "POTION": {
+            "PRICE": "Potion price",
+            "HEAL_PERCENT": "Healing value"
+        }
+    },
+    "EQUIPMENT": {
+        "NAME": "Equipment"
+    },
+    "WORK": {
+        "CREATE": "Create job",
+        "SHOW": "Job",
+        "NAME": "Job name",
+        "STATS": "Job information",
+        "WAGE": "Wage",
+        "WORK_TIME": "Work time (minutes)",
+        "END": "End job",
+        "TIME": "Work time",
+        "START": "Start job"
+    },
+    "SHOP": {
+        "NAME": "Shop"
+    },
+    "FIGHT": {
+        "NAME": "Fight",
+        "ATTACK": {
+            "NORMAL": "Normal attack",
+            "USE_POTION": "Use health potion"
+        }
     },
     "HOME_NAVBAR": {
         "CHARACTERS": "Characters"
@@ -71,17 +187,42 @@
         "MUST_BE_POSITIVE": "Value must be positive"
     },
     "ERROR": {
-        "COMMUNICATION": "Can't communicate with server.",
-        "EMPTY_JWT": "Token is empty.",
+        "COMMUNICATION": "Unable to connect to the server.",
+        "EMPTY_JWT": "The token is empty.",
         "Access Denied": "Access denied.",
-        "JWT_EXPIRED": "Logged out - token expired.",
+        "JWT_EXPIRED": "Logged out - token has expired.",
         "USER_NOT_FOUND": "User not found.",
         "REFRESH_TOKEN_NOT_FOUND": "Logged out - refresh token not found.",
-        "ACCOUNT_USERNAME_EXISTS": "Username already exists.",
-        "ACCOUNT_EMAIL_EXISTS": "Email already taken.",
+        "ACCOUNT_USERNAME_EXISTS": "Username is already taken.",
+        "ACCOUNT_EMAIL_EXISTS": "Email is already in use.",
         "ACCOUNT_ALREADY_VERIFIED": "Account is already verified.",
-        "VERIFICATION_EMAIL_SEND_ERROR": "Verification email could not be sent. Please try again later.",
-        "CHARACTER_ALREADY_EXISTS": "Character name already taken.",
-        "NOT_ENOUGH_SKILL_POINTS": "Not enough skill points for this operation."
+        "VERIFICATION_EMAIL_SEND_ERROR": "Unable to send verification email. Please try again later.",
+        "CHARACTER_ALREADY_EXISTS": "Character already exists",
+        "CHARACTER_NOT_FOUND": "Character not found",
+        "CHARACTER_IS_OCCUPIED": "Character is occupied",
+        "CHARACTER_IS_NOT_ON_ADVENTURE": "Character is not on adventure",
+        "NOT_ENOUGH_SKILL_POINTS": "Not enough skill points for this operation.",
+        "IMAGE_DOES_NOT_EXIST": "Image does not exist",
+        "ENUM_VALUE_NOT_FOUND": "Enum value not found",
+        "ENEMY_ALREADY_EXISTS": "Enemy already exists",
+        "ENEMY_DOES_NOT_EXIST": "Enemy does not exist",
+        "SKILL_NOT_FOUND": "Skill not found",
+        "SKILL_ALREADY_EXISTS": "Skill already exists",
+        "ADVENTURE_NAME_EXISTS": "Adventure name already exists",
+        "ADVENTURE_NOT_FOUND": "Adventure not found",
+        "FIGHT_IS_ONGOING": "Fight is ongoing",
+        "FIGHT_IS_NOT_ACTIVE": "Fight is not active",
+        "NOT_ENOUGH_MANA": "Not enough mana",
+        "ITEM_ALREADY_EXISTS": "Item already exists",
+        "ITEM_NOT_FOUND": "Item not found",
+        "NOT_ENOUGH_GOLD": "Not enough gold",
+        "NO_POTIONS_LEFT": "No potions left",
+        "WORK_ALREADY_EXISTS": "Work already exists",
+        "WORK_NOT_FOUND": "Work not found",
+        "CHARACTER_STILL_WORKING": "Character is still working",
+        "CHARACTER_STILL_ON_ADVENTURE": "Character is still on adventure",
+        "SKILL_CHARACTER_CLASS_MISMATCH": "Skill and character class mismatch",
+        "ITEM_ALREADY_BOUGHT": "Item already bought",
+        "CHARACTER_HP_FULL": "Character's health points are full"
     }
 }
