@@ -118,7 +118,13 @@ class CharacterControllerTest extends TestBase {
         when:
             def user2 = authenticationServiceHelper.createUser()
             def character1 = characterServiceHelper.createCharacter(user, [name: "Carl"])
-            def character2 = characterServiceHelper.createCharacter(user, [name: "Johnny", sex: CharacterSex.MALE])
+            // Tydzień 2, Wzorzec Prototype
+            // Tworzona jest nowa postać na podstawie poprzedniej, a następnie zmieniane są tylko wymagane cechy
+            def character2 = character1.clone()
+            character2.name = "Johnny"
+            character2.sex = CharacterSex.MALE
+            character2 = characterServiceHelper.save(character2)
+            // Koniec, Tydzień 2, Wzorzec Prototype
             def anotherUserCharacter = characterServiceHelper.createCharacter(user2, [name: "Fred", sex: CharacterSex.MALE])
             def list = [character1, character2]
             def response = httpGet(userCharactersUrl, CharacterBasics, [accessToken: userAccessToken])

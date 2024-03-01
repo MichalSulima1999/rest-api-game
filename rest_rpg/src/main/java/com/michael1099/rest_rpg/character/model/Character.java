@@ -49,7 +49,10 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+// Tydzień 2, Wzorzec Builder
+// Dodana odpowiednia adnotacja do klasy
 @Builder
+// Koniec, Tydzień 2, Wzorzec Builder
 @Table(name = "character_table")
 @NamedEntityGraph(name = Character.CHARACTER_BASIC,
         attributeNodes = {
@@ -185,7 +188,7 @@ import java.util.Set;
                 )
         }
 )
-public class Character {
+public class Character implements Cloneable {
 
     public static final String CHARACTER_BASIC = "CHARACTER_BASIC_GRAPH";
     public static final String CHARACTER_DETAILS = "CHARACTER_DETAILS_GRAPH";
@@ -249,6 +252,9 @@ public class Character {
     private boolean deleted;
 
     public static Character createCharacter(@NotNull @Valid CharacterCreateRequestDto dto, @NotNull User user) {
+        // Tydzień 2, Wzorzec Builder
+        // Używany jest builder, który pozwala na ustawienie odpowiednich pól, a następnie jest możliwość
+        // stworzenia obiektu używając .build()
         var character = Character.builder()
                 .name(dto.getName())
                 .characterClass(dto.getCharacterClass())
@@ -262,6 +268,7 @@ public class Character {
                 .status(CharacterStatus.IDLE)
                 .user(user)
                 .build();
+        // Koniec, Tydzień 2, Wzorzec Builder
 
         character.getOccupation().setCharacter(character);
         character.getStatistics().setCharacter(character);
@@ -301,4 +308,26 @@ public class Character {
         equipment.usePotion();
         statistics.heal(ItemService.POTION_HEAL_PERCENT);
     }
+
+    // Tydzień 2, Wzorzec Prototype
+    // Korzystając z interfejsu Cloneable, tworzona jest metoda clone, która tworzy kopię obiektu, następnie ustawiane są
+    // wymagane atrybuty powiązanych encji
+    @Override
+    public Character clone() {
+        try {
+            Character clone = (Character) super.clone();
+            clone.setId(null);
+            clone.getEquipment().setId(null);
+            clone.getEquipment().setCharacter(clone);
+            clone.getOccupation().setId(null);
+            clone.getOccupation().setCharacter(clone);
+            clone.getOccupation().getFight().setId(null);
+            clone.getStatistics().setId(null);
+            clone.getStatistics().setCharacter(clone);
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
+    }
+    // Koniec, Tydzień 2, Wzorzec Prototype
 }

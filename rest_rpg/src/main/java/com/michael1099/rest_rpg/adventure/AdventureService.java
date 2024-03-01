@@ -20,6 +20,7 @@ import org.openapitools.model.AdventureCreateRequest;
 import org.openapitools.model.AdventureDetails;
 import org.openapitools.model.AdventureLite;
 import org.openapitools.model.AdventureSearchRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -31,11 +32,18 @@ import java.util.Optional;
 @Validated
 public class AdventureService {
 
+    // Tydzień 2, Wzorzec Singleton
+    // Do stworzenia singletonów używane są adnotacje @Service, @Repository, @Component itp.
+    // Aby użyć ich w klasie, można dodać 'private final' i następnie umieścić odpowiednie komponenty w konstruktorze
+    // w tym wypadku tę sprawę załatwia @RequiredArgsConstructor. Można też użyć @Autowired
     private final AdventureRepository adventureRepository;
     private final EnemyRepository enemyRepository;
     private final CharacterRepository characterRepository;
     private final IAuthenticationFacade authenticationFacade;
-    private final AdventureMapper mapper;
+
+    @Autowired
+    private AdventureMapper mapper;
+    // Koniec, Tydzień 2, Wzorzec Singleton
 
     @Transactional
     public AdventureLite createAdventure(@NotNull AdventureCreateRequest request) {
