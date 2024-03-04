@@ -1,6 +1,7 @@
 package com.michael1099.rest_rpg.adventure.model;
 
 import com.michael1099.rest_rpg.enemy.model.Enemy;
+import com.michael1099.rest_rpg.helpers.time.ObjectWithTime;
 import com.michael1099.rest_rpg.occupation.Occupation;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -47,7 +48,7 @@ import java.util.Set;
                 })
         }
 )
-public class Adventure {
+public class Adventure implements ObjectWithTime {
 
     public static final String ADVENTURE_BASIC = "ADVENTURE_BASIC_GRAPH";
     public static final String ADVENTURE_DETAILS = "ADVENTURE_DETAILS_GRAPH";
@@ -92,5 +93,10 @@ public class Adventure {
         setXpForAdventure(dto.getXpForAdventure());
         setGoldForAdventure(dto.getGoldForAdventure());
         setEnemy(enemy);
+    }
+
+    @Override
+    public int getTimeInMinutes() {
+        return adventureTimeInMinutes;
     }
 }

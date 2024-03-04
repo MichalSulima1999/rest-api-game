@@ -1,5 +1,6 @@
 package com.michael1099.rest_rpg.work.model;
 
+import com.michael1099.rest_rpg.helpers.time.ObjectWithTime;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -19,7 +20,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Work {
+public class Work implements ObjectWithTime {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,5 +42,10 @@ public class Work {
                 .wage(dto.getWage())
                 .workMinutes(dto.getWorkMinutes())
                 .build();
+    }
+
+    @Override
+    public int getTimeInMinutes() {
+        return workMinutes;
     }
 }
