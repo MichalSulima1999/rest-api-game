@@ -2,6 +2,9 @@ package com.michael1099.rest_rpg.character;
 
 import com.michael1099.rest_rpg.auth.auth.IAuthenticationFacade;
 import com.michael1099.rest_rpg.auth.user.UserRepository;
+import com.michael1099.rest_rpg.character.artwork.CharacterCompositeArtwork;
+import com.michael1099.rest_rpg.character.artwork.CharacterFullArtwork;
+import com.michael1099.rest_rpg.character.artwork.CharacterThumbnailArtwork;
 import com.michael1099.rest_rpg.character.model.Character;
 import com.michael1099.rest_rpg.character.model.CharacterArtwork;
 import com.michael1099.rest_rpg.character.model.dto.CharacterCreateRequestDto;
@@ -66,12 +69,14 @@ public class CharacterService {
 
     @Transactional
     public ResponseEntity<Resource> getCharacterFullArtwork(@NotNull String characterArtwork) {
-        return getCharacterArtwork(characterArtwork, "public/avatars/full/");
+        var artwork = new CharacterFullArtwork(this);
+        return new CharacterCompositeArtwork(artwork).getArtwork(characterArtwork);
     }
 
     @Transactional
     public ResponseEntity<Resource> getCharacterThumbnailArtwork(@NotNull String characterArtwork) {
-        return getCharacterArtwork(characterArtwork, "public/avatars/thumbnail/");
+        var artwork = new CharacterThumbnailArtwork(this);
+        return new CharacterCompositeArtwork(artwork).getArtwork(characterArtwork);
     }
 
     @Transactional
@@ -96,6 +101,26 @@ public class CharacterService {
         return characterMapper.toDetails(character);
     }
 
+    @Transactional
+    public ResponseEntity<Resource> getCharacterArtwork(@NotNull String characterArtwork, @NotNull String artworksPath) {
+        if (!EnumUtils.isValidEnum(CharacterArtwork.class, characterArtwork)) {
+            throw new ImageDoesNotExistException();
+        }
+        String inputFile = artworksPath + CharacterArtwork.valueOf(characterArtwork).getArtworkName();
+        Path path = new File(inputFile).toPath();
+        FileSystemResource resource = new FileSystemResource(path);
+        MediaType mediaType;
+        try {
+            mediaType = MediaType.parseMediaType(Files.probeContentType(path));
+        } catch (IOException e) {
+            throw new GetImageException();
+        }
+
+        return ResponseEntity.ok()
+                .contentType(mediaType)
+                .body(resource);
+    }
+
     private void assertCharacterDoesNotExist(@NotNull String name) {
         if (characterRepository.existsByNameIgnoreCase(name)) {
             throw new CharacterAlreadyExistsException();
@@ -107,24 +132,5 @@ public class CharacterService {
         if (sum > freePoints) {
             throw new NotEnoughSkillPointsException();
         }
-    }
-
-    private ResponseEntity<Resource> getCharacterArtwork(@NotNull String characterArtwork, @NotNull String artworksPath) {
-        if (!EnumUtils.isValidEnum(CharacterArtwork.class, characterArtwork)) {
-            throw new ImageDoesNotExistException();
-        }
-        String inputFile = artworksPath + CharacterArtwork.valueOf(characterArtwork).getArtworkName();
-        Path path = new File(inputFile).toPath();
-        FileSystemResource resource = new FileSystemResource(path);
-        MediaType mediaType = null;
-        try {
-            mediaType = MediaType.parseMediaType(Files.probeContentType(path));
-        } catch (IOException e) {
-            throw new GetImageException();
-        }
-
-        return ResponseEntity.ok()
-                .contentType(mediaType)
-                .body(resource);
     }
 }
