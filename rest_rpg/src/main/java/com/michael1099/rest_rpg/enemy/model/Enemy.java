@@ -78,20 +78,85 @@ public class Enemy {
 
     private boolean deleted;
 
+    private Enemy(MyEnemyBuilder enemyBuilder) {
+        this.id = enemyBuilder.id;
+        this.name = enemyBuilder.name;
+        this.hp = enemyBuilder.hp;
+        this.mana = enemyBuilder.mana;
+        this.damage = enemyBuilder.damage;
+        this.fights = enemyBuilder.fights;
+        this.adventures = enemyBuilder.adventures;
+        this.skill = enemyBuilder.skill;
+        this.skillLevel = enemyBuilder.skillLevel;
+        this.numberOfPotions = enemyBuilder.numberOfPotions;
+        this.strategyElements = enemyBuilder.strategyElements;
+        this.deleted = enemyBuilder.deleted;
+    }
+
     public static Enemy of(@NotNull @Valid EnemyCreateRequestDto dto, @NotNull Skill skill) {
-        return Enemy.builder()
-                .hp(dto.getHp())
-                .mana(dto.getMana())
-                .damage(dto.getDamage())
-                .name(dto.getName())
-                .numberOfPotions(dto.getNumberOfPotions())
-                .skill(skill)
-                .skillLevel(dto.getSkillLevel())
-                .deleted(false)
-                .build();
+        return new MyEnemyBuilder(
+                dto.getName(), dto.getHp(), dto.getMana(), dto.getDamage(), skill, dto.getSkillLevel(), dto.getNumberOfPotions()).build();
     }
 
     public void usePotion() {
         numberOfPotions = Math.max(0, numberOfPotions - 1);
     }
+
+    // Tydzień 2, Builder
+    // Stworzenie klasy builder
+    public static class MyEnemyBuilder {
+
+        private final String name;
+        private final int hp;
+        private final int mana;
+        private final int damage;
+        private final int skillLevel;
+        private final int numberOfPotions;
+        private final Skill skill;
+        private Long id;
+        private Set<Fight> fights;
+        private Set<Adventure> adventures;
+        private Set<StrategyElement> strategyElements = new HashSet<>();
+        private boolean deleted;
+
+        public MyEnemyBuilder(String name, int hp, int mana, int damage, Skill skill, int skillLevel, int numberOfPotions) {
+            this.name = name;
+            this.hp = hp;
+            this.mana = mana;
+            this.damage = damage;
+            this.skill = skill;
+            this.skillLevel = skillLevel;
+            this.numberOfPotions = numberOfPotions;
+        }
+
+        public MyEnemyBuilder setId(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public MyEnemyBuilder setFights(Set<Fight> fights) {
+            this.fights = fights;
+            return this;
+        }
+
+        public MyEnemyBuilder setAdventures(Set<Adventure> adventures) {
+            this.adventures = adventures;
+            return this;
+        }
+
+        public MyEnemyBuilder setStrategyElements(Set<StrategyElement> strategyElements) {
+            this.strategyElements = strategyElements;
+            return this;
+        }
+
+        public MyEnemyBuilder setDeleted(boolean deleted) {
+            this.deleted = deleted;
+            return this;
+        }
+
+        public Enemy build() {
+            return new Enemy(this);
+        }
+    }
+    // Koniec Tydzień 2, Builder
 }
