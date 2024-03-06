@@ -3,6 +3,7 @@ package com.michael1099.rest_rpg.skill;
 import com.michael1099.rest_rpg.auth.auth.AuthenticationFacade;
 import com.michael1099.rest_rpg.character.CharacterRepository;
 import com.michael1099.rest_rpg.character.model.Character;
+import com.michael1099.rest_rpg.config.RepositoryDecorator;
 import com.michael1099.rest_rpg.exceptions.NotEnoughGoldException;
 import com.michael1099.rest_rpg.exceptions.NotEnoughSkillPointsException;
 import com.michael1099.rest_rpg.exceptions.SkillAlreadyExistsException;
@@ -12,7 +13,6 @@ import com.michael1099.rest_rpg.skill.model.Skill;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.RequiredArgsConstructor;
 import org.openapitools.model.CharacterSkillBasics;
 import org.openapitools.model.SkillBasicPage;
 import org.openapitools.model.SkillCreateRequest;
@@ -24,21 +24,29 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 @Service
-@RequiredArgsConstructor
 @Validated
 public class SkillService {
 
     private final SkillRepository skillRepository;
+    private final RepositoryDecorator<Skill, Long> decoratedRepository;
     private final CharacterRepository characterRepository;
     private final AuthenticationFacade authenticationFacade;
     private final SkillMapper skillMapper;
+
+    public SkillService(SkillRepository skillRepository, CharacterRepository characterRepository, AuthenticationFacade authenticationFacade, SkillMapper skillMapper) {
+        this.skillRepository = skillRepository;
+        this.decoratedRepository = new RepositoryDecorator<>(skillRepository);
+        this.characterRepository = characterRepository;
+        this.authenticationFacade = authenticationFacade;
+        this.skillMapper = skillMapper;
+    }
 
     @Transactional
     public SkillLite createSkill(@NotNull SkillCreateRequest skillCreateRequest) {
         var dto = skillMapper.toDto(skillCreateRequest);
         checkIfSkillExists(dto.getName());
         var skill = Skill.of(dto);
-        return skillMapper.toLite(skillRepository.save(skill));
+        return skillMapper.toLite(decoratedRepository.save(skill));
     }
 
     @Transactional
