@@ -5,20 +5,19 @@ import com.michael1099.rest_rpg.character.CharacterRepository;
 import com.michael1099.rest_rpg.character.model.Character;
 import com.michael1099.rest_rpg.enemy.model.Enemy;
 import com.michael1099.rest_rpg.enemy.model.StrategyElement;
-import com.michael1099.rest_rpg.equipment.Equipment;
 import com.michael1099.rest_rpg.exceptions.AdventureNotFoundException;
-import com.michael1099.rest_rpg.exceptions.CharacterHpFullException;
 import com.michael1099.rest_rpg.exceptions.FightIsNotActiveException;
-import com.michael1099.rest_rpg.exceptions.NoPotionsLeftException;
-import com.michael1099.rest_rpg.exceptions.NotEnoughManaException;
-import com.michael1099.rest_rpg.exceptions.SkillNotFoundException;
+import com.michael1099.rest_rpg.fight.helpers.FightAction;
+import com.michael1099.rest_rpg.fight.helpers.FightEffectsSingleton;
+import com.michael1099.rest_rpg.fight.helpers.NormalAttack;
+import com.michael1099.rest_rpg.fight.helpers.SpecialAttack;
+import com.michael1099.rest_rpg.fight.helpers.UsePotion;
 import com.michael1099.rest_rpg.fight.model.Fight;
 import com.michael1099.rest_rpg.fight_effect.FightEffect;
 import com.michael1099.rest_rpg.skill.SkillRepository;
 import com.michael1099.rest_rpg.statistics.Statistics;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
-import lombok.RequiredArgsConstructor;
 import org.openapitools.model.ElementEvent;
 import org.openapitools.model.FightActionRequest;
 import org.openapitools.model.FightActionResponse;
@@ -29,12 +28,9 @@ import org.springframework.validation.annotation.Validated;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Random;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 @Validated
 public class FightService {
 
@@ -44,13 +40,15 @@ public class FightService {
     private final SkillRepository skillRepository;
     private final IAuthenticationFacade authenticationFacade;
     private final FightMapper fightMapper;
+    private final FightEffectsSingleton fightEffectsSingleton;
 
-    private final AtomicBoolean playerStunned = new AtomicBoolean(false);
-    private final AtomicBoolean enemyStunned = new AtomicBoolean(false);
-    private final AtomicReference<Float> playerDamageMultiplier = new AtomicReference<>((float) 1);
-    private final AtomicReference<Float> enemyDamageMultiplier = new AtomicReference<>((float) 1);
-    private final AtomicReference<Float> playerDefenceMultiplier = new AtomicReference<>((float) 1);
-    private final AtomicReference<Float> enemyDefenceMultiplier = new AtomicReference<>((float) 1);
+    public FightService(CharacterRepository characterRepository, SkillRepository skillRepository, IAuthenticationFacade authenticationFacade, FightMapper fightMapper) {
+        this.characterRepository = characterRepository;
+        this.skillRepository = skillRepository;
+        this.authenticationFacade = authenticationFacade;
+        this.fightMapper = fightMapper;
+        this.fightEffectsSingleton = FightEffectsSingleton.getInstance();
+    }
 
     @Transactional
     public FightDetails getFight(long characterId) {
@@ -61,12 +59,12 @@ public class FightService {
 
     @Transactional
     public FightActionResponse performActionInFight(@NotNull FightActionRequest fightActionRequest) {
-        playerStunned.set(false);
-        enemyStunned.set(false);
-        playerDamageMultiplier.set(1f);
-        enemyDamageMultiplier.set(1f);
-        playerDefenceMultiplier.set(1f);
-        enemyDefenceMultiplier.set(1f);
+        fightEffectsSingleton.getPlayerStunned().set(false);
+        fightEffectsSingleton.getEnemyStunned().set(false);
+        fightEffectsSingleton.getPlayerDamageMultiplier().set(1f);
+        fightEffectsSingleton.getEnemyDamageMultiplier().set(1f);
+        fightEffectsSingleton.getPlayerDefenceMultiplier().set(1f);
+        fightEffectsSingleton.getEnemyDefenceMultiplier().set(1f);
         var request = fightMapper.toDto(fightActionRequest);
         var character = characterRepository.getWithEntityGraph(request.getCharacterId(), Character.CHARACTER_FIGHT_ACTION);
         authenticationFacade.checkIfCharacterBelongsToUser(character);
@@ -76,14 +74,18 @@ public class FightService {
 
         applyFightEffects(fight, character);
 
-        if (!playerStunned.get()) {
+        if (!fightEffectsSingleton.getPlayerStunned().get()) {
+            FightAction action = null;
             switch (request.getAction()) {
-                case NORMAL_ATTACK -> attack(character, response, fight);
-                case USE_POTION -> usePotion(character);
-                case SPECIAL_ATTACK -> specialAttack(character, fight, response, fightActionRequest.getSkillId());
+                case NORMAL_ATTACK -> action = new NormalAttack();
+                case USE_POTION -> action = new UsePotion();
+                case SPECIAL_ATTACK -> action = new SpecialAttack(skillRepository);
+            }
+            if (action != null) {
+                action.performAction(character, fight, request, response);
             }
         }
-        if (!enemyStunned.get()) {
+        if (!fightEffectsSingleton.getEnemyStunned().get()) {
             enemyTurn(response, fight, character);
         }
 
@@ -122,95 +124,44 @@ public class FightService {
                     }
                     case STUNNED -> {
                         if (effect.isPlayerEffect()) {
-                            playerStunned.set(true);
+                            fightEffectsSingleton.getPlayerStunned().set(true);
                         } else {
-                            enemyStunned.set(true);
+                            fightEffectsSingleton.getEnemyStunned().set(true);
                         }
                     }
                     case WEAKNESS -> {
                         if (effect.isPlayerEffect()) {
-                            playerDamageMultiplier.set(Math.max(0.1f, playerDamageMultiplier.get() - effect.getEffectMultiplier()));
+                            fightEffectsSingleton.getPlayerDamageMultiplier().set(Math.max(0.1f, fightEffectsSingleton.getPlayerDamageMultiplier().get() - effect.getEffectMultiplier()));
                         } else {
-                            enemyDamageMultiplier.set(Math.max(0.1f, enemyDamageMultiplier.get() - effect.getEffectMultiplier()));
+                            fightEffectsSingleton.getEnemyDamageMultiplier().set(Math.max(0.1f, fightEffectsSingleton.getEnemyDamageMultiplier().get() - effect.getEffectMultiplier()));
                         }
                     }
                     case DAMAGE_BOOST -> {
                         if (effect.isPlayerEffect()) {
-                            playerDamageMultiplier.set(Math.max(0.1f, playerDamageMultiplier.get() + effect.getEffectMultiplier()));
+                            fightEffectsSingleton.getPlayerDamageMultiplier().set(Math.max(0.1f, fightEffectsSingleton.getPlayerDamageMultiplier().get() + effect.getEffectMultiplier()));
                         } else {
-                            enemyDamageMultiplier.set(Math.max(0.1f, enemyDamageMultiplier.get() + effect.getEffectMultiplier()));
+                            fightEffectsSingleton.getEnemyDamageMultiplier().set(Math.max(0.1f, fightEffectsSingleton.getEnemyDamageMultiplier().get() + effect.getEffectMultiplier()));
                         }
                     }
                     case DEFENCE_BOOST -> {
                         if (effect.isPlayerEffect()) {
-                            playerDefenceMultiplier.set(Math.max(0.1f, playerDefenceMultiplier.get() + effect.getEffectMultiplier()));
+                            fightEffectsSingleton.getPlayerDefenceMultiplier().set(Math.max(0.1f, fightEffectsSingleton.getPlayerDefenceMultiplier().get() + effect.getEffectMultiplier()));
                         } else {
-                            enemyDefenceMultiplier.set(Math.max(0.1f, enemyDefenceMultiplier.get() + effect.getEffectMultiplier()));
+                            fightEffectsSingleton.getEnemyDefenceMultiplier().set(Math.max(0.1f, fightEffectsSingleton.getEnemyDefenceMultiplier().get() + effect.getEffectMultiplier()));
                         }
                     }
                     case DAMAGE_DEFENCE_BOOST -> {
                         if (effect.isPlayerEffect()) {
-                            playerDamageMultiplier.set(Math.max(0.1f, playerDamageMultiplier.get() + effect.getEffectMultiplier()));
-                            playerDefenceMultiplier.set(Math.max(0.1f, playerDefenceMultiplier.get() + effect.getEffectMultiplier()));
+                            fightEffectsSingleton.getPlayerDamageMultiplier().set(Math.max(0.1f, fightEffectsSingleton.getPlayerDamageMultiplier().get() + effect.getEffectMultiplier()));
+                            fightEffectsSingleton.getPlayerDefenceMultiplier().set(Math.max(0.1f, fightEffectsSingleton.getPlayerDefenceMultiplier().get() + effect.getEffectMultiplier()));
                         } else {
-                            enemyDamageMultiplier.set(Math.max(0.1f, enemyDamageMultiplier.get() + effect.getEffectMultiplier()));
-                            enemyDefenceMultiplier.set(Math.max(0.1f, enemyDefenceMultiplier.get() + effect.getEffectMultiplier()));
+                            fightEffectsSingleton.getEnemyDamageMultiplier().set(Math.max(0.1f, fightEffectsSingleton.getEnemyDamageMultiplier().get() + effect.getEffectMultiplier()));
+                            fightEffectsSingleton.getEnemyDefenceMultiplier().set(Math.max(0.1f, fightEffectsSingleton.getEnemyDefenceMultiplier().get() + effect.getEffectMultiplier()));
                         }
                     }
                 }
             });
         }
-    }
-
-    private void attack(@NotNull Character character, @NotNull FightActionResponse response, @NotNull Fight fight) {
-        var playerStatistics = character.getStatistics();
-
-        var playerDamage = Math.round(character.getStatistics().getDamage() * playerDamageMultiplier.get() / enemyDefenceMultiplier.get());
-        if (new Random().nextFloat(0, 100) < playerStatistics.getCriticalChance()) {
-            playerDamage *= 2;
-            response.setPlayerCriticalStrike(true);
-        }
-        fight.dealDamageToEnemy(playerDamage);
-        response.setPlayerDamage(playerDamage);
-        character.setStatistics(playerStatistics);
-        character.getOccupation().setFight(fight);
-    }
-
-    private void usePotion(@NotNull Character character) {
-        checkIfHpAlreadyFull(character.getStatistics());
-        checkIfCharacterHasPotions(character.getEquipment());
-        character.usePotion();
-    }
-
-    private void specialAttack(@NotNull Character character, @NotNull Fight fight, @NotNull FightActionResponse response, long skillId) {
-        var skill = skillRepository.get(skillId);
-        var statistics = character.getStatistics();
-        var skillLevel = character.getSkills().stream().filter(s -> s.getSkill().getId().equals(skill.getId())).findFirst().orElseThrow(SkillNotFoundException::new).getLevel();
-        if (statistics.getCurrentMana() < skill.getManaCost()) {
-            throw new NotEnoughManaException();
-        }
-        if (skill.getEffect() != null) {
-            var effects = Optional.ofNullable(fight.getFightEffects()).orElse(new HashSet<>()).stream().
-                    filter(fightEffect -> fightEffect.getDuration() <= 0).collect(Collectors.toSet());
-            FightEffect fightEffect = new FightEffect();
-            if (!effects.isEmpty()) {
-                fightEffect = effects.stream().findFirst().get();
-            }
-            fightEffect.setFight(fight);
-            int effectDuration = skill.getFinalEffectDuration(skillLevel);
-            fightEffect.setDuration(effectDuration);
-            fightEffect.setPlayerEffect(false);
-            fightEffect.setSkillEffect(skill.getEffect());
-            fightEffect.setEffectMultiplier(skill.getFinalEffectMultiplier(skillLevel));
-            fight.addFightEffect(fightEffect);
-        }
-        var baseDamage = skill.isMagicDamage() ? statistics.getMagicDamage() : statistics.getDamage();
-        var playerDamage = Math.round(skill.getDamageMultiplier(skillLevel) * baseDamage / enemyDefenceMultiplier.get());
-        statistics.useMana(skill.getManaCost());
-        fight.dealDamageToEnemy(playerDamage);
-        response.setPlayerDamage(playerDamage);
-        response.setPlayerCurrentMana(statistics.getCurrentMana());
-        character.setStatistics(statistics);
     }
 
     private void enemyTurn(@NotNull FightActionResponse response,
@@ -236,7 +187,7 @@ public class FightService {
         response.setEnemyHit(false);
         response.setEnemyDamage(0);
         if (successfulHit) {
-            var enemyDamage = Math.max(1, enemy.getDamage() - Math.round(playerStatistics.getArmor() * playerDefenceMultiplier.get()));
+            var enemyDamage = Math.max(1, enemy.getDamage() - Math.round(playerStatistics.getArmor() * fightEffectsSingleton.getPlayerDefenceMultiplier().get()));
             playerStatistics.takeDamage(enemyDamage);
             response.setEnemyHit(true);
             response.setEnemyDamage(enemyDamage);
@@ -255,7 +206,7 @@ public class FightService {
                 int effectDuration = skill.getEffectDuration();
                 var enemyDamage = Math.max(1,
                         Math.round((enemy.getSkill().getMultiplier() + effectDuration * enemy.getSkillLevel()) *
-                                enemy.getDamage() + enemy.getDamage() - playerStatistics.getArmor() * playerDefenceMultiplier.get()));
+                                enemy.getDamage() + enemy.getDamage() - playerStatistics.getArmor() * fightEffectsSingleton.getPlayerDefenceMultiplier().get()));
                 playerStatistics.takeDamage(enemyDamage);
                 fight.enemyUseMana();
                 response.setEnemyDamage(enemyDamage);
@@ -359,18 +310,6 @@ public class FightService {
     private void checkIfFightIsActive(@NotNull Fight fight) {
         if (!fight.isActive()) {
             throw new FightIsNotActiveException();
-        }
-    }
-
-    private void checkIfHpAlreadyFull(@NotNull Statistics statistics) {
-        if (statistics.getCurrentHp() >= statistics.getMaxHp()) {
-            throw new CharacterHpFullException();
-        }
-    }
-
-    private void checkIfCharacterHasPotions(@NotNull Equipment equipment) {
-        if (equipment.getHealthPotions() <= 0) {
-            throw new NoPotionsLeftException();
         }
     }
 }
