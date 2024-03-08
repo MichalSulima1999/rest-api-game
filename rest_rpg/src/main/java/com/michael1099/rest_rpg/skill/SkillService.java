@@ -32,13 +32,15 @@ public class SkillService {
     private final CharacterRepository characterRepository;
     private final AuthenticationFacade authenticationFacade;
     private final SkillMapper skillMapper;
+    private final SkillCache skillCache;
 
-    public SkillService(SkillRepository skillRepository, CharacterRepository characterRepository, AuthenticationFacade authenticationFacade, SkillMapper skillMapper) {
+    public SkillService(SkillRepository skillRepository, CharacterRepository characterRepository, AuthenticationFacade authenticationFacade, SkillMapper skillMapper, SkillCache skillCache) {
         this.skillRepository = skillRepository;
         this.decoratedRepository = new RepositoryDecorator<>(skillRepository);
         this.characterRepository = characterRepository;
         this.authenticationFacade = authenticationFacade;
         this.skillMapper = skillMapper;
+        this.skillCache = skillCache;
     }
 
     @Transactional
@@ -55,14 +57,29 @@ public class SkillService {
         return skillMapper.toPage(skillRepository.findSkills(request, pageable));
     }
 
+    @Transactional
     public SkillDetails getSkill(long skillId) {
-        return skillMapper.toDetails(skillRepository.get(skillId));
+        // Tydzień 4 - Flyweight
+        // Pobierany jest Skill z bazy, a następnie przechowujemy go w cache
+        // Jeżeli umiejętność jest już w cache, to zwracamy ją z cache
+        SkillDetails details;
+        if (skillCache.containsEntity(skillId)) {
+            details = skillMapper.toDetails(skillCache.getEntity(skillId));
+        } else {
+            var entity = skillRepository.get(skillId);
+            skillCache.putEntity(skillId, entity);
+            details = skillMapper.toDetails(entity);
+        }
+        return details;
+        // Koniec Tydzień 4 - Flyweight
     }
 
+    @Transactional
     public SkillLites getSkills() {
         return skillMapper.toLites(skillRepository.findByDeletedFalse());
     }
 
+    @Transactional
     public CharacterSkillBasics getCharacterSkills(long characterId) {
         var character = characterRepository.getWithEntityGraph(characterId, Character.CHARACTER_SKILLS);
         authenticationFacade.checkIfCharacterBelongsToUser(character);
