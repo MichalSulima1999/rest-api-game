@@ -13,9 +13,7 @@ import com.michael1099.rest_rpg.fight.helpers.NormalAttack;
 import com.michael1099.rest_rpg.fight.helpers.SpecialAttack;
 import com.michael1099.rest_rpg.fight.helpers.UsePotion;
 import com.michael1099.rest_rpg.fight.model.Fight;
-import com.michael1099.rest_rpg.fight_effect.FightEffect;
 import com.michael1099.rest_rpg.skill.SkillRepository;
-import com.michael1099.rest_rpg.statistics.Statistics;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
 import org.openapitools.model.ElementEvent;
@@ -25,10 +23,7 @@ import org.openapitools.model.FightDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Random;
-import java.util.stream.Collectors;
 
 @Service
 @Validated
@@ -172,71 +167,20 @@ public class FightService {
         if (fight.getEnemyCurrentHp() > 0) {
             var enemyAction = decideEnemyAction(fight, character);
             response.setEnemyAction(enemyAction.getElementAction());
+            // Tydzień 2, Wzorzec Factory
+            // Tworzone są obiekty na podstawie wartości pola elementAction
+            // Klasy są tworzone na podstawie interfejsu, a następnie wywoływana jest metoda perform()
+            EnemyAction enemyAction1 = null;
             switch (enemyAction.getElementAction()) {
-                case NORMAL_ATTACK -> enemyNormalAttack(response, playerStatistics, enemy);
-                case SPECIAL_ATTACK -> enemySpecialAttack(response, playerStatistics, enemy, fight);
-                case USE_POTION -> enemyUsePotion(response, playerStatistics, enemy, fight);
+                case NORMAL_ATTACK -> enemyAction1 = new EnemyNormalAttack(response, playerStatistics, enemy);
+                case SPECIAL_ATTACK -> enemyAction1 = new EnemySpecialAttack(response, playerStatistics, enemy, fight);
+                case USE_POTION -> enemyAction1 = new EnemyUsePotion(response, playerStatistics, enemy, fight);
             }
+            enemyAction1.perform();
+            // Koniec Tydzień 2, Wzorzec Factory
         }
         character.setStatistics(playerStatistics);
         character.getOccupation().setFight(fight);
-    }
-
-    private void enemyNormalAttack(@NotNull FightActionResponse response, @NotNull Statistics playerStatistics, @NotNull Enemy enemy) {
-        var successfulHit = new Random().nextFloat(0, 100) > playerStatistics.getDodgeChance();
-        response.setEnemyHit(false);
-        response.setEnemyDamage(0);
-        if (successfulHit) {
-            var enemyDamage = Math.max(1, enemy.getDamage() - Math.round(playerStatistics.getArmor() * fightEffectsSingleton.getPlayerDefenceMultiplier().get()));
-            playerStatistics.takeDamage(enemyDamage);
-            response.setEnemyHit(true);
-            response.setEnemyDamage(enemyDamage);
-            response.setPlayerCurrentHp(playerStatistics.getCurrentHp());
-        }
-    }
-
-    private void enemySpecialAttack(@NotNull FightActionResponse response, @NotNull Statistics playerStatistics, @NotNull Enemy enemy, @NotNull Fight fight) {
-        var skill = enemy.getSkill();
-        response.setEnemyHit(false);
-        if (fight.getEnemyCurrentMana() < skill.getManaCost()) {
-            enemyNormalAttack(response, playerStatistics, enemy);
-        } else {
-            var successfulHit = new Random().nextFloat(0, 100) > playerStatistics.getDodgeChance();
-            if (successfulHit) {
-                int effectDuration = skill.getEffectDuration();
-                var enemyDamage = Math.max(1,
-                        Math.round((enemy.getSkill().getMultiplier() + effectDuration * enemy.getSkillLevel()) *
-                                enemy.getDamage() + enemy.getDamage() - playerStatistics.getArmor() * fightEffectsSingleton.getPlayerDefenceMultiplier().get()));
-                playerStatistics.takeDamage(enemyDamage);
-                fight.enemyUseMana();
-                response.setEnemyDamage(enemyDamage);
-                response.setEnemyHit(true);
-                response.setPlayerCurrentHp(playerStatistics.getCurrentHp());
-                if (skill.getEffect() != null) {
-                    var effects = Optional.ofNullable(fight.getFightEffects()).orElse(new HashSet<>()).stream()
-                            .filter(fightEffect -> fightEffect.getDuration() <= 0).collect(Collectors.toSet());
-                    FightEffect fightEffect = new FightEffect();
-                    if (!effects.isEmpty()) {
-                        fightEffect = effects.stream().findFirst().get();
-                    }
-                    fightEffect.setFight(fight);
-                    fightEffect.setDuration(effectDuration);
-                    fightEffect.setPlayerEffect(true);
-                    fightEffect.setSkillEffect(skill.getEffect());
-                    fightEffect.setEffectMultiplier(skill.getFinalEffectMultiplier(enemy.getSkillLevel()));
-                    fight.addFightEffect(fightEffect);
-                }
-            }
-        }
-    }
-
-    private void enemyUsePotion(@NotNull FightActionResponse response, @NotNull Statistics playerStatistics, @NotNull Enemy enemy, @NotNull Fight fight) {
-        if (enemy.getNumberOfPotions() > 0) {
-            fight.healEnemy();
-            enemy.usePotion();
-        } else {
-            enemyNormalAttack(response, playerStatistics, enemy);
-        }
     }
 
     private StrategyElement decideEnemyAction(@NotNull Fight fight, @NotNull Character character) {
