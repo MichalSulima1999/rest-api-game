@@ -104,7 +104,8 @@ function ShowWorks() {
             <Thead>
               <Tr>
                 <Th>{t("WORK.NAME")}</Th>
-                <Th>{t("CHARACTER.STATISTICS.GOLD")}</Th>
+                <Th>{t("WORK.RESOURCE_TYPE.NAME")}</Th>
+                <Th>{t("WORK.RESOURCE_AMOUNT")}</Th>
                 <Th>{t("WORK.WORK_TIME")}</Th>
                 <Th>{t("WORK.START")}</Th>
               </Tr>
@@ -113,7 +114,8 @@ function ShowWorks() {
               {data?.content.map((item) => (
                 <Tr key={item.id}>
                   <Td>{item.name}</Td>
-                  <Td>{item.wage}</Td>
+                  <Td>{t(`WORK.${item.resourceType}`)}</Td>
+                  <Td>{item.resourceAmount}</Td>
                   <Td>{item.workMinutes}m</Td>
                   <Td>
                     <Button onClick={() => handleStartWork(item.id)}>

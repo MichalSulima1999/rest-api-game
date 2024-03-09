@@ -3,6 +3,8 @@ package com.michael1099.rest_rpg.work.model;
 import com.michael1099.rest_rpg.helpers.time.ObjectWithTime;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -13,6 +15,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.openapitools.model.ResourceType;
 
 @Entity
 @Getter
@@ -30,7 +33,11 @@ public class Work implements ObjectWithTime {
     @NotNull
     private String name;
 
-    private int wage;
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private ResourceType resourceType;
+
+    private int resourceAmount;
 
     private int workMinutes;
 
@@ -39,7 +46,8 @@ public class Work implements ObjectWithTime {
     public static Work of(@NotNull @Valid WorkCreateRequestDto dto) {
         return builder()
                 .name(dto.getName())
-                .wage(dto.getWage())
+                .resourceType(dto.getResourceType())
+                .resourceAmount(dto.getResourceAmount())
                 .workMinutes(dto.getWorkMinutes())
                 .build();
     }

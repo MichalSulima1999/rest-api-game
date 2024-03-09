@@ -3,7 +3,12 @@ package com.michael1099.rest_rpg.occupation;
 import com.michael1099.rest_rpg.adventure.model.Adventure;
 import com.michael1099.rest_rpg.character.model.Character;
 import com.michael1099.rest_rpg.exceptions.CharacterIsOccupiedException;
+import com.michael1099.rest_rpg.exceptions.EnumValueNotFoundException;
 import com.michael1099.rest_rpg.fight.model.Fight;
+import com.michael1099.rest_rpg.work.EndWork;
+import com.michael1099.rest_rpg.work.EndWorkWithGold;
+import com.michael1099.rest_rpg.work.EndWorkWithIron;
+import com.michael1099.rest_rpg.work.EndWorkWithWood;
 import com.michael1099.rest_rpg.work.model.Work;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.CascadeType;
@@ -113,7 +118,17 @@ public class Occupation {
     }
 
     public void endWork(@NotNull Work work) {
-        character.getEquipment().earnGold(work.getWage());
-        setWork(null);
+        // Tydzień 6, Template
+        // Stworzona została abstrakcyjna klasa EndWork, która rozszerza EndWorkWithGold, EndWorkWithIron i EndWorkWithWood
+        // Metoda getResources() jest nadpisywana w tych klasach
+        EndWork endWork;
+        switch (work.getResourceType()) {
+            case GOLD -> endWork = new EndWorkWithGold(this, character.getEquipment(), work);
+            case IRON -> endWork = new EndWorkWithIron(this, character.getEquipment(), work);
+            case WOOD -> endWork = new EndWorkWithWood(this, character.getEquipment(), work);
+            default -> throw new EnumValueNotFoundException();
+        }
+        // Koniec Tydzień 6, Template
+        endWork.finishWork();
     }
 }

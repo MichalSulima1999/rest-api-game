@@ -61,11 +61,14 @@ public class WorkRepositoryCustomImpl implements WorkRepositoryCustom {
         if (request.getNameLike() != null) {
             predicate.and(work.name.contains(request.getNameLike()));
         }
-        if (request.getWageGreaterThanOrEqual() != null) {
-            predicate.and(work.wage.goe(request.getWageGreaterThanOrEqual()));
+        if (request.getResourceAmountGreaterThanOrEqual() != null) {
+            predicate.and(work.resourceAmount.goe(request.getResourceAmountGreaterThanOrEqual()));
         }
-        if (request.getWageLessThanOrEqual() != null) {
-            predicate.and(work.wage.loe(request.getWageLessThanOrEqual()));
+        if (request.getResourceAmountLessThanOrEqual() != null) {
+            predicate.and(work.resourceAmount.loe(request.getResourceAmountLessThanOrEqual()));
+        }
+        if (request.getResourceTypeIn() != null) {
+            predicate.and(work.resourceType.in(request.getResourceTypeIn()));
         }
         if (request.getWorkMinutesGreaterThanOrEqual() != null) {
             predicate.and(work.workMinutes.goe(request.getWorkMinutesGreaterThanOrEqual()));

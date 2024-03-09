@@ -4,6 +4,7 @@ package com.michael1099.rest_rpg.work
 import com.michael1099.rest_rpg.character.CharacterServiceHelper
 import com.michael1099.rest_rpg.configuration.TestBase
 import org.openapitools.model.ErrorCodes
+import org.openapitools.model.ResourceType
 import org.openapitools.model.WorkLite
 import org.openapitools.model.WorkLitePage
 import org.springframework.beans.factory.annotation.Autowired
@@ -64,8 +65,8 @@ class WorkControllerTest extends TestBase {
         then:
             response.status == HttpStatus.NO_CONTENT
             characterServiceHelper.getCharacter(character.id).with {
-                WorkHelper.compare(it.occupation.work, work)
-                it.occupation.isOccupied()
+                assert WorkHelper.compare(it.occupation.work, work)
+                assert it.occupation.isOccupied()
             }
     }
 
@@ -85,20 +86,34 @@ class WorkControllerTest extends TestBase {
 
     def "should end work"() {
         given:
-            def work = workServiceHelper.saveWork(wage: 100)
+            def work = workServiceHelper.saveWork(resourceType: resourceType, resourceAmount: 100)
             def character = characterServiceHelper.createCharacter(user)
             character.occupation.setWork(work)
             character.occupation.setFinishTime(LocalDateTime.now().minusDays(1))
             character.equipment.setGold(100)
+            character.equipment.setIron(100)
+            character.equipment.setWood(100)
             character = characterServiceHelper.save(character)
         when:
             def response = httpGet(endWorkUrl(character.id), Void, [accessToken: userAccessToken])
         then:
             response.status == HttpStatus.NO_CONTENT
             characterServiceHelper.getCharacter(character.id).with {
-                it.equipment.gold == 200
-                !it.occupation.isOccupied()
+                switch (resourceType) {
+                    case ResourceType.GOLD:
+                        assert it.equipment.gold == 200
+                        break
+                    case ResourceType.IRON:
+                        assert it.equipment.iron == 200
+                        break
+                    case ResourceType.WOOD:
+                        assert it.equipment.wood == 200
+                        break
+                }
+                assert !it.occupation.isOccupied()
             }
+        where:
+            resourceType << [ResourceType.GOLD, ResourceType.IRON, ResourceType.WOOD]
     }
 
     def "should not end work"() {

@@ -787,6 +787,12 @@ components:
       enum:
         - WEAPON
         - ARMOR
+    ResourceType:
+      type: string
+      enum:
+        - GOLD
+        - IRON
+        - WOOD
     UserLite:
       type: object
       required:
@@ -1130,14 +1136,18 @@ components:
       type: object
       required:
         - name
-        - wage
+        - resourceType
+        - resourceAmount
         - workMinutes
       properties:
         name:
           description: Work name
           type: string
-        wage:
-          description: Gold earned for work
+        resourceType:
+          description: Resource type earned for work
+          $ref: '#/components/schemas/ResourceType'
+        resourceAmount:
+          description: Amount of resource earned for work
           type: integer
         workMinutes:
           description: Work length in minutes
@@ -1148,13 +1158,18 @@ components:
         pagination:
           $ref: '#/components/schemas/Pagination'
         nameLike:
-          description: Item name fragment
+          description: Work name fragment
           type: string
-        wageGreaterThanOrEqual:
-          description: Item attribute power greater or equals
+        resourceTypeIn:
+          description: Resource type in (enum ResourceType)
+          type: array
+          items:
+            $ref: '#/components/schemas/ResourceType'
+        resourceAmountGreaterThanOrEqual:
+          description: Resource amount greater or equals
           type: integer
-        wageLessThanOrEqual:
-          description: Item attribute power less or equals
+        resourceAmountLessThanOrEqual:
+          description: Resource amount power less or equals
           type: integer
         workMinutesGreaterThanOrEqual:
           description: Item price greater or equals
@@ -1718,7 +1733,8 @@ components:
       required:
         - id
         - name
-        - wage
+        - resourceType
+        - resourceAmount
         - workMinutes
       properties:
         id:
@@ -1728,8 +1744,11 @@ components:
         name:
           description: Work name
           type: string
-        wage:
-          description: Gold earned in work
+        resourceType:
+          description: Resource type got in work
+          $ref: '#/components/schemas/ResourceType'
+        resourceAmount:
+          description: Resource amount got in work
           type: integer
         workMinutes:
           description: Work length in minutes

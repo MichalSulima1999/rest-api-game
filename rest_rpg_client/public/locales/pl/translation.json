@@ -1,231 +1,237 @@
 {
-    "AUTH": {
-        "LOGIN": "Zaloguj się",
-        "REGISTER": "Rejestracja",
-        "LOGOUT": "Wyloguj się",
-        "USERNAME": "Nazwa użytkownika",
-        "PASSWORD": "Hasło",
-        "PERSIST": "Zapamiętaj mnie",
-        "EMAIL": "Email",
-        "LOGOUT_SUCCESSFUL": "Wylogowano pomyślnie",
-        "LOGIN_SUCCESSFUL": "Zalogowano pomyślnie",
-        "REGISTRATION_SUCCESSFUL": "Zarejestrowano pomyślnie"
+  "AUTH": {
+    "LOGIN": "Zaloguj się",
+    "REGISTER": "Rejestracja",
+    "LOGOUT": "Wyloguj się",
+    "USERNAME": "Nazwa użytkownika",
+    "PASSWORD": "Hasło",
+    "PERSIST": "Zapamiętaj mnie",
+    "EMAIL": "Email",
+    "LOGOUT_SUCCESSFUL": "Wylogowano pomyślnie",
+    "LOGIN_SUCCESSFUL": "Zalogowano pomyślnie",
+    "REGISTRATION_SUCCESSFUL": "Zarejestrowano pomyślnie"
+  },
+  "NAVBAR": {
+    "TITLE": "Rest RPG",
+    "HOME": "Strona główna"
+  },
+  "CHARACTER": {
+    "NAME": "Nazwa postaci",
+    "NAME_SHORT": "Nazwa",
+    "CREATE": "Stwórz postać",
+    "CREATION_SUCCESSFUL": "Stworzono postać",
+    "ARTWORK": "Avatar",
+    "CHOOSE_ARTWORK": "Wybierz avatar",
+    "LEVEL": "Poziom",
+    "MAIN": "Ekran główny postaci",
+    "RACE": {
+      "NAME": "Rasa",
+      "HUMAN": "Człowiek",
+      "ELF": "Elf",
+      "DWARF": "Krasnolud"
     },
-    "NAVBAR": {
-        "TITLE": "Rest RPG",
-        "HOME": "Strona główna"
+    "SEX": {
+      "NAME": "Płeć",
+      "MALE": "Mężczyzna",
+      "FEMALE": "Kobieta"
     },
-    "CHARACTER": {
-        "NAME": "Nazwa postaci",
-        "NAME_SHORT": "Nazwa",
-        "CREATE": "Stwórz postać",
-        "CREATION_SUCCESSFUL": "Stworzono postać",
-        "ARTWORK": "Avatar",
-        "CHOOSE_ARTWORK": "Wybierz avatar",
-        "LEVEL": "Poziom",
-        "MAIN": "Ekran główny postaci",
-        "RACE": {
-            "NAME": "Rasa",
-            "HUMAN": "Człowiek",
-            "ELF": "Elf",
-            "DWARF": "Krasnolud"
-        },
-        "SEX": {
-            "NAME": "Płeć",
-            "MALE": "Mężczyzna",
-            "FEMALE": "Kobieta"
-        },
-        "CLASS": {
-            "NAME": "Klasa",
-            "WARRIOR": "Wojownik",
-            "ROGUE": "Łotrzyk",
-            "MAGE": "Mag"
-        },
-        "STATISTICS": {
-            "NAME": "Statystyki",
-            "FREE_POINTS": "Wolne punkty",
-            "STRENGTH": "Siła",
-            "DEXTERITY": "Zręczność",
-            "INTELLIGENCE": "Inteligencja",
-            "CONSTITUTION": "Kondycja",
-            "HP": "Zdrowie",
-            "MANA": "Mana",
-            "XP": "XP",
-            "DAMAGE": "Obrażenia",
-            "MAGIC_DAMAGE": "Obrażenia magiczne",
-            "ARMOR": "Pancerz",
-            "DODGE_CHANCE": "Szansa uniku",
-            "CRITICAL_CHANCE": "Szansa ciosu krytycznego",
-            "NUMBER_OF_POTIONS": "Liczba mikstur zdrowia",
-            "GOLD": "Złoto",
-            "UPDATE": "Trenuj"
-        }
+    "CLASS": {
+      "NAME": "Klasa",
+      "WARRIOR": "Wojownik",
+      "ROGUE": "Łotrzyk",
+      "MAGE": "Mag"
     },
-    "ENEMY": {
-        "MAIN": "Przeciwnik",
-        "NAME": "Nazwa przeciwnika",
-        "CREATE": "Stwórz przeciwnika",
-        "CREATION_SUCCESSFUL": "Przeciwnik stworzony pomyślnie"
-    },
-    "STRATEGY": {
-        "NAME": "Strategia podczas ataku specjalnego",
-        "EVENT": "Wydarzenie",
-        "NORMAL_ATTACK": "Zwykły atak",
-        "SPECIAL_ATTACK": "Atak specjalny",
-        "USE_POTION": "Użyj mikstury zdrowia",
-        "PRIORITY": "Priorytet",
-        "PLAYER_HEALTH_0_20": "Zdrowie gracza 0%-20%",
-        "PLAYER_HEALTH_20_40": "Zdrowie gracza 20%-40%",
-        "PLAYER_HEALTH_40_60": "Zdrowie gracza 40%-60%",
-        "PLAYER_HEALTH_60_80": "Zdrowie gracza 60%-80%",
-        "PLAYER_HEALTH_80_100": "Zdrowie gracza 80%-100%",
-        "ENEMY_HEALTH_0_20": "Zdrowie przeciwnika 0%-20%",
-        "ENEMY_HEALTH_20_40": "Zdrowie przeciwnika 20%-40%",
-        "ENEMY_HEALTH_40_60": "Zdrowie przeciwnika 40%-60%",
-        "ENEMY_HEALTH_60_80": "Zdrowie przeciwnika 60%-80%",
-        "ENEMY_HEALTH_80_100": "Zdrowie przeciwnika 80%-100%",
-        "ACTION": {
-            "NAME": "Akcja"
-        }
-    },
-    "SKILL": {
-        "MAIN": "Umiejętność",
-        "NAME": "Nazwa umiejętności",
-        "CREATION_SUCCESSFUL": "Umiejętność stworzona pomyślnie",
-        "CREATE": "Stwórz umiejętność",
-        "LEVEL": "Poziom umiejętności",
-        "TYPE": {
-            "NAME": "Typ umiejętności",
-            "NORMAL_DAMAGE": "Obrażenia normalne",
-            "MAGIC_DAMAGE": "Obrażenia magiczne"
-        },
-        "MANA_COST": "Koszt many",
-        "MULTIPLIER": "Mnożnik siły umiejętności",
-        "MULTIPLIER_PER_LEVEL": "Mnożnik co poziom",
-        "GOLD_COST": "Cena umiejętności",
-        "STATISTIC_POINTS_COST": "Wymagane punkty umiejętności",
-        "SHOW": "Umiejętności",
-        "LEARNED": "Nauczone umiejętności",
-        "LEARN": "Ucz się umiejętności",
-        "EFFECT": {
-            "NAME": "Efekt",
-            "BLEEDING": "Krwawienie",
-            "BURNING": "Podpalenie",
-            "STUNNED": "Ogłuszenie",
-            "WEAKNESS": "Osłabienie",
-            "DAMAGE_BOOST": "Zwiększenie obrażeń",
-            "DEFENCE_BOOST": "Zwiększenie obrony",
-            "DAMAGE_DEFENCE_BOOST": "Zwiększenie obrony i obrażeń",
-            "DURATION": "Długość działania",
-            "DURATION_PER_LEVEL": "Długość działania co poziom",
-            "MULTIPLIER": "Mnożnik siły efektu",
-            "MULTIPLIER_PER_LEVEL": "Mnożnik siły co poziom"
-        }
-    },
-    "ADVENTURE": {
-        "CREATE": "Stwórz podróż",
-        "SHOW": "Pokaż podróże",
-        "EDIT": "Edytuj podróż",
-        "DELETE": "Usuń podróż",
-        "NAME": "Nazwa podróży",
-        "LENGTH": "Długość podróży (minuty)",
-        "END": "Zakończ podróż",
-        "TIME": "Czas podróży",
-        "START": "Zacznij podróż",
-        "STARTED": "Zaczęto podróż"
-    },
-    "ITEM": {
-        "CREATE": "Stwórz przedmiot",
-        "NAME": "Nazwa przedmiotu",
-        "STATS": "Statystyki przedmiotu",
-        "TYPE": {
-            "NAME": "Rodzaj przedmiotu",
-            "WEAPON": "Broń",
-            "ARMOR": "Pancerz"
-        },
-        "POWER": "Moc przedmiotu",
-        "PRICE": "Cena za przedmiot",
-        "USE_POTION": "Użyj mikstury zdrowia",
-        "BUY": "Kup",
-        "POTION": {
-            "PRICE": "Cena za miksturę",
-            "HEAL_PERCENT": "Wartość leczenia"
-        }
-    },
-    "EQUIPMENT": {
-        "NAME": "Ekwipunek"
-    },
-    "WORK": {
-        "CREATE": "Stwórz pracę",
-        "SHOW": "Praca",
-        "NAME": "Nazwa pracy",
-        "STATS": "Informacje o pracy",
-        "WAGE": "Płaca",
-        "WORK_TIME": "Czas pracy (minuty)",
-        "END": "Zakończ pracę",
-        "TIME": "Czas pracy",
-        "START": "Zacznij pracę"
-    },
-    "SHOP": {
-        "NAME": "Sklep"
-    },
-    "FIGHT": {
-        "NAME": "Walcz",
-        "ATTACK": {
-            "NORMAL": "Zwykły atak",
-            "USE_POTION": "Użyj mikstury zdrowia"
-        }
-    },
-    "INPUT": {
-        "NONE": "Brak"
-    },
-    "HOME_NAVBAR": {
-        "CHARACTERS": "Postacie"
-    },
-    "VALIDATION": {
-        "REQUIRED": "Pole wymagane",
-        "PASSWORD_SHORT": "Hasło powinno zawierać minimum 8 znaków",
-        "NOT_EMAIL": "To nie jest format email",
-        "MUST_BE_GREATER_THAN_0": "Wartość musi być większa od 0",
-        "MUST_BE_POSITIVE": "Wartość musi być dodatnia"
-    },
-    "ERROR": {
-        "COMMUNICATION": "Nie można połączyć z serwerem.",
-        "EMPTY_JWT": "Token jest pusty.",
-        "Access Denied": "Dostęp zabroniony.",
-        "JWT_EXPIRED": "Wylogowano - token wygasł.",
-        "USER_NOT_FOUND": "Nie znaleziono użytkownika.",
-        "REFRESH_TOKEN_NOT_FOUND": "Wylogowano - nie znaleziono refresh tokena.",
-        "ACCOUNT_USERNAME_EXISTS": "Nazwa użytkownika jest zajęta.",
-        "ACCOUNT_EMAIL_EXISTS": "Email zajęty.",
-        "ACCOUNT_ALREADY_VERIFIED": "Konto już zweryfikowane.",
-        "VERIFICATION_EMAIL_SEND_ERROR": "Nie można wysłać e-maila weryfikacyjnego. Spróbuj ponownie później.",
-        "CHARACTER_ALREADY_EXISTS": "Postać już istnieje",
-        "CHARACTER_NOT_FOUND": "Nie znaleziono postaci",
-        "CHARACTER_IS_OCCUPIED": "Postać jest zajęta",
-        "CHARACTER_IS_NOT_ON_ADVENTURE": "Postać nie jest w podróży",
-        "NOT_ENOUGH_SKILL_POINTS": "Za mało punktów umiejętności dla tej operacji.",
-        "IMAGE_DOES_NOT_EXIST": "Obraz nie istnieje",
-        "ENUM_VALUE_NOT_FOUND": "Nie znaleziono wartości enumeraty",
-        "ENEMY_ALREADY_EXISTS": "Przeciwnik już istnieje",
-        "ENEMY_DOES_NOT_EXIST": "Przeciwnik nie istnieje",
-        "SKILL_NOT_FOUND": "Umiejętność nie znaleziona",
-        "SKILL_ALREADY_EXISTS": "Umiejętność już istnieje",
-        "ADVENTURE_NAME_EXISTS": "Nazwa przygody już istnieje",
-        "ADVENTURE_NOT_FOUND": "Przygoda nie znaleziona",
-        "FIGHT_IS_ONGOING": "Walka trwa",
-        "FIGHT_IS_NOT_ACTIVE": "Walka nieaktywna",
-        "NOT_ENOUGH_MANA": "Za mało many",
-        "ITEM_ALREADY_EXISTS": "Przedmiot już istnieje",
-        "ITEM_NOT_FOUND": "Przedmiot nie znaleziony",
-        "NOT_ENOUGH_GOLD": "Za mało złota",
-        "NO_POTIONS_LEFT": "Brak mikstur",
-        "WORK_ALREADY_EXISTS": "Praca już istnieje",
-        "WORK_NOT_FOUND": "Praca nie znaleziona",
-        "CHARACTER_STILL_WORKING": "Postać nadal pracuje",
-        "CHARACTER_STILL_ON_ADVENTURE": "Postać nadal w przygodzie",
-        "SKILL_CHARACTER_CLASS_MISMATCH": "Niezgodność klasy postaci z umiejętnością",
-        "ITEM_ALREADY_BOUGHT": "Przedmiot już zakupiony",
-        "CHARACTER_HP_FULL": "Pełne punkty życia postaci"
+    "STATISTICS": {
+      "NAME": "Statystyki",
+      "FREE_POINTS": "Wolne punkty",
+      "STRENGTH": "Siła",
+      "DEXTERITY": "Zręczność",
+      "INTELLIGENCE": "Inteligencja",
+      "CONSTITUTION": "Kondycja",
+      "HP": "Zdrowie",
+      "MANA": "Mana",
+      "XP": "XP",
+      "DAMAGE": "Obrażenia",
+      "MAGIC_DAMAGE": "Obrażenia magiczne",
+      "ARMOR": "Pancerz",
+      "DODGE_CHANCE": "Szansa uniku",
+      "CRITICAL_CHANCE": "Szansa ciosu krytycznego",
+      "NUMBER_OF_POTIONS": "Liczba mikstur zdrowia",
+      "GOLD": "Złoto",
+      "UPDATE": "Trenuj"
     }
+  },
+  "ENEMY": {
+    "MAIN": "Przeciwnik",
+    "NAME": "Nazwa przeciwnika",
+    "CREATE": "Stwórz przeciwnika",
+    "CREATION_SUCCESSFUL": "Przeciwnik stworzony pomyślnie"
+  },
+  "STRATEGY": {
+    "NAME": "Strategia podczas ataku specjalnego",
+    "EVENT": "Wydarzenie",
+    "NORMAL_ATTACK": "Zwykły atak",
+    "SPECIAL_ATTACK": "Atak specjalny",
+    "USE_POTION": "Użyj mikstury zdrowia",
+    "PRIORITY": "Priorytet",
+    "PLAYER_HEALTH_0_20": "Zdrowie gracza 0%-20%",
+    "PLAYER_HEALTH_20_40": "Zdrowie gracza 20%-40%",
+    "PLAYER_HEALTH_40_60": "Zdrowie gracza 40%-60%",
+    "PLAYER_HEALTH_60_80": "Zdrowie gracza 60%-80%",
+    "PLAYER_HEALTH_80_100": "Zdrowie gracza 80%-100%",
+    "ENEMY_HEALTH_0_20": "Zdrowie przeciwnika 0%-20%",
+    "ENEMY_HEALTH_20_40": "Zdrowie przeciwnika 20%-40%",
+    "ENEMY_HEALTH_40_60": "Zdrowie przeciwnika 40%-60%",
+    "ENEMY_HEALTH_60_80": "Zdrowie przeciwnika 60%-80%",
+    "ENEMY_HEALTH_80_100": "Zdrowie przeciwnika 80%-100%",
+    "ACTION": {
+      "NAME": "Akcja"
+    }
+  },
+  "SKILL": {
+    "MAIN": "Umiejętność",
+    "NAME": "Nazwa umiejętności",
+    "CREATION_SUCCESSFUL": "Umiejętność stworzona pomyślnie",
+    "CREATE": "Stwórz umiejętność",
+    "LEVEL": "Poziom umiejętności",
+    "TYPE": {
+      "NAME": "Typ umiejętności",
+      "NORMAL_DAMAGE": "Obrażenia normalne",
+      "MAGIC_DAMAGE": "Obrażenia magiczne"
+    },
+    "MANA_COST": "Koszt many",
+    "MULTIPLIER": "Mnożnik siły umiejętności",
+    "MULTIPLIER_PER_LEVEL": "Mnożnik co poziom",
+    "GOLD_COST": "Cena umiejętności",
+    "STATISTIC_POINTS_COST": "Wymagane punkty umiejętności",
+    "SHOW": "Umiejętności",
+    "LEARNED": "Nauczone umiejętności",
+    "LEARN": "Ucz się umiejętności",
+    "EFFECT": {
+      "NAME": "Efekt",
+      "BLEEDING": "Krwawienie",
+      "BURNING": "Podpalenie",
+      "STUNNED": "Ogłuszenie",
+      "WEAKNESS": "Osłabienie",
+      "DAMAGE_BOOST": "Zwiększenie obrażeń",
+      "DEFENCE_BOOST": "Zwiększenie obrony",
+      "DAMAGE_DEFENCE_BOOST": "Zwiększenie obrony i obrażeń",
+      "DURATION": "Długość działania",
+      "DURATION_PER_LEVEL": "Długość działania co poziom",
+      "MULTIPLIER": "Mnożnik siły efektu",
+      "MULTIPLIER_PER_LEVEL": "Mnożnik siły co poziom"
+    }
+  },
+  "ADVENTURE": {
+    "CREATE": "Stwórz podróż",
+    "SHOW": "Pokaż podróże",
+    "EDIT": "Edytuj podróż",
+    "DELETE": "Usuń podróż",
+    "NAME": "Nazwa podróży",
+    "LENGTH": "Długość podróży (minuty)",
+    "END": "Zakończ podróż",
+    "TIME": "Czas podróży",
+    "START": "Zacznij podróż",
+    "STARTED": "Zaczęto podróż"
+  },
+  "ITEM": {
+    "CREATE": "Stwórz przedmiot",
+    "NAME": "Nazwa przedmiotu",
+    "STATS": "Statystyki przedmiotu",
+    "TYPE": {
+      "NAME": "Rodzaj przedmiotu",
+      "WEAPON": "Broń",
+      "ARMOR": "Pancerz"
+    },
+    "POWER": "Moc przedmiotu",
+    "PRICE": "Cena za przedmiot",
+    "USE_POTION": "Użyj mikstury zdrowia",
+    "BUY": "Kup",
+    "POTION": {
+      "PRICE": "Cena za miksturę",
+      "HEAL_PERCENT": "Wartość leczenia"
+    }
+  },
+  "EQUIPMENT": {
+    "NAME": "Ekwipunek"
+  },
+  "WORK": {
+    "CREATE": "Stwórz pracę",
+    "SHOW": "Praca",
+    "NAME": "Nazwa pracy",
+    "STATS": "Informacje o pracy",
+    "RESOURCE_AMOUNT": "Ilość",
+    "RESOURCE_TYPE": {
+      "NAME": "Typ surowca",
+      "GOLD": "Złoto",
+      "IRON": "Żelazo",
+      "WOOD": "Drewno"
+    },
+    "WORK_TIME": "Czas pracy (minuty)",
+    "END": "Zakończ pracę",
+    "TIME": "Czas pracy",
+    "START": "Zacznij pracę"
+  },
+  "SHOP": {
+    "NAME": "Sklep"
+  },
+  "FIGHT": {
+    "NAME": "Walcz",
+    "ATTACK": {
+      "NORMAL": "Zwykły atak",
+      "USE_POTION": "Użyj mikstury zdrowia"
+    }
+  },
+  "INPUT": {
+    "NONE": "Brak"
+  },
+  "HOME_NAVBAR": {
+    "CHARACTERS": "Postacie"
+  },
+  "VALIDATION": {
+    "REQUIRED": "Pole wymagane",
+    "PASSWORD_SHORT": "Hasło powinno zawierać minimum 8 znaków",
+    "NOT_EMAIL": "To nie jest format email",
+    "MUST_BE_GREATER_THAN_0": "Wartość musi być większa od 0",
+    "MUST_BE_POSITIVE": "Wartość musi być dodatnia"
+  },
+  "ERROR": {
+    "COMMUNICATION": "Nie można połączyć z serwerem.",
+    "EMPTY_JWT": "Token jest pusty.",
+    "Access Denied": "Dostęp zabroniony.",
+    "JWT_EXPIRED": "Wylogowano - token wygasł.",
+    "USER_NOT_FOUND": "Nie znaleziono użytkownika.",
+    "REFRESH_TOKEN_NOT_FOUND": "Wylogowano - nie znaleziono refresh tokena.",
+    "ACCOUNT_USERNAME_EXISTS": "Nazwa użytkownika jest zajęta.",
+    "ACCOUNT_EMAIL_EXISTS": "Email zajęty.",
+    "ACCOUNT_ALREADY_VERIFIED": "Konto już zweryfikowane.",
+    "VERIFICATION_EMAIL_SEND_ERROR": "Nie można wysłać e-maila weryfikacyjnego. Spróbuj ponownie później.",
+    "CHARACTER_ALREADY_EXISTS": "Postać już istnieje",
+    "CHARACTER_NOT_FOUND": "Nie znaleziono postaci",
+    "CHARACTER_IS_OCCUPIED": "Postać jest zajęta",
+    "CHARACTER_IS_NOT_ON_ADVENTURE": "Postać nie jest w podróży",
+    "NOT_ENOUGH_SKILL_POINTS": "Za mało punktów umiejętności dla tej operacji.",
+    "IMAGE_DOES_NOT_EXIST": "Obraz nie istnieje",
+    "ENUM_VALUE_NOT_FOUND": "Nie znaleziono wartości enumeraty",
+    "ENEMY_ALREADY_EXISTS": "Przeciwnik już istnieje",
+    "ENEMY_DOES_NOT_EXIST": "Przeciwnik nie istnieje",
+    "SKILL_NOT_FOUND": "Umiejętność nie znaleziona",
+    "SKILL_ALREADY_EXISTS": "Umiejętność już istnieje",
+    "ADVENTURE_NAME_EXISTS": "Nazwa przygody już istnieje",
+    "ADVENTURE_NOT_FOUND": "Przygoda nie znaleziona",
+    "FIGHT_IS_ONGOING": "Walka trwa",
+    "FIGHT_IS_NOT_ACTIVE": "Walka nieaktywna",
+    "NOT_ENOUGH_MANA": "Za mało many",
+    "ITEM_ALREADY_EXISTS": "Przedmiot już istnieje",
+    "ITEM_NOT_FOUND": "Przedmiot nie znaleziony",
+    "NOT_ENOUGH_GOLD": "Za mało złota",
+    "NO_POTIONS_LEFT": "Brak mikstur",
+    "WORK_ALREADY_EXISTS": "Praca już istnieje",
+    "WORK_NOT_FOUND": "Praca nie znaleziona",
+    "CHARACTER_STILL_WORKING": "Postać nadal pracuje",
+    "CHARACTER_STILL_ON_ADVENTURE": "Postać nadal w przygodzie",
+    "SKILL_CHARACTER_CLASS_MISMATCH": "Niezgodność klasy postaci z umiejętnością",
+    "ITEM_ALREADY_BOUGHT": "Przedmiot już zakupiony",
+    "CHARACTER_HP_FULL": "Pełne punkty życia postaci"
+  }
 }

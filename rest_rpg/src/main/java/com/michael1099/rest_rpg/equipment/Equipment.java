@@ -34,6 +34,12 @@ public class Equipment {
     @Min(0)
     private int gold;
 
+    @Min(0)
+    private int wood;
+
+    @Min(0)
+    private int iron;
+
     @NotNull
     @OneToOne(mappedBy = "equipment", fetch = FetchType.EAGER)
     private Character character;
@@ -59,6 +65,14 @@ public class Equipment {
 
     public void earnGold(int amount) {
         gold += amount;
+    }
+
+    public void addWood(int amount) {
+        wood += amount;
+    }
+
+    public void addIron(int amount) {
+        iron += amount;
     }
 
     public void addPotion(int amount) {

@@ -4,7 +4,11 @@ import { useFormik } from "formik";
 import { Box, Button, Flex, HStack, Heading } from "@chakra-ui/react";
 import FormikInput from "../../forms/FormikInput";
 import useWorkService from "../../../services/useWorkService";
-import { WorkCreateSchema } from "../../../validation/work/WorkValidation";
+import {
+  WorkCreateSchema,
+  resourceTypes,
+} from "../../../validation/work/WorkValidation";
+import FormikRadioGroup from "../../forms/FormikRadioGroup";
 
 const CreateWork = () => {
   const { t } = useTranslation();
@@ -17,7 +21,8 @@ const CreateWork = () => {
   const { values, errors, touched, handleChange, handleSubmit } = useFormik({
     initialValues: {
       name: "",
-      wage: 0,
+      resourceType: resourceTypes[0],
+      resourceAmount: 0,
       workMinutes: 0,
     },
     validationSchema: WorkCreateSchema,
@@ -45,13 +50,22 @@ const CreateWork = () => {
           <Heading mb={4}>{t("WORK.STATS")}</Heading>
           <HStack spacing="8px">
             <FormikInput
-              error={errors.wage}
-              touched={touched.wage}
-              value={values.wage}
+              error={errors.resourceAmount}
+              touched={touched.resourceAmount}
+              value={values.resourceAmount}
               handleChange={handleChange}
               inputType="number"
-              inputName="wage"
-              translationKey="WORK.WAGE"
+              inputName="resourceAmount"
+              translationKey="WORK.RESOURCE_AMOUNT"
+            />
+            <FormikRadioGroup
+              error={errors.resourceType}
+              touched={touched.resourceType}
+              value={values.resourceType}
+              handleChange={handleChange}
+              radioValues={resourceTypes}
+              inputName="resourceType"
+              translationKey="WORK.RESOURCE_TYPE"
             />
             <FormikInput
               error={errors.workMinutes}

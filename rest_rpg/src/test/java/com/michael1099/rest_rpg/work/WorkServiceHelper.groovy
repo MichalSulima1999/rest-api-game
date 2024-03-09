@@ -1,6 +1,7 @@
 package com.michael1099.rest_rpg.work
 
 import com.michael1099.rest_rpg.work.model.Work
+import org.openapitools.model.ResourceType
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -16,16 +17,18 @@ class WorkServiceHelper {
 
     Work saveWork(Map customArgs = [:]) {
         Map args = [
-                name       : "Kill bear",
-                wage       : 90,
-                workMinutes: 100,
-                deleted    : false
+                name          : "Kill bear",
+                resourceType  : ResourceType.GOLD,
+                resourceAmount: 90,
+                workMinutes   : 100,
+                deleted       : false
         ]
         args << customArgs
 
         def work = Work.builder()
                 .name(args.name)
-                .wage(args.wage)
+                .resourceType(args.resourceType)
+                .resourceAmount(args.resourceAmount)
                 .workMinutes(args.workMinutes)
                 .deleted(args.deleted)
                 .build()
