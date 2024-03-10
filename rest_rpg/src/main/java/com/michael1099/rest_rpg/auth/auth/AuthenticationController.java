@@ -20,14 +20,14 @@ import org.springframework.web.bind.annotation.RestController;
 @Validated
 public class AuthenticationController {
 
-    private final AuthenticationService service;
+    private final AuthenticationServiceProxy proxy;
 
     @PostMapping("/register")
     public ResponseEntity<Void> register(
             @Valid @RequestBody RegisterRequest request,
             HttpServletRequest servletRequest
     ) {
-        service.register(request, getSiteURL(servletRequest), Role.USER);
+        proxy.register(request, getSiteURL(servletRequest), Role.USER);
         return ResponseEntity.ok().build();
     }
 
@@ -36,12 +36,12 @@ public class AuthenticationController {
             @RequestBody AuthenticationRequest request,
             HttpServletResponse response
     ) {
-        return ResponseEntity.ok(service.authenticate(request, response));
+        return ResponseEntity.ok(proxy.authenticate(request, response));
     }
 
     @GetMapping("/verify")
     public ResponseEntity<Void> verifyUser(@Param("code") String code) {
-        service.verify(code);
+        proxy.verify(code);
         return ResponseEntity.ok().build();
     }
 
