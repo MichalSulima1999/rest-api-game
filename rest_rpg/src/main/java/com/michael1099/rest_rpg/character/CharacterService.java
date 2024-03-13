@@ -15,6 +15,7 @@ import com.michael1099.rest_rpg.exceptions.GetImageException;
 import com.michael1099.rest_rpg.exceptions.ImageDoesNotExistException;
 import com.michael1099.rest_rpg.exceptions.NotEnoughSkillPointsException;
 import com.michael1099.rest_rpg.statistics.dto.StatisticsUpdateRequestDto;
+import com.michael1099.rest_rpg.statistics.interpreter.RaceBonusInterpreter;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -49,6 +50,7 @@ public class CharacterService {
     private final UserRepository userRepository;
     private final IAuthenticationFacade authenticationFacade;
     private final CharacterMapper characterMapper;
+    private final RaceBonusInterpreter raceBonusInterpreter;
 
     @Transactional
     public CharacterLite createCharacter(@NotNull CharacterCreateRequest request, @NotBlank String username) {
@@ -62,7 +64,8 @@ public class CharacterService {
         var user = userRepository.getByUsername(username);
         var character = Character.createCharacter(dto, user);
         assertCharacterStatisticsAreValid(dto.getStatistics(), character.getStatistics().getFreeStatisticPoints());
-        character.getStatistics().addStatistics(dto.getStatistics(), dto.getRace());
+        character.getStatistics().addStatistics(dto.getStatistics());
+        raceBonusInterpreter.setRaceBonus(character.getStatistics(), dto.getRace());
 
         return characterMapper.toLite(characterRepository.save(character));
     }

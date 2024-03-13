@@ -1,5 +1,6 @@
 package com.michael1099.rest_rpg.statistics
 
+import com.michael1099.rest_rpg.statistics.interpreter.CharacterRaceBonusInterpreter
 import org.openapitools.model.CharacterRace
 import org.openapitools.model.StatisticsDetails
 import org.openapitools.model.StatisticsLite
@@ -99,10 +100,10 @@ class StatisticsHelper {
         assert statistics.dodgeChance == criticalDodgeChance(dto.dexterity)
         assert statistics.criticalChance == criticalDodgeChance(dto.dexterity)
         assert statistics.maxHp == dto.constitution * Statistics.HP_MULTIPLIER
-        assert statistics.currentHp == statistics.maxHp;
+        assert statistics.currentHp == statistics.maxHp
         assert statistics.maxMana == dto.intelligence * Statistics.MANA_MULTIPLIER
         assert statistics.currentMana == statistics.maxMana
-        assert statistics.damage == (dto.strength + (race == CharacterRace.HUMAN ? Statistics.CHARACTER_RACE_BONUS : 0)) * Statistics.DAMAGE_MULTIPLIER
+        assert statistics.damage == (dto.strength + (race == CharacterRace.HUMAN ? CharacterRaceBonusInterpreter.CHARACTER_RACE_BONUS : 0)) * Statistics.DAMAGE_MULTIPLIER
         assert statistics.magicDamage == dto.intelligence * Statistics.MAGIC_DAMAGE_MULTIPLIER
         assert statistics.armor == 0
         assert statistics.currentXp == 0
@@ -110,9 +111,9 @@ class StatisticsHelper {
         assert statistics.currentLevel == 1
         assert statistics.freeStatisticPoints == Statistics.START_FREE_STATISTICS_POINTS -
                 dto.strength - dto.dexterity - dto.constitution - dto.intelligence
-        assert statistics.strength == dto.strength + (race == CharacterRace.HUMAN ? Statistics.CHARACTER_RACE_BONUS : 0)
-        assert statistics.dexterity == dto.dexterity + (race == CharacterRace.ELF ? Statistics.CHARACTER_RACE_BONUS : 0)
-        assert statistics.constitution == dto.constitution + (race == CharacterRace.DWARF ? Statistics.CHARACTER_RACE_BONUS : 0)
+        assert statistics.strength == dto.strength + (race == CharacterRace.HUMAN ? CharacterRaceBonusInterpreter.CHARACTER_RACE_BONUS : 0)
+        assert statistics.dexterity == dto.dexterity + (race == CharacterRace.ELF ? CharacterRaceBonusInterpreter.CHARACTER_RACE_BONUS : 0)
+        assert statistics.constitution == dto.constitution + (race == CharacterRace.DWARF ? CharacterRaceBonusInterpreter.CHARACTER_RACE_BONUS : 0)
         assert statistics.intelligence == dto.intelligence
 
         true

@@ -1,7 +1,6 @@
 package com.michael1099.rest_rpg.statistics;
 
 import com.michael1099.rest_rpg.character.model.Character;
-import com.michael1099.rest_rpg.exceptions.EnumValueNotFoundException;
 import com.michael1099.rest_rpg.exceptions.NotEnoughManaException;
 import com.michael1099.rest_rpg.exceptions.NotEnoughSkillPointsException;
 import com.michael1099.rest_rpg.fight.FightService;
@@ -23,7 +22,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.openapitools.model.CharacterRace;
 
 import java.util.Optional;
 
@@ -63,7 +61,6 @@ public class Statistics {
     public static final int MAGIC_DAMAGE_MULTIPLIER = 3;
     public static final int START_FREE_STATISTICS_POINTS = 50;
     public static final int STATISTICS_POINTS_PER_LEVEL = 10;
-    public static final int CHARACTER_RACE_BONUS = 5;
     public static final int XP_TO_NEXT_LEVEL_BASE = 250;
 
     @Id
@@ -153,7 +150,7 @@ public class Statistics {
         return XP_TO_NEXT_LEVEL_BASE * currentLevel * currentLevel;
     }
 
-    public void addStatistics(@NotNull @Valid StatisticsUpdateRequestDto dto, @NotNull CharacterRace race) {
+    public void addStatistics(@NotNull @Valid StatisticsUpdateRequestDto dto) {
         var sum = dto.getConstitution() + dto.getDexterity() + dto.getStrength() + dto.getIntelligence();
         if (sum > freeStatisticPoints) {
             throw new NotEnoughSkillPointsException();
@@ -165,7 +162,6 @@ public class Statistics {
         this.intelligence = dto.getIntelligence();
         this.freeStatisticPoints -= sum;
         updateStats();
-        setRaceBonus(race);
     }
 
     public void updateStats() {
@@ -215,15 +211,6 @@ public class Statistics {
             throw new NotEnoughSkillPointsException();
         }
         freeStatisticPoints -= points;
-    }
-
-    private void setRaceBonus(CharacterRace race) {
-        switch (race) {
-            case ELF -> this.dexterity += CHARACTER_RACE_BONUS;
-            case DWARF -> this.constitution += CHARACTER_RACE_BONUS;
-            case HUMAN -> this.strength += CHARACTER_RACE_BONUS;
-            default -> throw new EnumValueNotFoundException();
-        }
     }
 
     private float criticalDodgeChance(int statistic) {
