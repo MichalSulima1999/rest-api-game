@@ -5,17 +5,15 @@ import com.michael1099.rest_rpg.character.CharacterRepository;
 import com.michael1099.rest_rpg.character.model.Character;
 import com.michael1099.rest_rpg.enemy.model.Enemy;
 import com.michael1099.rest_rpg.enemy.model.StrategyElement;
-import com.michael1099.rest_rpg.exceptions.AdventureNotFoundException;
 import com.michael1099.rest_rpg.exceptions.FightIsNotActiveException;
+import com.michael1099.rest_rpg.fight.command.EndFight;
+import com.michael1099.rest_rpg.fight.command.EndFightExecutor;
 import com.michael1099.rest_rpg.fight.helpers.FightAction;
 import com.michael1099.rest_rpg.fight.helpers.FightEffectsSingleton;
 import com.michael1099.rest_rpg.fight.helpers.NormalAttack;
 import com.michael1099.rest_rpg.fight.helpers.SpecialAttack;
 import com.michael1099.rest_rpg.fight.helpers.UsePotion;
 import com.michael1099.rest_rpg.fight.model.Fight;
-import com.michael1099.rest_rpg.fight_effect.CollectionOfFightEffects;
-import com.michael1099.rest_rpg.fight_effect.FightEffect;
-import com.michael1099.rest_rpg.helpers.iterator.Iterator;
 import com.michael1099.rest_rpg.skill.SkillRepository;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
@@ -39,6 +37,7 @@ public class FightService {
     private final IAuthenticationFacade authenticationFacade;
     private final FightMapper fightMapper;
     private final FightEffectsSingleton fightEffectsSingleton;
+    private final EndFightExecutor endFightExecutor;
 
     public FightService(CharacterRepository characterRepository, SkillRepository skillRepository, IAuthenticationFacade authenticationFacade, FightMapper fightMapper) {
         this.characterRepository = characterRepository;
@@ -46,6 +45,7 @@ public class FightService {
         this.authenticationFacade = authenticationFacade;
         this.fightMapper = fightMapper;
         this.fightEffectsSingleton = FightEffectsSingleton.getInstance();
+        this.endFightExecutor = new EndFightExecutor();
     }
 
     @Transactional
@@ -88,9 +88,11 @@ public class FightService {
         }
 
         if (fight.getEnemyCurrentHp() <= 0) {
-            winFight(fight, character, response);
+            var endFight = new EndFight(fight, character, response);
+            endFightExecutor.executeCommand(endFight::winFight);
         } else if (character.getStatistics().getCurrentHp() <= 0) {
-            loseFight(fight, character, response);
+            var endFight = new EndFight(fight, character, response);
+            endFightExecutor.executeCommand(endFight::loseFight);
         }
 
         if (response.getPlayerWon() == null) {
@@ -224,43 +226,6 @@ public class FightService {
             enemyAction = action.getPriority() > action2.getPriority() ? action : action2;
         }
         return enemyAction;
-    }
-
-    private void winFight(@NotNull Fight fight, @NotNull Character character, @NotNull FightActionResponse response) {
-        fight.setActive(false);
-        fight.setEnemy(null);
-        var adventure = character.getOccupation().getAdventure();
-        if (adventure == null) {
-            throw new AdventureNotFoundException();
-        }
-        character.getEquipment().earnGold(adventure.getGoldForAdventure());
-        character.getStatistics().earnXp(adventure.getXpForAdventure());
-        character.getOccupation().setAdventure(null);
-        character.getOccupation().setFight(fight);
-        if (fight.getFightEffects() != null) {
-            // Tydzień 5, Iterator
-            // Stworzona została nowa klasa, która w konstruktorze przyjmuje kolekcję fightEffects
-            // Następnie możliwe jest iterowanie po tej kolekcji metodami hasNext i next
-            var fightEffects = new CollectionOfFightEffects(fight.getFightEffects());
-            for (Iterator iter = fightEffects.getIterator(); iter.hasNext(); ) {
-                var effect = (FightEffect) iter.next();
-                effect.setDuration(0);
-            }
-            // Koniec Tydzień 5, Iterator
-            //fight.getFightEffects().forEach(fightEffect -> fightEffect.setDuration(0));
-        }
-        response.setPlayerWon(true);
-    }
-
-    private void loseFight(@NotNull Fight fight, @NotNull Character character, @NotNull FightActionResponse response) {
-        fight.setActive(false);
-        fight.setEnemy(null);
-        character.getOccupation().setAdventure(null);
-        character.getOccupation().setFight(fight);
-        if (fight.getFightEffects() != null) {
-            fight.getFightEffects().forEach(fightEffect -> fightEffect.setDuration(0));
-        }
-        response.setPlayerWon(false);
     }
 
     private void checkIfFightIsActive(@NotNull Fight fight) {
