@@ -1,6 +1,7 @@
 package com.michael1099.rest_rpg.character
 
 import com.michael1099.rest_rpg.auth.user.User
+import com.michael1099.rest_rpg.character.mediator.LearnSkillMediator
 import com.michael1099.rest_rpg.character.model.Character
 import com.michael1099.rest_rpg.character.model.CharacterArtwork
 import com.michael1099.rest_rpg.character_skill.CharacterSkill
@@ -92,8 +93,9 @@ class CharacterServiceHelper {
 
         character = save(character)
 
+        def mediator = new LearnSkillMediator(character.getEquipment(), character, character.getStatistics(), character.getSkills())
         args.skills.forEach {
-            character.learnNewSkill(it)
+            mediator.learnNewSkill(it)
         }
 
         save(character)

@@ -2,6 +2,7 @@ package com.michael1099.rest_rpg.skill;
 
 import com.michael1099.rest_rpg.auth.auth.AuthenticationFacade;
 import com.michael1099.rest_rpg.character.CharacterRepository;
+import com.michael1099.rest_rpg.character.mediator.LearnSkillMediator;
 import com.michael1099.rest_rpg.character.model.Character;
 import com.michael1099.rest_rpg.config.RepositoryDecorator;
 import com.michael1099.rest_rpg.exceptions.NotEnoughGoldException;
@@ -94,7 +95,8 @@ public class SkillService {
         character.getOccupation().throwIfCharacterIsOccupied();
         var skill = skillRepository.get(skillId);
         validateSkillLearning(character, skill);
-        character.learnNewSkill(skill);
+        var mediator = new LearnSkillMediator(character.getEquipment(), character, character.getStatistics(), character.getSkills());
+        mediator.learnNewSkill(skill);
         characterRepository.save(character);
         return skillMapper.toLite(skill);
     }

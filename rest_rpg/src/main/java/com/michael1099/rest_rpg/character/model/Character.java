@@ -7,7 +7,6 @@ import com.michael1099.rest_rpg.equipment.Equipment;
 import com.michael1099.rest_rpg.item.ItemService;
 import com.michael1099.rest_rpg.item.model.Item;
 import com.michael1099.rest_rpg.occupation.Occupation;
-import com.michael1099.rest_rpg.skill.model.Skill;
 import com.michael1099.rest_rpg.statistics.Statistics;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.CascadeType;
@@ -275,19 +274,6 @@ public class Character implements Cloneable {
         character.getEquipment().setCharacter(character);
 
         return character;
-    }
-
-    public void learnNewSkill(@NotNull Skill skill) {
-        var currentSkill = skills.stream().filter(s -> s.getSkill().getId().equals(skill.getId())).findFirst();
-        currentSkill.ifPresentOrElse(CharacterSkill::upgrade, () -> {
-            var characterSkill = CharacterSkill.newSkill(skill, this);
-            if (skills == null) {
-                skills = new HashSet<>();
-            }
-            skills.add(characterSkill);
-        });
-        equipment.spendGold(skill.getSkillTraining().getGoldCost());
-        statistics.useStatisticPoints(skill.getSkillTraining().getStatisticPointsCost());
     }
 
     public void buyItem(@NotNull Item item) {
