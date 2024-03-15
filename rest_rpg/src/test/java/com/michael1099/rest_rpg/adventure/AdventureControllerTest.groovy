@@ -1,5 +1,6 @@
 package com.michael1099.rest_rpg.adventure
 
+import com.michael1099.rest_rpg.adventure.memento.AdventureCaretaker
 import com.michael1099.rest_rpg.character.CharacterServiceHelper
 import com.michael1099.rest_rpg.configuration.TestBase
 import com.michael1099.rest_rpg.enemy.EnemyServiceHelper
@@ -48,19 +49,33 @@ class AdventureControllerTest extends TestBase {
             AdventureHelper.compare(request, response.body)
     }
 
+    // Tydzień 5, Memento
     def "should edit adventure"() {
         given:
             def adventure = adventureServiceHelper.saveAdventure(name: "Adventure 1")
+            def memento = adventure.saveToMemento()
+            def caretaker = new AdventureCaretaker()
+            caretaker.addMemento(memento)
             def enemy = enemyServiceHelper.saveEnemy()
         and:
             def request = AdventureHelper.createAdventureCreateRequest(enemy, [name: "Modified adventure"])
         when:
             def response = httpPut(adventureUrl(adventure.id), request, AdventureLite, [accessToken: adminAccessToken])
+            adventure = adventureServiceHelper.getAdventure(adventure.id)
         then:
             response.status == HttpStatus.OK
             AdventureHelper.compare(request, response.body)
+            AdventureHelper.compare(adventure, response.body)
             adventure.id == response.body.id
+        when:
+            memento = caretaker.getMemento()
+            adventure.undoFromMemento(memento)
+            request = AdventureHelper.createAdventureCreateRequest(enemy, [name: "Adventure 1"])
+            response = httpPut(adventureUrl(adventure.id), request, AdventureLite, [accessToken: adminAccessToken])
+        then:
+            AdventureHelper.compare(adventure, response.body)
     }
+    // Koniec Tydzień 5, Memento
 
     def "should delete adventure"() {
         given:

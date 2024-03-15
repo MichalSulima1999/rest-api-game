@@ -1,5 +1,6 @@
 package com.michael1099.rest_rpg.adventure.model;
 
+import com.michael1099.rest_rpg.adventure.memento.AdventureMemento;
 import com.michael1099.rest_rpg.enemy.model.Enemy;
 import com.michael1099.rest_rpg.helpers.time.ObjectWithTime;
 import com.michael1099.rest_rpg.occupation.Occupation;
@@ -99,4 +100,20 @@ public class Adventure implements ObjectWithTime {
     public int getTimeInMinutes() {
         return adventureTimeInMinutes;
     }
+
+    public AdventureMemento saveToMemento() {
+        return new AdventureMemento(this.id, this.name, this.adventureTimeInMinutes, this.xpForAdventure, this.goldForAdventure, this.enemy, this.occupation, this.deleted);
+    }
+
+    public void undoFromMemento(AdventureMemento memento) {
+        this.id = memento.getId();
+        this.name = memento.getName();
+        this.adventureTimeInMinutes = memento.getAdventureTimeInMinutes();
+        this.xpForAdventure = memento.getXpForAdventure();
+        this.goldForAdventure = memento.getGoldForAdventure();
+        this.enemy = memento.getEnemy();
+        this.occupation = memento.getOccupation();
+        this.deleted = memento.isDeleted();
+    }
+
 }
