@@ -60,9 +60,6 @@ public class SkillService {
 
     @Transactional
     public SkillDetails getSkill(long skillId) {
-        // Tydzień 4 - Flyweight
-        // Pobierany jest Skill z bazy, a następnie przechowujemy go w cache
-        // Jeżeli umiejętność jest już w cache, to zwracamy ją z cache
         SkillDetails details;
         if (skillCache.containsEntity(skillId)) {
             details = skillMapper.toDetails(skillCache.getEntity(skillId));
@@ -72,7 +69,6 @@ public class SkillService {
             details = skillMapper.toDetails(entity);
         }
         return details;
-        // Koniec Tydzień 4 - Flyweight
     }
 
     @Transactional
