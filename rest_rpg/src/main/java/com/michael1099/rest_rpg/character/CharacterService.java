@@ -19,7 +19,6 @@ import com.michael1099.rest_rpg.statistics.interpreter.RaceBonusInterpreter;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.EnumUtils;
 import org.openapitools.model.CharacterBasics;
 import org.openapitools.model.CharacterCreateRequest;
@@ -42,7 +41,6 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 @Validated
 public class CharacterService {
 
@@ -51,6 +49,18 @@ public class CharacterService {
     private final IAuthenticationFacade authenticationFacade;
     private final CharacterMapper characterMapper;
     private final RaceBonusInterpreter raceBonusInterpreter;
+    private final CharacterCompositeArtwork compositeArtwork;
+
+    public CharacterService(CharacterRepository characterRepository, UserRepository userRepository, IAuthenticationFacade authenticationFacade, CharacterMapper characterMapper, RaceBonusInterpreter raceBonusInterpreter) {
+        this.characterRepository = characterRepository;
+        this.userRepository = userRepository;
+        this.authenticationFacade = authenticationFacade;
+        this.characterMapper = characterMapper;
+        this.raceBonusInterpreter = raceBonusInterpreter;
+        var thumbnailArtwork = new CharacterThumbnailArtwork(this);
+        var fullArtwork = new CharacterFullArtwork(this);
+        this.compositeArtwork = new CharacterCompositeArtwork(thumbnailArtwork, fullArtwork);
+    }
 
     @Transactional
     public CharacterLite createCharacter(@NotNull CharacterCreateRequest request, @NotBlank String username) {
@@ -71,15 +81,18 @@ public class CharacterService {
     }
 
     @Transactional
+    public ResponseEntity<Resource> getCharacterArtwork(@NotNull String characterArtwork) {
+        return compositeArtwork.getArtwork(characterArtwork);
+    }
+
+    @Transactional
     public ResponseEntity<Resource> getCharacterFullArtwork(@NotNull String characterArtwork) {
-        var artwork = new CharacterFullArtwork(this);
-        return new CharacterCompositeArtwork(artwork).getArtwork(characterArtwork);
+        return getCharacterArtwork(characterArtwork, "public/avatars/full/");
     }
 
     @Transactional
     public ResponseEntity<Resource> getCharacterThumbnailArtwork(@NotNull String characterArtwork) {
-        var artwork = new CharacterThumbnailArtwork(this);
-        return new CharacterCompositeArtwork(artwork).getArtwork(characterArtwork);
+        return getCharacterArtwork(characterArtwork, "public/avatars/thumbnail/");
     }
 
     @Transactional
