@@ -8,6 +8,7 @@ import com.michael1099.rest_rpg.enemy.model.StrategyElement;
 import com.michael1099.rest_rpg.exceptions.FightIsNotActiveException;
 import com.michael1099.rest_rpg.fight.command.EndFight;
 import com.michael1099.rest_rpg.fight.command.EndFightExecutor;
+import com.michael1099.rest_rpg.fight.flyweight.Terrain;
 import com.michael1099.rest_rpg.fight.helpers.FightAction;
 import com.michael1099.rest_rpg.fight.helpers.FightEffectsSingleton;
 import com.michael1099.rest_rpg.fight.helpers.NormalAttack;
@@ -25,12 +26,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.Optional;
+import java.util.Random;
 
 @Service
 @Validated
 public class FightService {
 
     public static int MANA_REGENERATION_PERCENT_PER_TURN = 10;
+    public static int MAP_SIZE = 500;
+    public static int ELEMENTS_TO_DRAW = 1000;
+    static int OBJECT_TYPES = 3;
 
     private final CharacterRepository characterRepository;
     private final SkillRepository skillRepository;
@@ -69,6 +74,18 @@ public class FightService {
         var fight = character.getOccupation().getFight();
         checkIfFightIsActive(fight);
         var response = new FightActionResponse();
+
+        Terrain terrain = new Terrain();
+        Random random = new Random();
+        for (int i = 0; i < (ELEMENTS_TO_DRAW / OBJECT_TYPES); i++) {
+            terrain.placeObject(random.nextInt(0, MAP_SIZE),
+                    random.nextInt(0, MAP_SIZE), "Oak", "Oak texture", true);
+            terrain.placeObject(random.nextInt(0, MAP_SIZE),
+                    random.nextInt(0, MAP_SIZE), "Stone", "Stone texture", true);
+            terrain.placeObject(random.nextInt(0, MAP_SIZE),
+                    random.nextInt(0, MAP_SIZE), "Grass", "Grass texture", false);
+        }
+        terrain.createTerrain();
 
         applyFightEffects(fight, character);
 

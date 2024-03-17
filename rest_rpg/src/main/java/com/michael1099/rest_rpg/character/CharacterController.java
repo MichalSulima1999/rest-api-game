@@ -29,6 +29,11 @@ public class CharacterController implements CharacterApi {
     }
 
     @Override
+    public ResponseEntity<Resource> getCharacterPicture(String characterArtwork) {
+        return characterService.getCharacterArtwork(characterArtwork);
+    }
+
+    @Override
     public ResponseEntity<Resource> getCharacterArtwork(String characterArtwork) {
         return characterService.getCharacterFullArtwork(characterArtwork);
     }

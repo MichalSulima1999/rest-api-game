@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 // Liść
 public class CharacterThumbnailArtwork implements CharacterArtworkComponent {
 
-    private static final String ARTWORKS_PATH = "public/avatars/full/";
+    private static final String ARTWORKS_PATH = "public/avatars/thumbnail/";
     private final CharacterService characterService;
 
     public CharacterThumbnailArtwork(CharacterService artworkService) {

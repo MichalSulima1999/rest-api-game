@@ -6,6 +6,9 @@ import org.springframework.http.ResponseEntity;
 
 // Tydzień 3, Composite
 // Klasa composite, która posiada tablicę CharacterArtworkComponent
+// Pozwala na pobranie obrazka. Liście zawierają różne sposoby na ich pobieranie, dzięki czemu
+// jeżeli dany obrazek nie jest dostępny z jednego liścia, automatycznie następuje próba
+// jego pobrania z następnego liścia.
 public class CharacterCompositeArtwork implements CharacterArtworkComponent {
 
     private final CharacterArtworkComponent[] components;

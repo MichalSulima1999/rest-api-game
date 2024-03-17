@@ -38,6 +38,25 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CharacterLite'
+  /character/picture/{characterArtwork}:
+    get:
+      summary: Get character artwork
+      operationId: getCharacterPicture
+      parameters:
+        - name: characterArtwork
+          in: path
+          required: true
+          description: Artwork enum
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            image/jpeg:
+              schema:
+                type: string
+                format: binary
   /character/image/{characterArtwork}:
     get:
       summary: Get full sized character artwork

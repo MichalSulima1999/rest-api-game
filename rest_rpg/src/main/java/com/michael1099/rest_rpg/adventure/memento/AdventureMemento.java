@@ -7,6 +7,9 @@ import lombok.Getter;
 
 import java.util.Set;
 
+// Tydzień 5, Memento
+// Memento pozwala na zachowanie historycznego stanu obiektu.
+// Obiekt memento pozwala na zachowanie tego stanu, a caretaker przechowuje historię
 @Getter
 @AllArgsConstructor
 public class AdventureMemento {
@@ -27,3 +30,4 @@ public class AdventureMemento {
 
     private boolean deleted;
 }
+// Koniec Tydzień 5, Memento
