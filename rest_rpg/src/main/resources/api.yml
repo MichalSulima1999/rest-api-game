@@ -742,6 +742,8 @@ components:
         - SKILL_CHARACTER_CLASS_MISMATCH
         - ITEM_ALREADY_BOUGHT
         - CHARACTER_HP_FULL
+        - CHARACTER_IS_ON_ADVENTURE
+        - CHARACTER_IS_AT_WORK
     ElementEvent:
       type: string
       enum:

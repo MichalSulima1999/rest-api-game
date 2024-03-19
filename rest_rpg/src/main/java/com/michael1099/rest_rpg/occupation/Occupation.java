@@ -3,12 +3,12 @@ package com.michael1099.rest_rpg.occupation;
 import com.michael1099.rest_rpg.adventure.model.Adventure;
 import com.michael1099.rest_rpg.character.model.Character;
 import com.michael1099.rest_rpg.exceptions.CharacterIsOccupiedException;
-import com.michael1099.rest_rpg.exceptions.EnumValueNotFoundException;
 import com.michael1099.rest_rpg.fight.model.Fight;
-import com.michael1099.rest_rpg.work.EndWork;
-import com.michael1099.rest_rpg.work.EndWorkWithGold;
-import com.michael1099.rest_rpg.work.EndWorkWithIron;
-import com.michael1099.rest_rpg.work.EndWorkWithWood;
+import com.michael1099.rest_rpg.occupation.state.AdventureOccupationState;
+import com.michael1099.rest_rpg.occupation.state.FightOccupationState;
+import com.michael1099.rest_rpg.occupation.state.IdleOccupationState;
+import com.michael1099.rest_rpg.occupation.state.OccupationState;
+import com.michael1099.rest_rpg.occupation.state.WorkingOccupationState;
 import com.michael1099.rest_rpg.work.model.Work;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.CascadeType;
@@ -21,6 +21,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -67,11 +68,27 @@ public class Occupation {
 
     private boolean deleted;
 
+    @Transient
+    private OccupationState state;
+
     public static Occupation init() {
         var occupation = new Occupation();
         occupation.setFight(new Fight());
         occupation.getFight().setOccupation(occupation);
         return occupation;
+    }
+
+    public OccupationState getState() {
+        if (fight.isActive()) {
+            return new FightOccupationState();
+        }
+        if (adventure != null) {
+            return new AdventureOccupationState();
+        }
+        if (work != null) {
+            return new WorkingOccupationState();
+        }
+        return new IdleOccupationState();
     }
 
     public boolean isOccupied() {
@@ -97,38 +114,5 @@ public class Occupation {
             return Work.class.getSimpleName();
         }
         return null;
-    }
-
-    public void startAdventure(@NotNull Adventure adventure) {
-        setAdventure(adventure);
-        setFinishTime(LocalDateTime.now().plusMinutes(adventure.getAdventureTimeInMinutes()));
-    }
-
-    public void endAdventure(@NotNull Adventure adventure) {
-        var enemy = adventure.getEnemy();
-        getFight().setEnemy(enemy);
-        getFight().setActive(true);
-        getFight().setEnemyCurrentHp(enemy.getHp());
-        getFight().setEnemyCurrentMana(enemy.getMana());
-    }
-
-    public void startWork(@NotNull Work work) {
-        setWork(work);
-        setFinishTime(LocalDateTime.now().plusMinutes(work.getWorkMinutes()));
-    }
-
-    public void endWork(@NotNull Work work) {
-        // Tydzień 6, Template
-        // Stworzona została abstrakcyjna klasa EndWork, która rozszerza EndWorkWithGold, EndWorkWithIron i EndWorkWithWood
-        // Metoda getResources() jest nadpisywana w tych klasach
-        EndWork endWork;
-        switch (work.getResourceType()) {
-            case GOLD -> endWork = new EndWorkWithGold(this, character.getEquipment(), work);
-            case IRON -> endWork = new EndWorkWithIron(this, character.getEquipment(), work);
-            case WOOD -> endWork = new EndWorkWithWood(this, character.getEquipment(), work);
-            default -> throw new EnumValueNotFoundException();
-        }
-        // Koniec Tydzień 6, Template
-        endWork.finishWork();
     }
 }

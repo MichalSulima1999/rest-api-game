@@ -89,7 +89,7 @@ public class AdventureService {
         character.getOccupation().throwIfCharacterIsOccupied();
 
         var adventure = adventureRepository.getAdventureById(adventureId);
-        character.getOccupation().startAdventure(adventure);
+        character.getOccupation().getState().startAdventure(adventure, character.getOccupation());
         characterRepository.save(character);
 
         return mapper.toLite(adventure);
@@ -106,7 +106,7 @@ public class AdventureService {
         var adventure = Optional.ofNullable(character.getOccupation().getAdventure())
                 .orElseThrow(CharacterIsNotOnAdventureException::new);
 
-        character.getOccupation().endAdventure(adventure);
+        character.getOccupation().getState().endAdventure(adventure, character.getOccupation());
         characterRepository.save(character);
 
         return mapper.toLite(adventure);

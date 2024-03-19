@@ -52,7 +52,7 @@ public class WorkService {
         character.getOccupation().throwIfCharacterIsOccupied();
 
         var work = workRepository.getWorkById(workId);
-        character.getOccupation().startWork(work);
+        character.getOccupation().getState().startWork(work, character.getOccupation());
         characterRepository.save(character);
     }
 
@@ -66,7 +66,7 @@ public class WorkService {
         var work = Optional.ofNullable(character.getOccupation().getWork())
                 .orElseThrow(WorkNotFoundException::new);
 
-        character.getOccupation().endWork(work);
+        character.getOccupation().getState().endWork(work, character.getOccupation());
         characterRepository.save(character);
     }
 
