@@ -6,8 +6,10 @@ import com.michael1099.rest_rpg.fight.model.Fight;
 import com.michael1099.rest_rpg.fight_effect.CollectionOfFightEffects;
 import com.michael1099.rest_rpg.fight_effect.FightEffect;
 import com.michael1099.rest_rpg.helpers.iterator.Iterator;
+import com.michael1099.rest_rpg.statistics.observer.LevelUpEvent;
 import lombok.RequiredArgsConstructor;
 import org.openapitools.model.FightActionResponse;
+import org.springframework.context.ApplicationEventPublisher;
 
 @RequiredArgsConstructor
 public class EndFight {
@@ -15,6 +17,7 @@ public class EndFight {
     private final Fight fight;
     private final Character character;
     private final FightActionResponse response;
+    private final ApplicationEventPublisher eventPublisher;
 
     public void loseFight() {
         fight.setActive(false);
@@ -35,7 +38,10 @@ public class EndFight {
             throw new AdventureNotFoundException();
         }
         character.getEquipment().earnGold(adventure.getGoldForAdventure());
-        character.getStatistics().earnXp(adventure.getXpForAdventure());
+        var leveledUp = character.getStatistics().earnXp(adventure.getXpForAdventure());
+        if (leveledUp) {
+            eventPublisher.publishEvent(new LevelUpEvent(this, character));
+        }
         character.getOccupation().setAdventure(null);
         character.getOccupation().setFight(fight);
         if (fight.getFightEffects() != null) {

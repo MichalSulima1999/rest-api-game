@@ -198,12 +198,15 @@ public class Statistics {
         }
     }
 
-    public void earnXp(int xp) {
+    public boolean earnXp(int xp) {
+        boolean levelUp = false;
         currentXp += xp;
         while (currentXp >= getXpToNextLevel()) {
             currentLevel++;
             freeStatisticPoints += STATISTICS_POINTS_PER_LEVEL;
+            levelUp = true;
         }
+        return levelUp;
     }
 
     public void useStatisticPoints(int points) {

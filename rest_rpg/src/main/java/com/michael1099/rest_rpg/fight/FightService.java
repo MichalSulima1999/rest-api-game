@@ -22,6 +22,7 @@ import org.openapitools.model.ElementEvent;
 import org.openapitools.model.FightActionRequest;
 import org.openapitools.model.FightActionResponse;
 import org.openapitools.model.FightDetails;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -43,12 +44,14 @@ public class FightService {
     private final FightMapper fightMapper;
     private final FightEffectsSingleton fightEffectsSingleton;
     private final EndFightExecutor endFightExecutor;
+    private final ApplicationEventPublisher eventPublisher;
 
-    public FightService(CharacterRepository characterRepository, SkillRepository skillRepository, IAuthenticationFacade authenticationFacade, FightMapper fightMapper) {
+    public FightService(CharacterRepository characterRepository, SkillRepository skillRepository, IAuthenticationFacade authenticationFacade, FightMapper fightMapper, ApplicationEventPublisher eventPublisher) {
         this.characterRepository = characterRepository;
         this.skillRepository = skillRepository;
         this.authenticationFacade = authenticationFacade;
         this.fightMapper = fightMapper;
+        this.eventPublisher = eventPublisher;
         this.fightEffectsSingleton = FightEffectsSingleton.getInstance();
         this.endFightExecutor = new EndFightExecutor();
     }
@@ -105,10 +108,10 @@ public class FightService {
         }
 
         if (fight.getEnemyCurrentHp() <= 0) {
-            var endFight = new EndFight(fight, character, response);
+            var endFight = new EndFight(fight, character, response, eventPublisher);
             endFightExecutor.executeCommand(endFight::winFight);
         } else if (character.getStatistics().getCurrentHp() <= 0) {
-            var endFight = new EndFight(fight, character, response);
+            var endFight = new EndFight(fight, character, response, eventPublisher);
             endFightExecutor.executeCommand(endFight::loseFight);
         }
 
