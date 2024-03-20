@@ -3,7 +3,6 @@ package com.michael1099.rest_rpg.fight;
 import com.michael1099.rest_rpg.auth.auth.IAuthenticationFacade;
 import com.michael1099.rest_rpg.character.CharacterRepository;
 import com.michael1099.rest_rpg.character.model.Character;
-import com.michael1099.rest_rpg.enemy.model.Enemy;
 import com.michael1099.rest_rpg.enemy.model.StrategyElement;
 import com.michael1099.rest_rpg.exceptions.FightIsNotActiveException;
 import com.michael1099.rest_rpg.fight.command.EndFight;
@@ -15,6 +14,8 @@ import com.michael1099.rest_rpg.fight.helpers.NormalAttack;
 import com.michael1099.rest_rpg.fight.helpers.SpecialAttack;
 import com.michael1099.rest_rpg.fight.helpers.UsePotion;
 import com.michael1099.rest_rpg.fight.model.Fight;
+import com.michael1099.rest_rpg.fight_effect.strategy.FightEffectStrategy;
+import com.michael1099.rest_rpg.fight_effect.strategy.FightEffectStrategyFactory;
 import com.michael1099.rest_rpg.skill.SkillRepository;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
@@ -132,53 +133,9 @@ public class FightService {
         if (fight.getFightEffects() != null) {
             fight.getFightEffects().stream().filter(effect -> effect.getDuration() > 0).forEach(effect -> {
                 effect.passTurn();
-                switch (effect.getSkillEffect()) {
-                    case BLEEDING, BURNING -> {
-                        if (effect.isPlayerEffect()) {
-                            character.getStatistics().takeDamage(
-                                    Math.round(character.getStatistics().getMaxHp() * effect.getEffectMultiplier()));
-                        } else {
-                            var enemyMaxHp = Optional.ofNullable(fight.getEnemy()).map(Enemy::getHp).orElseThrow();
-                            fight.dealDamageToEnemy(Math.round(enemyMaxHp * effect.getEffectMultiplier()));
-                        }
-                    }
-                    case STUNNED -> {
-                        if (effect.isPlayerEffect()) {
-                            fightEffectsSingleton.getPlayerStunned().set(true);
-                        } else {
-                            fightEffectsSingleton.getEnemyStunned().set(true);
-                        }
-                    }
-                    case WEAKNESS -> {
-                        if (effect.isPlayerEffect()) {
-                            fightEffectsSingleton.getPlayerDamageMultiplier().set(Math.max(0.1f, fightEffectsSingleton.getPlayerDamageMultiplier().get() - effect.getEffectMultiplier()));
-                        } else {
-                            fightEffectsSingleton.getEnemyDamageMultiplier().set(Math.max(0.1f, fightEffectsSingleton.getEnemyDamageMultiplier().get() - effect.getEffectMultiplier()));
-                        }
-                    }
-                    case DAMAGE_BOOST -> {
-                        if (effect.isPlayerEffect()) {
-                            fightEffectsSingleton.getPlayerDamageMultiplier().set(Math.max(0.1f, fightEffectsSingleton.getPlayerDamageMultiplier().get() + effect.getEffectMultiplier()));
-                        } else {
-                            fightEffectsSingleton.getEnemyDamageMultiplier().set(Math.max(0.1f, fightEffectsSingleton.getEnemyDamageMultiplier().get() + effect.getEffectMultiplier()));
-                        }
-                    }
-                    case DEFENCE_BOOST -> {
-                        if (effect.isPlayerEffect()) {
-                            fightEffectsSingleton.getPlayerDefenceMultiplier().set(Math.max(0.1f, fightEffectsSingleton.getPlayerDefenceMultiplier().get() + effect.getEffectMultiplier()));
-                        } else {
-                            fightEffectsSingleton.getEnemyDefenceMultiplier().set(Math.max(0.1f, fightEffectsSingleton.getEnemyDefenceMultiplier().get() + effect.getEffectMultiplier()));
-                        }
-                    }
-                    case DAMAGE_DEFENCE_BOOST -> {
-                        if (effect.isPlayerEffect()) {
-                            fightEffectsSingleton.getPlayerDamageMultiplier().set(Math.max(0.1f, fightEffectsSingleton.getPlayerDamageMultiplier().get() + effect.getEffectMultiplier()));
-                            fightEffectsSingleton.getPlayerDefenceMultiplier().set(Math.max(0.1f, fightEffectsSingleton.getPlayerDefenceMultiplier().get() + effect.getEffectMultiplier()));
-                        } else {
-                            fightEffectsSingleton.getEnemyDamageMultiplier().set(Math.max(0.1f, fightEffectsSingleton.getEnemyDamageMultiplier().get() + effect.getEffectMultiplier()));
-                            fightEffectsSingleton.getEnemyDefenceMultiplier().set(Math.max(0.1f, fightEffectsSingleton.getEnemyDefenceMultiplier().get() + effect.getEffectMultiplier()));
-                        }
-                    }
+                FightEffectStrategy strategy = FightEffectStrategyFactory.getStrategy(effect.getSkillEffect());
+                if (strategy != null) {
+                    strategy.applyEffect(effect, fight, character);
                 }
             });
         }
