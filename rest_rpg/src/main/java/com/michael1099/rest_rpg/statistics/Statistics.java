@@ -5,6 +5,8 @@ import com.michael1099.rest_rpg.exceptions.NotEnoughManaException;
 import com.michael1099.rest_rpg.exceptions.NotEnoughSkillPointsException;
 import com.michael1099.rest_rpg.fight.FightService;
 import com.michael1099.rest_rpg.item.model.Item;
+import com.michael1099.rest_rpg.report.ReportVisitor;
+import com.michael1099.rest_rpg.report.Reportable;
 import com.michael1099.rest_rpg.statistics.dto.StatisticsUpdateRequestDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -22,6 +24,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.openapitools.model.ReportResponse;
 
 import java.util.Optional;
 
@@ -51,7 +54,7 @@ import java.util.Optional;
                 )
         }
 )
-public class Statistics {
+public class Statistics implements Reportable {
 
     public static final String STATISTICS_DETAILS = "statistic-details-graph";
 
@@ -219,5 +222,10 @@ public class Statistics {
     private float criticalDodgeChance(int statistic) {
         double k = 0.01;
         return (float) (100 * (1 - Math.exp(-k * statistic)));
+    }
+
+    @Override
+    public ReportResponse accept(ReportVisitor visitor) {
+        return visitor.visit(this);
     }
 }

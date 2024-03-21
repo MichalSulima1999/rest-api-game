@@ -7,6 +7,8 @@ import com.michael1099.rest_rpg.equipment.Equipment;
 import com.michael1099.rest_rpg.item.ItemService;
 import com.michael1099.rest_rpg.item.model.Item;
 import com.michael1099.rest_rpg.occupation.Occupation;
+import com.michael1099.rest_rpg.report.ReportVisitor;
+import com.michael1099.rest_rpg.report.Reportable;
 import com.michael1099.rest_rpg.statistics.Statistics;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.CascadeType;
@@ -39,6 +41,7 @@ import org.openapitools.model.CharacterRace;
 import org.openapitools.model.CharacterSex;
 import org.openapitools.model.CharacterStatus;
 import org.openapitools.model.ItemType;
+import org.openapitools.model.ReportResponse;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -187,7 +190,7 @@ import java.util.Set;
                 )
         }
 )
-public class Character implements Cloneable {
+public class Character implements Cloneable, Reportable {
 
     public static final String CHARACTER_BASIC = "CHARACTER_BASIC_GRAPH";
     public static final String CHARACTER_DETAILS = "CHARACTER_DETAILS_GRAPH";
@@ -316,4 +319,9 @@ public class Character implements Cloneable {
         }
     }
     // Koniec, Tydzień 2, Wzorzec Prototype
+
+    @Override
+    public ReportResponse accept(ReportVisitor visitor) {
+        return visitor.visit(this);
+    }
 }

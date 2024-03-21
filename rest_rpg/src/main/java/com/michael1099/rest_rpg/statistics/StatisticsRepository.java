@@ -17,4 +17,8 @@ public interface StatisticsRepository extends JpaRepository<Statistics, Long> {
     default Statistics getStatisticsByCharacterId(long characterId) {
         return findByCharacter_Id(characterId).orElseThrow(CharacterNotFoundException::new);
     }
+
+    default Statistics getStatisticsById(long id) {
+        return findById(id).orElseThrow();
+    }
 }

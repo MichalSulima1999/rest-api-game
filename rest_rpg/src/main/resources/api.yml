@@ -701,6 +701,24 @@ paths:
       responses:
         '204':
           description: No content
+  /report/generate:
+    post:
+      summary: Generate report.
+      operationId: generateReport
+      x-preauth: "hasAnyAuthority('ADMIN', 'USER')"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GenerateReportRequest'
+      responses:
+        '200':
+          description: Created report
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportResponse'
 components:
   schemas:
     ErrorCodes:
@@ -814,6 +832,12 @@ components:
         - GOLD
         - IRON
         - WOOD
+    ReportType:
+      type: string
+      enum:
+        - CHARACTER
+        - EQUIPMENT
+        - STATISTICS
     UserLite:
       type: object
       required:
@@ -1198,6 +1222,19 @@ components:
         workMinutesLessThanOrEqual:
           description: Item price less or equals
           type: integer
+    GenerateReportRequest:
+      type: object
+      required:
+        - id
+        - reportType
+      properties:
+        id:
+          description: Id of an object to create report to
+          type: integer
+          format: int64
+        reportType:
+          description: Report type to generate
+          $ref: '#/components/schemas/ReportType'
     CharacterLite:
       type: object
       required:
@@ -1785,3 +1822,16 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/WorkLite'
+    ReportResponse:
+      type: object
+      description: Report response
+      required:
+        - name
+        - content
+      properties:
+        name:
+          description: Report name
+          type: string
+        content:
+          description: Report content
+          type: string

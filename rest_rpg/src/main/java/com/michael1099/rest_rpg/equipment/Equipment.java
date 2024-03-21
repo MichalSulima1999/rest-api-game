@@ -2,6 +2,8 @@ package com.michael1099.rest_rpg.equipment;
 
 import com.michael1099.rest_rpg.character.model.Character;
 import com.michael1099.rest_rpg.item.model.Item;
+import com.michael1099.rest_rpg.report.ReportVisitor;
+import com.michael1099.rest_rpg.report.Reportable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -17,6 +19,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.openapitools.model.ReportResponse;
 
 @Entity
 @Getter
@@ -24,7 +27,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Equipment {
+public class Equipment implements Reportable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -81,5 +84,10 @@ public class Equipment {
 
     public void usePotion() {
         healthPotions--;
+    }
+
+    @Override
+    public ReportResponse accept(ReportVisitor visitor) {
+        return visitor.visit(this);
     }
 }

@@ -5,4 +5,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface EquipmentRepository extends JpaRepository<Equipment, Long> {
+
+    default Equipment getEquipmentById(long id) {
+        return findById(id).orElseThrow();
+    }
 }
