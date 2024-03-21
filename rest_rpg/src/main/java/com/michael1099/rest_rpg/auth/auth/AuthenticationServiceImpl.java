@@ -15,6 +15,7 @@ import jakarta.mail.internet.MimeMessage;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -42,10 +43,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JavaMailSender mailSender;
 
+
     public void register(@NotNull RegisterRequest request,
                          @NotNull String verificationURL,
                          @NotNull Role role) {
-        assertAccountNotExists(request.getUsername(), request.getEmail());
         var user = User.of(request, passwordEncoder, role);
         user = repository.save(user);
 
@@ -54,16 +55,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     public AuthenticationResponse authenticate(@NotNull AuthenticationRequest request,
                                                HttpServletResponse response) {
-        try {
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            request.getUsername(),
-                            request.getPassword()
-                    ));
-        } catch (AuthenticationException exception) {
-            throw new UserNotFoundException();
-        }
-
         var user = repository.findByUsername(request.getUsername())
                 .orElseThrow(UserNotFoundException::new);
 
@@ -73,21 +64,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public void verify(String verificationCode) {
         User user = repository.findByVerificationCode(verificationCode)
                 .orElseThrow(UserNotFoundException::new);
-
-        if (user.isEnabled()) {
-            throw new UserAlreadyVerifiedException();
-        }
         user.setEnabled(true);
         repository.save(user);
-    }
-
-    private void assertAccountNotExists(@NotNull String username, @NotNull String email) {
-        if (repository.findByUsername(username).isPresent()) {
-            throw new AccountUsernameExistsException();
-        }
-        if (repository.findByEmail(email).isPresent()) {
-            throw new AccountEmailExistsException();
-        }
     }
 
     private AuthenticationResponse createJwtResponse(User user, HttpServletResponse response) {
