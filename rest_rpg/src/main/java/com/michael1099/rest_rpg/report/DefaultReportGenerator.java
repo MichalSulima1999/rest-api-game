@@ -8,8 +8,12 @@ import com.michael1099.rest_rpg.statistics.Statistics;
 import org.openapitools.model.ReportResponse;
 import org.springframework.stereotype.Service;
 
+// Tydzień 7 - otwarte - zamknięte
+// Istnieje interfejs ReportVisitor, który jest implementowany przez DefaultReportGenerator, JsonReportGenerator i YamlReportGenerator
+// Czyli są trzy sposoby na generowanie raportów. Jeśli chcielibyśmy dodać nowy sposób,
+// to wystarczy stworzyć nową klasę i zaimplementować metody z interfejsu ReportVisitor
 @Service
-public class ReportGenerator implements ReportVisitor {
+public class DefaultReportGenerator implements ReportVisitor {
 
     @Override
     public ReportResponse visit(Character character) {

@@ -17,7 +17,9 @@ public class ReportService {
     private final CharacterRepository characterRepository;
     private final EquipmentRepository equipmentRepository;
     private final StatisticsRepository statisticsRepository;
-    private final ReportGenerator reportGenerator;
+    private final DefaultReportGenerator reportGenerator;
+    private final JsonReportGenerator jsonReportGenerator;
+    private final YamlReportGenerator yamlReportGenerator;
 
     public ReportResponse generateReport(GenerateReportRequest generateReportRequest) {
         switch (generateReportRequest.getReportType()) {

@@ -32,7 +32,6 @@ public class RefreshTokenService {
     private final TokenProperties tokenProperties;
 
     public AuthenticationResponse refreshToken(@NotEmpty String jwt) {
-        log.debug(jwt);
         if (jwt == null) {
             throw new EmptyJwtException();
         }

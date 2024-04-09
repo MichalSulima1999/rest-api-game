@@ -42,6 +42,7 @@ import org.openapitools.model.CharacterSex;
 import org.openapitools.model.CharacterStatus;
 import org.openapitools.model.ItemType;
 import org.openapitools.model.ReportResponse;
+import org.openapitools.model.ResourceType;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -296,6 +297,22 @@ public class Character implements Cloneable, Reportable {
     public void usePotion() {
         equipment.usePotion();
         statistics.heal(ItemService.POTION_HEAL_PERCENT);
+    }
+
+    public void acceptResourcesTask(ResourceType resourceType, int amount) {
+
+    }
+
+    public void acceptMonsterTask(String monsterType, int monstersNumber) {
+
+    }
+
+    public void endResourcesTask() {
+
+    }
+
+    public void endMonsterTask() {
+
     }
 
     // Tydzień 2, Wzorzec Prototype

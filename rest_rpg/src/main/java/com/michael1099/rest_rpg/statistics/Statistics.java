@@ -219,6 +219,10 @@ public class Statistics implements Reportable {
         freeStatisticPoints -= points;
     }
 
+    public void trainIntelligence(int amount) {
+        intelligence += amount;
+    }
+
     private float criticalDodgeChance(int statistic) {
         double k = 0.01;
         return (float) (100 * (1 - Math.exp(-k * statistic)));
