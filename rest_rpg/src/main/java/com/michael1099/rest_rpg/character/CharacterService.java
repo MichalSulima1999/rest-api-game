@@ -8,6 +8,7 @@ import com.michael1099.rest_rpg.character.artwork.CharacterThumbnailArtwork;
 import com.michael1099.rest_rpg.character.model.Character;
 import com.michael1099.rest_rpg.character.model.CharacterArtwork;
 import com.michael1099.rest_rpg.character.model.dto.CharacterCreateRequestDto;
+import com.michael1099.rest_rpg.email.EmailService;
 import com.michael1099.rest_rpg.exceptions.CharacterAlreadyExistsException;
 import com.michael1099.rest_rpg.exceptions.CharacterNotFoundException;
 import com.michael1099.rest_rpg.exceptions.EnumValueNotFoundException;
@@ -50,13 +51,15 @@ public class CharacterService {
     private final CharacterMapper characterMapper;
     private final RaceBonusInterpreter raceBonusInterpreter;
     private final CharacterCompositeArtwork compositeArtwork;
+    private final EmailService emailService;
 
-    public CharacterService(CharacterRepository characterRepository, UserRepository userRepository, IAuthenticationFacade authenticationFacade, CharacterMapper characterMapper, RaceBonusInterpreter raceBonusInterpreter) {
+    public CharacterService(CharacterRepository characterRepository, UserRepository userRepository, IAuthenticationFacade authenticationFacade, CharacterMapper characterMapper, RaceBonusInterpreter raceBonusInterpreter, EmailService emailService) {
         this.characterRepository = characterRepository;
         this.userRepository = userRepository;
         this.authenticationFacade = authenticationFacade;
         this.characterMapper = characterMapper;
         this.raceBonusInterpreter = raceBonusInterpreter;
+        this.emailService = emailService;
         var thumbnailArtwork = new CharacterThumbnailArtwork(this);
         var fullArtwork = new CharacterFullArtwork(this);
         this.compositeArtwork = new CharacterCompositeArtwork(thumbnailArtwork, fullArtwork);
@@ -76,8 +79,10 @@ public class CharacterService {
         assertCharacterStatisticsAreValid(dto.getStatistics(), character.getStatistics().getFreeStatisticPoints());
         character.getStatistics().addStatistics(dto.getStatistics());
         raceBonusInterpreter.setRaceBonus(character.getStatistics(), dto.getRace());
+        character = characterRepository.save(character);
+        character.addObserver(emailService);
 
-        return characterMapper.toLite(characterRepository.save(character));
+        return characterMapper.toLite(character);
     }
 
     @Transactional

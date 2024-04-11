@@ -10,6 +10,7 @@ import com.michael1099.rest_rpg.occupation.Occupation;
 import com.michael1099.rest_rpg.report.ReportVisitor;
 import com.michael1099.rest_rpg.report.Reportable;
 import com.michael1099.rest_rpg.statistics.Statistics;
+import com.michael1099.rest_rpg.statistics.observer.LevelUpObserver;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -28,6 +29,7 @@ import jakarta.persistence.NamedSubgraph;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -44,7 +46,9 @@ import org.openapitools.model.ItemType;
 import org.openapitools.model.ReportResponse;
 import org.openapitools.model.ResourceType;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -201,6 +205,9 @@ public class Character implements Cloneable, Reportable {
     public static final String CHARACTER_SKILLS = "CHARACTER_SKILLS_GRAPH";
     public static final String CHARACTER_TEST = "CHARACTER_TEST_GRAPH";
 
+    @Transient
+    private List<LevelUpObserver> observers = new ArrayList<>();
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -270,6 +277,7 @@ public class Character implements Cloneable, Reportable {
                 .statistics(Statistics.init())
                 .status(CharacterStatus.IDLE)
                 .user(user)
+                .observers(new ArrayList<>())
                 .build();
         // Koniec, Tydzień 2, Wzorzec Builder
 
@@ -315,6 +323,22 @@ public class Character implements Cloneable, Reportable {
 
     }
 
+    public void earnXp(int xp) {
+        var leveledUp = statistics.earnXp(xp);
+
+        if (leveledUp) {
+            notifyObservers();
+        }
+    }
+
+    public void addObserver(LevelUpObserver observer) {
+        observers.add(observer);
+    }
+
+    public void removeObserver(LevelUpObserver observer) {
+        observers.remove(observer);
+    }
+
     // Tydzień 2, Wzorzec Prototype
     // Korzystając z interfejsu Cloneable, tworzona jest metoda clone, która tworzy kopię obiektu, następnie ustawiane są
     // wymagane atrybuty powiązanych encji
@@ -340,5 +364,11 @@ public class Character implements Cloneable, Reportable {
     @Override
     public ReportResponse accept(ReportVisitor visitor) {
         return visitor.visit(this);
+    }
+
+    private void notifyObservers() {
+        for (LevelUpObserver observer : observers) {
+            observer.onLevelUp(this);
+        }
     }
 }
