@@ -20,6 +20,10 @@ import java.util.stream.Collectors
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 
+// Tydzień 13 - testy
+// Zostały stworzone klasy testowe do kontrolerów.
+// Przykładowo przy tworzeniu postaci porównywana jest tworzona postać ze zwracaną postacią.
+// W niektórych przypadkach tworzone są też testy, które sprawdzają wyrzucanie wyjątków.
 class CharacterControllerTest extends TestBase {
 
     def baseUrl = "/character"
@@ -152,3 +156,4 @@ class CharacterControllerTest extends TestBase {
             response.errorMessage == ErrorCodes.CHARACTER_NOT_FOUND.toString()
     }
 }
+// Koniec Tydzień 13 - testy
