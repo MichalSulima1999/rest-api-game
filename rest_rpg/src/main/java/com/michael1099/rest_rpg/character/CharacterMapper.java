@@ -34,6 +34,9 @@ public interface CharacterMapper {
     CharacterDetails toDetails(@NotNull Character source);
 
     default List<SkillDetails> toDetailsList(@NotNull Set<CharacterSkill> source) {
+        // Tydzień 10 - strumienie 3
+        // Ten stream pozwala na wyciągnięcie z Set<CharacterSkill> Skill, a następnie zmapowanie na SkillDetails i zwrócenie listy
         return source.stream().map(CharacterSkill::getSkill).map(s -> Mappers.getMapper(SkillMapper.class).toDetails(s)).toList();
+        // Koniec Tydzień 10 - strumienie 3
     }
 }

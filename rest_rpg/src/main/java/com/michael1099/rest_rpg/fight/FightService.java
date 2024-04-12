@@ -82,6 +82,8 @@ public class FightService {
 
     private void applyFightEffects(@NotNull Fight fight, @NotNull Character character) {
         if (fight.getFightEffects() != null) {
+            // Tydzień 10 - strumienie 2
+            // Ten strumień pozwala na przefiltrowanie kolekcji i wyciągnięcie aktywnych efektów, a następnie w forEach wykonywane są na nich działania
             fight.getFightEffects().stream().filter(effect -> effect.getDuration() > 0).forEach(effect -> {
                 effect.passTurn();
                 FightEffectStrategy strategy = FightEffectStrategyFactory.getStrategy(effect.getSkillEffect());
@@ -89,6 +91,7 @@ public class FightService {
                     strategy.applyEffect(effect, fight, character);
                 }
             });
+            // Koniec Tydzień 10 - strumienie 2
         }
     }
 

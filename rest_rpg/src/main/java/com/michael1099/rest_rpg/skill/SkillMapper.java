@@ -34,7 +34,10 @@ public interface SkillMapper {
     CharacterSkillBasic toCharacterSkillBasic(@NotNull CharacterSkill source);
 
     default CharacterSkillBasics toCharacterSkillBasics(@NotNull Character source) {
+        // Tydzień 10 - strumienie 1
+        // Ten strumień pozwala na zmapowanie Set<CharacterSkill> na List<CharacterSkillBasic>
         return new CharacterSkillBasics().content(source.getSkills().stream().map(this::toCharacterSkillBasic).toList());
+        // Koniec Tydzień 10 - strumienie
     }
 
     default SkillLites toLites(@NotNull List<Skill> source) {
