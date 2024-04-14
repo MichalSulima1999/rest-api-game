@@ -4,6 +4,7 @@ import com.michael1099.rest_rpg.character.CharacterServiceHelper
 import com.michael1099.rest_rpg.configuration.TestBase
 import com.michael1099.rest_rpg.helpers.DeleteServiceHelper
 import org.openapitools.model.GenerateReportRequest
+import org.openapitools.model.ReportFormat
 import org.openapitools.model.ReportResponse
 import org.openapitools.model.ReportType
 import org.springframework.beans.factory.annotation.Autowired
@@ -26,7 +27,7 @@ class ReportControllerTest extends TestBase {
     def "should create report"() {
         given:
             def character = characterServiceHelper.createCharacter(user, [name: "Jan"])
-            def request = new GenerateReportRequest(character.id, ReportType.CHARACTER)
+            def request = new GenerateReportRequest(character.id, ReportType.CHARACTER, ReportFormat.DEFAULT)
         when:
             def response = httpPost(generateUrl, request, ReportResponse, [accessToken: userAccessToken])
         then:

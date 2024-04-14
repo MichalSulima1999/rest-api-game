@@ -838,6 +838,12 @@ components:
         - CHARACTER
         - EQUIPMENT
         - STATISTICS
+    ReportFormat:
+      type: string
+      enum:
+        - DEFAULT
+        - YAML
+        - JSON
     UserLite:
       type: object
       required:
@@ -1227,6 +1233,7 @@ components:
       required:
         - id
         - reportType
+        - reportFormat
       properties:
         id:
           description: Id of an object to create report to
@@ -1235,6 +1242,9 @@ components:
         reportType:
           description: Report type to generate
           $ref: '#/components/schemas/ReportType'
+        reportFormat:
+          description: Report format to generate
+          $ref: '#/components/schemas/ReportFormat'
     CharacterLite:
       type: object
       required:
