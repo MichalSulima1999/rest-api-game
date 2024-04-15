@@ -304,7 +304,7 @@ public class Character implements Cloneable, Reportable {
 
     public void usePotion() {
         equipment.usePotion();
-        statistics.heal(ItemService.POTION_HEAL_PERCENT);
+        statistics.getHealOperation().heal(ItemService.POTION_HEAL_PERCENT);
     }
 
     public void acceptResourcesTask(ResourceType resourceType, int amount) {
@@ -324,7 +324,7 @@ public class Character implements Cloneable, Reportable {
     }
 
     public void earnXp(int xp) {
-        var leveledUp = statistics.earnXp(xp);
+        var leveledUp = statistics.getEarnXpOperation().earnXp(xp);
 
         if (leveledUp) {
             notifyObservers();

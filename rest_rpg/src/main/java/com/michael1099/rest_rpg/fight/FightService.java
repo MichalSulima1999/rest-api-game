@@ -72,7 +72,7 @@ public class FightService {
         checkIfFightEnded(fight, character, response);
 
         if (response.getPlayerWon() == null) {
-            character.getStatistics().regenerateManaPerTurn();
+            character.getStatistics().getRegenerateManaOperation().regenerateManaPerTurn();
             character.getOccupation().getFight().regenerateEnemyManaPerTurn();
         }
 

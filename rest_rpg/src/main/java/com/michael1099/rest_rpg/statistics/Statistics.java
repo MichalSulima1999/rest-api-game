@@ -8,6 +8,9 @@ import com.michael1099.rest_rpg.item.model.Item;
 import com.michael1099.rest_rpg.report.ReportVisitor;
 import com.michael1099.rest_rpg.report.Reportable;
 import com.michael1099.rest_rpg.statistics.dto.StatisticsUpdateRequestDto;
+import com.michael1099.rest_rpg.statistics.functional_interface.EarnXpFunction;
+import com.michael1099.rest_rpg.statistics.functional_interface.HealFunction;
+import com.michael1099.rest_rpg.statistics.functional_interface.RegenerateManaFunction;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -17,6 +20,7 @@ import jakarta.persistence.NamedAttributeNode;
 import jakarta.persistence.NamedEntityGraph;
 import jakarta.persistence.NamedSubgraph;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.Transient;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -97,6 +101,38 @@ public class Statistics implements Reportable {
     private Character character;
 
     private boolean deleted;
+
+    // Tydzień 10 - utwórz 3 interfejsy funkcyjne
+    // Stworzono 3 interfejsy: HealFunction, RegenerateManaFunction, EarnXpFunction
+    // Poniżej znajdują się implementacje
+    @Transient
+    private HealFunction healOperation = percent -> {
+        currentHp += maxHp * percent / 100;
+        if (currentHp > maxHp) {
+            currentHp = maxHp;
+        }
+    };
+
+    @Transient
+    private RegenerateManaFunction regenerateManaOperation = () -> {
+        currentMana += maxMana * FightService.MANA_REGENERATION_PERCENT_PER_TURN / 100;
+        if (currentMana > maxMana) {
+            currentMana = maxMana;
+        }
+    };
+
+    @Transient
+    private EarnXpFunction earnXpOperation = xp -> {
+        boolean levelUp = false;
+        currentXp += xp;
+        while (currentXp >= getXpToNextLevel()) {
+            currentLevel++;
+            freeStatisticPoints += STATISTICS_POINTS_PER_LEVEL;
+            levelUp = true;
+        }
+        return levelUp;
+    };
+    // Koniec Tydzień 10 - utwórz 3 interfejsy funkcyjne
 
     public static Statistics init() {
         return Statistics.builder()
@@ -185,31 +221,6 @@ public class Statistics implements Reportable {
             throw new NotEnoughManaException();
         }
         currentMana -= mana;
-    }
-
-    public void heal(int percent) {
-        currentHp += maxHp * percent / 100;
-        if (currentHp > maxHp) {
-            currentHp = maxHp;
-        }
-    }
-
-    public void regenerateManaPerTurn() {
-        currentMana += maxMana * FightService.MANA_REGENERATION_PERCENT_PER_TURN / 100;
-        if (currentMana > maxMana) {
-            currentMana = maxMana;
-        }
-    }
-
-    public boolean earnXp(int xp) {
-        boolean levelUp = false;
-        currentXp += xp;
-        while (currentXp >= getXpToNextLevel()) {
-            currentLevel++;
-            freeStatisticPoints += STATISTICS_POINTS_PER_LEVEL;
-            levelUp = true;
-        }
-        return levelUp;
     }
 
     public void useStatisticPoints(int points) {
