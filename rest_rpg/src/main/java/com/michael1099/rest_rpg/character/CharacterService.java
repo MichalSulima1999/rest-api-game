@@ -53,7 +53,9 @@ public class CharacterService {
     private final CharacterCompositeArtwork compositeArtwork;
     private final EmailService emailService;
 
-    public CharacterService(CharacterRepository characterRepository, UserRepository userRepository, IAuthenticationFacade authenticationFacade, CharacterMapper characterMapper, RaceBonusInterpreter raceBonusInterpreter, EmailService emailService) {
+    public CharacterService(CharacterRepository characterRepository, UserRepository userRepository,
+                            IAuthenticationFacade authenticationFacade, CharacterMapper characterMapper,
+                            RaceBonusInterpreter raceBonusInterpreter, EmailService emailService) {
         this.characterRepository = characterRepository;
         this.userRepository = userRepository;
         this.authenticationFacade = authenticationFacade;

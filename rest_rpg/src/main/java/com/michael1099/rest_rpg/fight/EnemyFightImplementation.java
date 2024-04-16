@@ -8,8 +8,17 @@ import org.openapitools.model.ElementEvent;
 import org.openapitools.model.FightActionResponse;
 
 import java.util.Optional;
+import java.util.Set;
 
 public class EnemyFightImplementation implements EnemyFight {
+
+    // Tydzień 9 - wyeliminuj magiczne liczby
+    // W metodzie selectAction były magiczne liczby, które teraz zostały umieszczone poniżej w stałych
+    private static final int HEALTH_THRESHOLD_20 = 20;
+    private static final int HEALTH_THRESHOLD_40 = 40;
+    private static final int HEALTH_THRESHOLD_60 = 60;
+    private static final int HEALTH_THRESHOLD_80 = 80;
+    // Koniec Tydzień 9 - wyeliminuj magiczne liczby
 
     @Override
     public void enemyTurn(@NotNull FightActionResponse response,
@@ -38,41 +47,47 @@ public class EnemyFightImplementation implements EnemyFight {
 
     private StrategyElement decideEnemyAction(@NotNull Fight fight, @NotNull Character character) {
         var enemy = Optional.ofNullable(fight.getEnemy()).orElseThrow();
-        StrategyElement enemyAction;
         var strategy = enemy.getStrategyElements();
-        var enemyHpPercent = (float) fight.getEnemyCurrentHp() / (float) enemy.getHp() * 100;
-        var playerHpPercent = (float) character.getStatistics().getCurrentHp() / (float) character.getStatistics().getMaxHp() * 100;
-        if (enemyHpPercent < 20) {
-            enemyAction = strategy.stream().filter(s ->
-                    s.getElementEvent() == ElementEvent.ENEMY_HEALTH_0_20).findFirst().orElseThrow();
-        } else if (playerHpPercent < 20) {
-            enemyAction = strategy.stream().filter(s ->
-                    s.getElementEvent() == ElementEvent.PLAYER_HEALTH_0_20).findFirst().orElseThrow();
-        } else if (enemyHpPercent < 40) {
-            enemyAction = strategy.stream().filter(s ->
-                    s.getElementEvent() == ElementEvent.ENEMY_HEALTH_20_40).findFirst().orElseThrow();
-        } else if (playerHpPercent < 40) {
-            enemyAction = strategy.stream().filter(s ->
-                    s.getElementEvent() == ElementEvent.PLAYER_HEALTH_20_40).findFirst().orElseThrow();
-        } else if (enemyHpPercent < 60) {
-            enemyAction = strategy.stream().filter(s ->
-                    s.getElementEvent() == ElementEvent.ENEMY_HEALTH_40_60).findFirst().orElseThrow();
-        } else if (playerHpPercent < 60) {
-            enemyAction = strategy.stream().filter(s ->
-                    s.getElementEvent() == ElementEvent.PLAYER_HEALTH_40_60).findFirst().orElseThrow();
-        } else if (enemyHpPercent < 80) {
-            enemyAction = strategy.stream().filter(s ->
-                    s.getElementEvent() == ElementEvent.ENEMY_HEALTH_60_80).findFirst().orElseThrow();
-        } else if (playerHpPercent < 80) {
-            enemyAction = strategy.stream().filter(s ->
-                    s.getElementEvent() == ElementEvent.PLAYER_HEALTH_60_80).findFirst().orElseThrow();
+        var enemyHpPercent = calculateHpPercent(fight.getEnemyCurrentHp(), enemy.getHp());
+        var playerHpPercent = calculateHpPercent(character.getStatistics().getCurrentHp(), character.getStatistics().getMaxHp());
+        return selectAction(strategy, enemyHpPercent, playerHpPercent);
+    }
+
+    private float calculateHpPercent(int currentHp, int maxHp) {
+        return ((float) currentHp / (float) maxHp) * 100;
+    }
+
+    // Tydzień 9 - dostosuj długości metod w programie, żeby nie miały więcej niż 20 linii
+    // Ta metoda była bardzo długa, ale udało się ją podzielić na więcej metod
+    private StrategyElement selectAction(Set<StrategyElement> strategy, float enemyHpPercent, float playerHpPercent) {
+        if (enemyHpPercent < HEALTH_THRESHOLD_20) {
+            return selectByElementEvent(strategy, ElementEvent.ENEMY_HEALTH_0_20);
+        } else if (playerHpPercent < HEALTH_THRESHOLD_20) {
+            return selectByElementEvent(strategy, ElementEvent.PLAYER_HEALTH_0_20);
+        } else if (enemyHpPercent < HEALTH_THRESHOLD_40) {
+            return selectByElementEvent(strategy, ElementEvent.ENEMY_HEALTH_20_40);
+        } else if (playerHpPercent < HEALTH_THRESHOLD_40) {
+            return selectByElementEvent(strategy, ElementEvent.PLAYER_HEALTH_20_40);
+        } else if (enemyHpPercent < HEALTH_THRESHOLD_60) {
+            return selectByElementEvent(strategy, ElementEvent.ENEMY_HEALTH_40_60);
+        } else if (playerHpPercent < HEALTH_THRESHOLD_60) {
+            return selectByElementEvent(strategy, ElementEvent.PLAYER_HEALTH_40_60);
+        } else if (enemyHpPercent < HEALTH_THRESHOLD_80) {
+            return selectByElementEvent(strategy, ElementEvent.ENEMY_HEALTH_60_80);
+        } else if (playerHpPercent < HEALTH_THRESHOLD_80) {
+            return selectByElementEvent(strategy, ElementEvent.PLAYER_HEALTH_60_80);
         } else {
-            var action = strategy.stream().filter(s ->
-                    s.getElementEvent() == ElementEvent.PLAYER_HEALTH_80_100).findFirst().orElseThrow();
-            var action2 = strategy.stream().filter(s ->
-                    s.getElementEvent() == ElementEvent.ENEMY_HEALTH_80_100).findFirst().orElseThrow();
-            enemyAction = action.getPriority() > action2.getPriority() ? action : action2;
+            StrategyElement playerAction = selectByElementEvent(strategy, ElementEvent.PLAYER_HEALTH_80_100);
+            StrategyElement enemyAction = selectByElementEvent(strategy, ElementEvent.ENEMY_HEALTH_80_100);
+            return playerAction.getPriority() > enemyAction.getPriority() ? playerAction : enemyAction;
         }
-        return enemyAction;
+    }
+    // Koniec Tydzień 9 - dostosuj długości metod w programie, żeby nie miały więcej niż 20 linii
+
+    private StrategyElement selectByElementEvent(Set<StrategyElement> strategy, ElementEvent elementEvent) {
+        return strategy.stream()
+                .filter(s -> s.getElementEvent() == elementEvent)
+                .findFirst()
+                .orElseThrow();
     }
 }
