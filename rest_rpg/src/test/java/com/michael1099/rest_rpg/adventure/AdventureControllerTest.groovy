@@ -81,11 +81,16 @@ class AdventureControllerTest extends TestBase {
         given:
             def adventure = adventureServiceHelper.saveAdventure()
         when:
-            def response = httpDelete(adventureUrl(adventure.id), AdventureLite, [accessToken: adminAccessToken])
+            def response = httpDelete(adventureUrl(adventure.id), Void, [accessToken: adminAccessToken])
             adventure = adventureServiceHelper.getAdventure(adventure.id)
         then:
-            response.status == HttpStatus.OK
-            adventure.id == response.body.id
+            response.status == HttpStatus.NO_CONTENT
+            adventure.deleted
+        when:
+            response = httpDelete(adventureUrl(adventure.id), Void, [accessToken: adminAccessToken])
+            adventure = adventureServiceHelper.getAdventure(adventure.id)
+        then:
+            response.status == HttpStatus.NO_CONTENT
             adventure.deleted
     }
 

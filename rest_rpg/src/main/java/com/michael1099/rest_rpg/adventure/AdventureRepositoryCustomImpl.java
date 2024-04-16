@@ -55,6 +55,13 @@ public class AdventureRepositoryCustomImpl implements AdventureRepositoryCustom 
         return new PageImpl<>(skills, pageable, total);
     }
 
+    @Override
+    public long deleteAdventure(long adventureId) {
+        var adventure = QAdventure.adventure;
+        return queryFactory.update(adventure)
+                .set(adventure.deleted, true).where(adventure.id.in(adventureId)).execute();
+    }
+
     private BooleanBuilder buildPredicate(@NotNull QAdventure adventure, @NotNull AdventureSearchRequest request) {
         var predicate = new BooleanBuilder();
 

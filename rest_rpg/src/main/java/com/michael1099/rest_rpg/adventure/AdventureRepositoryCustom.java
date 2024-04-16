@@ -11,4 +11,6 @@ import org.springframework.stereotype.Repository;
 public interface AdventureRepositoryCustom {
 
     Page<Adventure> findAdventures(@NotNull AdventureSearchRequest request, @NotNull Pageable pageable);
+
+    long deleteAdventure(@NotNull long adventureId);
 }

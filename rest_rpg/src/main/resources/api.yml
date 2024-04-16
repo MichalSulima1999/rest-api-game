@@ -321,12 +321,8 @@ paths:
             type: integer
             format: int64
       responses:
-        '200':
-          description: Info about deleted adventure
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AdventureLite'
+        '204':
+          description: No content
   /adventure/{adventureId}/start/{characterId}:
     get:
       summary: Start adventure with character

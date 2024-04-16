@@ -65,10 +65,8 @@ public class AdventureService {
     }
 
     @Transactional
-    public AdventureLite deleteAdventure(long adventureId) {
-        var adventure = adventureRepository.getAdventureById(adventureId);
-        adventure.setDeleted(true);
-        return mapper.toLite(adventureRepository.save(adventure));
+    public void deleteAdventure(long adventureId) {
+        adventureRepository.deleteAdventure(adventureId);
     }
 
     @Transactional
