@@ -9,7 +9,7 @@ import com.michael1099.rest_rpg.equipment.Equipment
 import com.michael1099.rest_rpg.fight.model.Fight
 import com.michael1099.rest_rpg.fight_effect.FightEffect
 import com.michael1099.rest_rpg.helpers.DeleteServiceHelper
-import com.michael1099.rest_rpg.item.ItemService
+import com.michael1099.rest_rpg.item.AbstractItemService
 import com.michael1099.rest_rpg.skill.SkillServiceHelper
 import com.michael1099.rest_rpg.statistics.StatisticsHelper
 import org.openapitools.model.ElementAction
@@ -131,7 +131,7 @@ class FightControllerTest extends TestBase {
             response.body.every {
                 FightHelper.compare(fightServiceHelper.getById(fight.id), it.fight)
                 it.playerPotions == 0
-                it.playerCurrentHp == ItemService.POTION_HEAL_PERCENT * character.statistics.maxHp / 100 + character.statistics.currentHp
+                it.playerCurrentHp == AbstractItemService.POTION_HEAL_PERCENT * character.statistics.maxHp / 100 + character.statistics.currentHp
             }
     }
 

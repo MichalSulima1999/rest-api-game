@@ -4,7 +4,7 @@ import com.michael1099.rest_rpg.auth.user.User;
 import com.michael1099.rest_rpg.character.model.dto.CharacterCreateRequestDto;
 import com.michael1099.rest_rpg.character_skill.CharacterSkill;
 import com.michael1099.rest_rpg.equipment.Equipment;
-import com.michael1099.rest_rpg.item.ItemService;
+import com.michael1099.rest_rpg.item.ItemServiceImplementation;
 import com.michael1099.rest_rpg.item.model.Item;
 import com.michael1099.rest_rpg.occupation.Occupation;
 import com.michael1099.rest_rpg.report.ReportVisitor;
@@ -298,13 +298,13 @@ public class Character implements Cloneable, Reportable {
     }
 
     public void buyPotion() {
-        equipment.spendGold(ItemService.POTION_PRICE);
+        equipment.spendGold(ItemServiceImplementation.POTION_PRICE);
         equipment.addPotion(1);
     }
 
     public void usePotion() {
         equipment.usePotion();
-        statistics.getHealOperation().heal(ItemService.POTION_HEAL_PERCENT);
+        statistics.getHealOperation().heal(ItemServiceImplementation.POTION_HEAL_PERCENT);
     }
 
     public void acceptResourcesTask(ResourceType resourceType, int amount) {

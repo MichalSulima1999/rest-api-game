@@ -127,12 +127,12 @@ class ItemControllerTest extends TestBase {
         then:
             response.status == HttpStatus.NO_CONTENT
             character.equipment.healthPotions == 1
-            character.equipment.gold == 1000 - ItemService.POTION_PRICE
+            character.equipment.gold == 1000 - AbstractItemService.POTION_PRICE
     }
 
     def "should not buy potion"() {
         given:
-            def character = characterServiceHelper.createCharacter(user, [equipment: Equipment.builder().gold(ItemService.POTION_PRICE - 1).healthPotions(0).build()])
+            def character = characterServiceHelper.createCharacter(user, [equipment: Equipment.builder().gold(AbstractItemService.POTION_PRICE - 1).healthPotions(0).build()])
         when:
             def response = httpGet(buyPotionUrl(character.id), Void, [accessToken: userAccessToken])
         then:
@@ -145,8 +145,8 @@ class ItemControllerTest extends TestBase {
             def response = httpGet(potionInfoUrl, PotionLite, [accessToken: userAccessToken])
         then:
             response.status == HttpStatus.OK
-            response.body.price == ItemService.POTION_PRICE
-            response.body.healPercent == ItemService.POTION_HEAL_PERCENT
+            response.body.price == AbstractItemService.POTION_PRICE
+            response.body.healPercent == AbstractItemService.POTION_HEAL_PERCENT
     }
 
     def "should use potion out of fight"() {
@@ -159,6 +159,6 @@ class ItemControllerTest extends TestBase {
             response.status == HttpStatus.OK
             StatisticsHelper.compare(character.statistics, response.body)
             character.equipment.healthPotions == 0
-            character.statistics.currentHp == Math.round(50 + character.statistics.maxHp * ItemService.POTION_HEAL_PERCENT / 100)
+            character.statistics.currentHp == Math.round(50 + character.statistics.maxHp * AbstractItemService.POTION_HEAL_PERCENT / 100)
     }
 }

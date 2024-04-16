@@ -3,7 +3,7 @@ package com.michael1099.rest_rpg.fight.model;
 import com.michael1099.rest_rpg.enemy.model.Enemy;
 import com.michael1099.rest_rpg.fight.FightService;
 import com.michael1099.rest_rpg.fight_effect.FightEffect;
-import com.michael1099.rest_rpg.item.ItemService;
+import com.michael1099.rest_rpg.item.ItemServiceImplementation;
 import com.michael1099.rest_rpg.occupation.Occupation;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.CascadeType;
@@ -90,7 +90,8 @@ public class Fight {
     }
 
     public void healEnemy() {
-        setEnemyCurrentHp(Math.min(Optional.ofNullable(enemy).map(Enemy::getHp).orElseThrow(), enemyCurrentHp + ItemService.POTION_HEAL_PERCENT * enemy.getHp() / 100));
+        setEnemyCurrentHp(Math.min(Optional.ofNullable(enemy).map(Enemy::getHp).orElseThrow(),
+                enemyCurrentHp + ItemServiceImplementation.POTION_HEAL_PERCENT * enemy.getHp() / 100));
     }
 
     public void enemyUseMana() {
