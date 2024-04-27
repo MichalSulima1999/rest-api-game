@@ -6,6 +6,7 @@ import com.michael1099.rest_rpg.character.model.Character;
 import com.michael1099.rest_rpg.exceptions.FightIsNotActiveException;
 import com.michael1099.rest_rpg.fight.command.EndFight;
 import com.michael1099.rest_rpg.fight.command.EndFightExecutor;
+import com.michael1099.rest_rpg.fight.flyweight.Terrain;
 import com.michael1099.rest_rpg.fight.model.Fight;
 import com.michael1099.rest_rpg.fight_effect.strategy.FightEffectStrategy;
 import com.michael1099.rest_rpg.fight_effect.strategy.FightEffectStrategyFactory;
@@ -44,7 +45,7 @@ public class FightService {
         this.fightMapper = fightMapper;
         this.eventPublisher = eventPublisher;
         this.endFightExecutor = new EndFightExecutor();
-        this.terrainManager = new TerrainManagerImplementation();
+        this.terrainManager = new TerrainManagerImplementation(new Terrain());
         this.enemyFight = new EnemyFightImplementation();
         this.fightEffectsManager = new FightEffectsManagerImplementation(skillRepository, this.enemyFight);
     }

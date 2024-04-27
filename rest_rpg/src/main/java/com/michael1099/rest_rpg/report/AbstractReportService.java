@@ -11,7 +11,4 @@ public abstract class AbstractReportService implements ReportService {
     protected final CharacterRepository characterRepository;
     protected final EquipmentRepository equipmentRepository;
     protected final StatisticsRepository statisticsRepository;
-    protected final DefaultReportGenerator defaultReportGenerator;
-    protected final JsonReportGenerator jsonReportGenerator;
-    protected final YamlReportGenerator yamlReportGenerator;
 }

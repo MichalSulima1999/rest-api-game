@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 // Istnieje interfejs ReportVisitor, który jest implementowany przez DefaultReportGenerator, JsonReportGenerator i YamlReportGenerator
 // Czyli są trzy sposoby na generowanie raportów. Jeśli chcielibyśmy dodać nowy sposób,
 // to wystarczy stworzyć nową klasę i zaimplementować metody z interfejsu ReportVisitor
+// istnieje ReportGeneratorFactory z którego można pobierać implementacje.
+// sterowanie danymi: ReportManager
 @Service
 public class DefaultReportGenerator implements ReportVisitor {
 

@@ -5,7 +5,7 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @Getter
-public class DiceRollGame implements DiceGame {
+public class DiceRollGame implements MiniGame, DiceGame {
 
     private Winner winner;
 

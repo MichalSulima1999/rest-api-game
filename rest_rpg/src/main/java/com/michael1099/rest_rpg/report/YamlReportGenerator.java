@@ -15,6 +15,11 @@ import java.util.Map;
 @Service
 public class YamlReportGenerator implements ReportVisitor {
 
+    public static String convertToYaml(Map<?, ?> data) {
+        Yaml yaml = new Yaml();
+        return yaml.dump(data);
+    }
+
     @Override
     public ReportResponse visit(Character character) {
         var name = "Character " + character.getName() + " report";
@@ -55,10 +60,5 @@ public class YamlReportGenerator implements ReportVisitor {
         content.put("weapon", equipment.getWeapon().getName());
         content.put("healthPotions", equipment.getHealthPotions());
         return new ReportResponse(name, convertToYaml(content));
-    }
-
-    private String convertToYaml(Map<?, ?> data) {
-        Yaml yaml = new Yaml();
-        return yaml.dump(data);
     }
 }

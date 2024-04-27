@@ -1,6 +1,6 @@
 package com.michael1099.rest_rpg.minigame;
 
-public interface DiceGame extends MiniGame {
+public interface DiceGame {
 
     void rollDice();
 }

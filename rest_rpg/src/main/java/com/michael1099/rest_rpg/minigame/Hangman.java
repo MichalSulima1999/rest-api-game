@@ -3,7 +3,7 @@ package com.michael1099.rest_rpg.minigame;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Hangman implements HangmanGame {
+public class Hangman implements MiniGame, HangmanGame {
 
     private final String wordToGuess;
     private final List<Character> guessedLetters;
